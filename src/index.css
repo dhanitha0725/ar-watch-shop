@@ -529,3 +529,45 @@ model-viewer {
 .animate-spin-slow {
   animation: spin-slow 20s linear infinite;
 }
+
+/* AR.js Camera Video & Canvas Stacking */
+body.arjs-mode,
+body.arjs-mode #root,
+body.arjs-mode main {
+  background: transparent !important;
+  background-color: transparent !important;
+}
+
+#arjs-video,
+video.a-canvas-video {
+  position: fixed !important;
+  top: 0 !important;
+  left: 0 !important;
+  width: 100vw !important;
+  height: 100vh !important;
+  object-fit: cover !important;
+  z-index: 0 !important;
+  margin: 0 !important;
+  max-width: none !important;
+  max-height: none !important;
+  display: block !important;
+}
+
+.a-canvas {
+  position: fixed !important;
+  top: 0 !important;
+  left: 0 !important;
+  width: 100vw !important;
+  height: 100vh !important;
+  z-index: 1 !important;
+  pointer-events: none !important;
+}
+
+a-scene {
+  position: fixed !important;
+  top: 0 !important;
+  left: 0 !important;
+  width: 100vw !important;
+  height: 100vh !important;
+  z-index: 1 !important;
+}

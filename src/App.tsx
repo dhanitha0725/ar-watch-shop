@@ -89,7 +89,7 @@ export const App: React.FC = () => {
   const isImmersiveAR = ['marker-ar', 'markerless-ar', 'wrist-tryon'].includes(currentView);
 
   return (
-    <div style={{ minHeight: '100vh', display: 'flex', flexDirection: 'column', backgroundColor: 'var(--bg-primary)' }}>
+    <div style={{ minHeight: '100vh', display: 'flex', flexDirection: 'column', backgroundColor: isImmersiveAR ? 'transparent' : 'var(--bg-primary)' }}>
       {/* Global Navbar (hidden in fullscreen AR modes) */}
       {!isImmersiveAR && (
         <Navbar

@@ -21,43 +21,43 @@ export const MarkerARScene: React.FC<MarkerARSceneProps> = ({
   const [trackingState, setTrackingState] = useState<TrackingState>('searching');
   const [modelScaleMultiplier, setModelScaleMultiplier] = useState<number>(1.0);
   const [showControls, setShowControls] = useState(true);
-  const [cameraError, setCameraError] = useState<string | null>(null);
 
-  const sceneContainerRef = useRef<HTMLDivElement>(null);
-
-  useEffect(() => {
-    navigator.mediaDevices?.getUserMedia({ video: true })
-      .then((stream) => {
-        stream.getTracks().forEach(track => track.stop());
-      })
-      .catch((err) => {
-        setCameraError('Camera access denied or unavailable. Please enable camera permissions.');
-      });
-
-    const handleMarkerFound = () => setTrackingState('detected');
-    const handleMarkerLost = () => setTrackingState('lost');
-
-    window.addEventListener('markerFound', handleMarkerFound);
-    window.addEventListener('markerLost', handleMarkerLost);
-
-    return () => {
-      window.removeEventListener('markerFound', handleMarkerFound);
-      window.removeEventListener('markerLost', handleMarkerLost);
-
-      const videoElements = document.querySelectorAll('video');
-      videoElements.forEach(v => {
-        if (v.srcObject) {
-          const s = v.srcObject as MediaStream;
-          s.getTracks().forEach(t => t.stop());
-        }
-      });
-      const arContainers = document.querySelectorAll('.a-canvas, a-scene');
-      arContainers.forEach(el => el.remove());
-    };
-  }, []);
+  const iframeRef = useRef<HTMLIFrameElement>(null);
 
   const scaleParts = watch.markerScale.split(' ').map(Number);
   const computedScale = scaleParts.map(s => (s * modelScaleMultiplier).toFixed(4)).join(' ');
+
+  useEffect(() => {
+    const handleMessage = (event: MessageEvent) => {
+      if (event.data?.source === 'arjs-marker-frame') {
+        if (event.data.type === 'markerFound') {
+          setTrackingState('detected');
+        } else if (event.data.type === 'markerLost') {
+          setTrackingState('lost');
+        }
+      }
+    };
+
+    window.addEventListener('message', handleMessage);
+    return () => {
+      window.removeEventListener('message', handleMessage);
+    };
+  }, []);
+
+  // Update iframe model/scale when watch or scale multiplier changes
+  useEffect(() => {
+    if (iframeRef.current?.contentWindow) {
+      iframeRef.current.contentWindow.postMessage({
+        target: 'arjs-marker-frame',
+        action: 'updateWatch',
+        modelUrl: watch.modelUrl,
+        scale: computedScale,
+        rotation: watch.markerRotation || '0 0 0',
+      }, '*');
+    }
+  }, [watch, computedScale]);
+
+  const iframeSrc = `/ar-marker-frame.html?model=${encodeURIComponent(watch.modelUrl)}&scale=${encodeURIComponent(computedScale)}&rotation=${encodeURIComponent(watch.markerRotation || '0 0 0')}`;
 
   return (
     <div style={{ position: 'relative', width: '100vw', height: '100vh', backgroundColor: '#000', overflow: 'hidden' }}>
@@ -98,74 +98,21 @@ export const MarkerARScene: React.FC<MarkerARSceneProps> = ({
         </button>
       </div>
 
-      {/* Camera Error Notice */}
-      {cameraError && (
-        <div style={{
+      {/* Standalone AR.js Camera & Tracking Frame */}
+      <iframe
+        ref={iframeRef}
+        src={iframeSrc}
+        allow="camera; microphone; display-capture"
+        style={{
+          width: '100%',
+          height: '100%',
+          border: 'none',
           position: 'absolute',
-          top: '50%',
-          left: '50%',
-          transform: 'translate(-50%, -50%)',
-          zIndex: 200,
-          backgroundColor: '#ffffff',
-          borderRadius: 'var(--rounded-lg)',
-          boxShadow: '0 20px 40px rgba(0,0,0,0.2)',
-          padding: '32px',
-          maxWidth: '400px',
-          textAlign: 'center',
-        }}>
-          <h4 style={{ color: 'var(--colors-danger)', marginBottom: '8px', fontSize: '18px', fontWeight: 600 }}>Camera Access Required</h4>
-          <p style={{ fontSize: '14px', color: 'var(--colors-body-muted)', marginBottom: '20px' }}>{cameraError}</p>
-          <button onClick={() => window.location.reload()} className="btn-primary" style={{ width: '100%' }}>
-            <span>Retry Permissions</span>
-          </button>
-        </div>
-      )}
-
-      {/* Embedded A-Frame & AR.js Scene */}
-      <div 
-        ref={sceneContainerRef}
-        style={{ width: '100%', height: '100%' }}
-        dangerouslySetInnerHTML={{
-          __html: `
-            <a-scene
-              embedded
-              arjs="sourceType: webcam; debugUIEnabled: false; detectionMode: mono_and_matrix; matrixCodeType: 3x3;"
-              renderer="logarithmicDepthBuffer: true; antialias: true; alpha: true;"
-              vr-mode-ui="enabled: false"
-              style="width: 100%; height: 100%; position: absolute; top: 0; left: 0;"
-            >
-              <a-entity light="type: ambient; color: #ffffff; intensity: 1.2;"></a-entity>
-              <a-entity light="type: directional; color: #ffffff; intensity: 1.5; position: 1 4 2"></a-entity>
-              <a-entity light="type: directional; color: #0066cc; intensity: 0.8; position: -2 -1 1"></a-entity>
-
-              <!-- Standard Hiro Marker -->
-              <a-marker preset="hiro" id="hiro-marker" emitevents="true">
-                <a-entity
-                  id="watch-model-hiro"
-                  gltf-model="url(${watch.modelUrl})"
-                  scale="${computedScale}"
-                  position="0 0.1 0"
-                  rotation="${watch.markerRotation || '0 0 0'}"
-                  animation="property: rotation; to: 0 360 0; loop: true; dur: 12000; easing: linear;"
-                ></a-entity>
-              </a-marker>
-
-              <!-- Custom Pattern Marker -->
-              <a-marker type="pattern" url="/markers/watch-marker.patt" id="custom-marker" emitevents="true">
-                <a-entity
-                  id="watch-model-custom"
-                  gltf-model="url(${watch.modelUrl})"
-                  scale="${computedScale}"
-                  position="0 0.1 0"
-                  rotation="${watch.markerRotation || '0 0 0'}"
-                  animation="property: rotation; to: 0 360 0; loop: true; dur: 12000; easing: linear;"
-                ></a-entity>
-              </a-marker>
-
-              <a-entity camera></a-entity>
-            </a-scene>
-          `
+          top: 0,
+          left: 0,
+          zIndex: 1,
         }}
+        title="AR.js Marker Tracking Scene"
       />
 
       {/* Bottom Floating Controls */}
