@@ -1,0 +1,88 @@
+import React from 'react';
+import { TrackingState } from '../../types/watch';
+import { Loader2, CheckCircle2, AlertTriangle, Eye } from 'lucide-react';
+
+interface ARStateBadgeProps {
+  state: TrackingState;
+  customMessage?: string;
+}
+
+export const ARStateBadge: React.FC<ARStateBadgeProps> = ({ state, customMessage }) => {
+  const badgeStyle: React.CSSProperties = {
+    display: 'inline-flex',
+    alignItems: 'center',
+    gap: '8px',
+    backgroundColor: 'rgba(255, 255, 255, 0.88)',
+    backdropFilter: 'saturate(180%) blur(16px)',
+    WebkitBackdropFilter: 'saturate(180%) blur(16px)',
+    border: '1px solid rgba(0, 0, 0, 0.08)',
+    boxShadow: '0 4px 12px rgba(0, 0, 0, 0.08)',
+    borderRadius: 'var(--rounded-pill)',
+    padding: '6px 14px',
+  };
+
+  const textStyle: React.CSSProperties = {
+    fontSize: '13px',
+    fontWeight: 600,
+    letterSpacing: '-0.1px',
+    color: 'var(--colors-ink)',
+    fontFamily: 'var(--font-body)',
+  };
+
+  switch (state) {
+    case 'searching':
+      return (
+        <div style={badgeStyle}>
+          <Loader2 size={14} className="animate-spin" color="var(--colors-primary)" />
+          <span style={textStyle}>
+            {customMessage || 'Searching for surface...'}
+          </span>
+          <style>{`
+            @keyframes spin { 100% { transform: rotate(360deg); } }
+            .animate-spin { animation: spin 1.2s linear infinite; }
+          `}</style>
+        </div>
+      );
+
+    case 'detected':
+      return (
+        <div style={badgeStyle}>
+          <CheckCircle2 size={14} color="var(--colors-success)" />
+          <span style={textStyle}>
+            {customMessage || 'Anchor locked'}
+          </span>
+        </div>
+      );
+
+    case 'lost':
+      return (
+        <div style={badgeStyle}>
+          <AlertTriangle size={14} color="var(--colors-danger)" />
+          <span style={textStyle}>
+            {customMessage || 'Tracking lost'}
+          </span>
+        </div>
+      );
+
+    case 'calibrating':
+      return (
+        <div style={badgeStyle}>
+          <Eye size={14} color="var(--colors-primary)" />
+          <span style={textStyle}>
+            {customMessage || 'Calibrating view...'}
+          </span>
+        </div>
+      );
+
+    case 'unsupported':
+    default:
+      return (
+        <div style={badgeStyle}>
+          <span style={{ width: '8px', height: '8px', borderRadius: '50%', backgroundColor: 'var(--colors-body-muted)' }} />
+          <span style={textStyle}>
+            {customMessage || 'Simulation active'}
+          </span>
+        </div>
+      );
+  }
+};
