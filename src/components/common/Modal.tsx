@@ -7,12 +7,19 @@ interface ModalProps {
 }
 
 export const MarkerModal: React.FC<ModalProps> = ({ isOpen, onClose }) => {
-  const [activeTab, setActiveTab] = useState<'hiro' | 'custom'>('hiro');
+  const [activeTab, setActiveTab] = useState<'card' | 'watch' | 'hiro'>('card');
 
   if (!isOpen) return null;
 
-  const currentMarkerUrl = activeTab === 'hiro' ? '/markers/hiro.svg' : '/markers/watch-marker.svg';
-  const markerName = activeTab === 'hiro' ? 'Hiro Standard Marker' : 'Custom Watch Store Marker';
+  const currentMarkerUrl = 
+    activeTab === 'card' ? '/markers/card.png' :
+    activeTab === 'watch' ? '/markers/watch-marker.svg' :
+    '/markers/hiro.svg';
+
+  const markerName = 
+    activeTab === 'card' ? 'MindAR Product Target Card' :
+    activeTab === 'watch' ? 'Watch Artwork Target' :
+    'Hiro Standard Marker';
 
   const handlePrint = () => {
     const win = window.open('', '_blank');
@@ -20,7 +27,7 @@ export const MarkerModal: React.FC<ModalProps> = ({ isOpen, onClose }) => {
       win.document.write(`
         <html>
           <head>
-            <title>Print AR Marker - ${markerName}</title>
+            <title>Print AR Target - ${markerName}</title>
             <style>
               body { display: flex; flex-direction: column; align-items: center; justify-content: center; min-height: 100vh; margin: 0; font-family: -apple-system, sans-serif; background: #fff; color: #1d1d1f; }
               img { max-width: 360px; max-height: 360px; border: 1px solid #e0e0e0; padding: 16px; border-radius: 12px; }
@@ -28,9 +35,9 @@ export const MarkerModal: React.FC<ModalProps> = ({ isOpen, onClose }) => {
             </style>
           </head>
           <body onload="window.print();">
-            <h2>Chrono AR Tracking Marker: ${markerName}</h2>
+            <h2>Chrono AR Tracking Target: ${markerName}</h2>
             <img src="${window.location.origin}${currentMarkerUrl}" alt="${markerName}" />
-            <p>Point your mobile camera at this marker in the WebAR Watch Store to view the 3D model.</p>
+            <p>Point your mobile camera at this target image in the WebAR Watch Store to view the 3D model.</p>
           </body>
         </html>
       `);
@@ -84,10 +91,10 @@ export const MarkerModal: React.FC<ModalProps> = ({ isOpen, onClose }) => {
           {/* Title */}
           <div style={{ marginBottom: '20px' }}>
             <h3 style={{ fontSize: '24px', fontWeight: 600, marginBottom: '6px' }}>
-              AR Tracking Marker
+              AR Tracking Target
             </h3>
             <p style={{ fontSize: '15px', color: 'var(--colors-body-muted)', lineHeight: 1.4 }}>
-              Point your camera at this marker on-screen or print it on paper.
+              Point your camera at this image target on a second screen or print it on paper.
             </p>
           </div>
 
@@ -98,42 +105,64 @@ export const MarkerModal: React.FC<ModalProps> = ({ isOpen, onClose }) => {
             padding: '4px',
             borderRadius: 'var(--rounded-pill)',
             marginBottom: '24px',
+            gap: '4px',
           }}>
+            <button
+              onClick={() => setActiveTab('card')}
+              style={{
+                flex: 1,
+                padding: '8px 12px',
+                borderRadius: 'var(--rounded-pill)',
+                border: 'none',
+                backgroundColor: activeTab === 'card' ? '#ffffff' : 'transparent',
+                color: activeTab === 'card' ? 'var(--colors-ink)' : 'var(--colors-body-muted)',
+                fontWeight: activeTab === 'card' ? 600 : 400,
+                fontSize: '12px',
+                cursor: 'pointer',
+                boxShadow: activeTab === 'card' ? '0 2px 6px rgba(0,0,0,0.08)' : 'none',
+                transition: 'all 0.15s ease',
+                whiteSpace: 'nowrap',
+              }}
+            >
+              Target Card
+            </button>
+            <button
+              onClick={() => setActiveTab('watch')}
+              style={{
+                flex: 1,
+                padding: '8px 12px',
+                borderRadius: 'var(--rounded-pill)',
+                border: 'none',
+                backgroundColor: activeTab === 'watch' ? '#ffffff' : 'transparent',
+                color: activeTab === 'watch' ? 'var(--colors-ink)' : 'var(--colors-body-muted)',
+                fontWeight: activeTab === 'watch' ? 600 : 400,
+                fontSize: '12px',
+                cursor: 'pointer',
+                boxShadow: activeTab === 'watch' ? '0 2px 6px rgba(0,0,0,0.08)' : 'none',
+                transition: 'all 0.15s ease',
+                whiteSpace: 'nowrap',
+              }}
+            >
+              Watch Marker
+            </button>
             <button
               onClick={() => setActiveTab('hiro')}
               style={{
                 flex: 1,
-                padding: '8px 16px',
+                padding: '8px 12px',
                 borderRadius: 'var(--rounded-pill)',
                 border: 'none',
                 backgroundColor: activeTab === 'hiro' ? '#ffffff' : 'transparent',
                 color: activeTab === 'hiro' ? 'var(--colors-ink)' : 'var(--colors-body-muted)',
                 fontWeight: activeTab === 'hiro' ? 600 : 400,
-                fontSize: '13px',
+                fontSize: '12px',
                 cursor: 'pointer',
                 boxShadow: activeTab === 'hiro' ? '0 2px 6px rgba(0,0,0,0.08)' : 'none',
                 transition: 'all 0.15s ease',
+                whiteSpace: 'nowrap',
               }}
             >
-              Hiro Marker
-            </button>
-            <button
-              onClick={() => setActiveTab('custom')}
-              style={{
-                flex: 1,
-                padding: '8px 16px',
-                borderRadius: 'var(--rounded-pill)',
-                border: 'none',
-                backgroundColor: activeTab === 'custom' ? '#ffffff' : 'transparent',
-                color: activeTab === 'custom' ? 'var(--colors-ink)' : 'var(--colors-body-muted)',
-                fontWeight: activeTab === 'custom' ? 600 : 400,
-                fontSize: '13px',
-                cursor: 'pointer',
-                boxShadow: activeTab === 'custom' ? '0 2px 6px rgba(0,0,0,0.08)' : 'none',
-                transition: 'all 0.15s ease',
-              }}
-            >
-              Watch Marker
+              Hiro
             </button>
           </div>
 
@@ -152,8 +181,8 @@ export const MarkerModal: React.FC<ModalProps> = ({ isOpen, onClose }) => {
               src={currentMarkerUrl}
               alt={markerName}
               style={{
-                width: '200px',
-                height: '200px',
+                width: '220px',
+                height: '160px',
                 objectFit: 'contain',
                 display: 'block',
                 borderRadius: '8px',
@@ -170,7 +199,7 @@ export const MarkerModal: React.FC<ModalProps> = ({ isOpen, onClose }) => {
           }}>
             <a
               href={currentMarkerUrl}
-              download={`${activeTab}-marker.svg`}
+              download={`${activeTab}-target.${activeTab === 'card' ? 'png' : 'svg'}`}
               className="btn-secondary"
               style={{
                 fontSize: '14px',
@@ -178,7 +207,7 @@ export const MarkerModal: React.FC<ModalProps> = ({ isOpen, onClose }) => {
               }}
             >
               <Download size={15} />
-              <span>Download SVG</span>
+              <span>Download Image</span>
             </a>
 
             <button
@@ -190,7 +219,7 @@ export const MarkerModal: React.FC<ModalProps> = ({ isOpen, onClose }) => {
               }}
             >
               <Printer size={15} />
-              <span>Print Marker</span>
+              <span>Print Target</span>
             </button>
           </div>
 
@@ -205,8 +234,8 @@ export const MarkerModal: React.FC<ModalProps> = ({ isOpen, onClose }) => {
           }}>
             <strong style={{ color: 'var(--colors-ink)', display: 'block', marginBottom: '4px' }}>Quick Instructions:</strong>
             1. Open Marker AR mode on your smartphone.<br />
-            2. Point your camera at this marker.<br />
-            3. The 3D watch will anchor directly on top of the pattern.
+            2. Point your camera at this image target (on a screen or printed card).<br />
+            3. The 3D watch will anchor solidly on top of the image via MindAR neural feature tracking.
           </div>
         </div>
       </div>

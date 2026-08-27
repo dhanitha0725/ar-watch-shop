@@ -29,7 +29,7 @@ export const MarkerARScene: React.FC<MarkerARSceneProps> = ({
 
   useEffect(() => {
     const handleMessage = (event: MessageEvent) => {
-      if (event.data?.source === 'arjs-marker-frame') {
+      if (event.data?.source === 'mindar-marker-frame' || event.data?.source === 'arjs-marker-frame') {
         if (event.data.type === 'markerFound') {
           setTrackingState('detected');
         } else if (event.data.type === 'markerLost') {
@@ -48,7 +48,7 @@ export const MarkerARScene: React.FC<MarkerARSceneProps> = ({
   useEffect(() => {
     if (iframeRef.current?.contentWindow) {
       iframeRef.current.contentWindow.postMessage({
-        target: 'arjs-marker-frame',
+        target: 'mindar-marker-frame',
         action: 'updateWatch',
         modelUrl: watch.modelUrl,
         scale: computedScale,
@@ -83,9 +83,9 @@ export const MarkerARScene: React.FC<MarkerARSceneProps> = ({
         <ARStateBadge
           state={trackingState}
           customMessage={
-            trackingState === 'searching' ? 'Point camera at Hiro / Marker' :
+            trackingState === 'searching' ? 'Point camera at Image Target / Card' :
             trackingState === 'detected' ? `Tracking ${watch.name}` :
-            'Marker lost — realigning'
+            'Target lost — realigning'
           }
         />
 
@@ -98,7 +98,7 @@ export const MarkerARScene: React.FC<MarkerARSceneProps> = ({
         </button>
       </div>
 
-      {/* Standalone AR.js Camera & Tracking Frame */}
+      {/* Standalone MindAR Camera & Tracking Frame */}
       <iframe
         ref={iframeRef}
         src={iframeSrc}
@@ -112,7 +112,7 @@ export const MarkerARScene: React.FC<MarkerARSceneProps> = ({
           left: 0,
           zIndex: 1,
         }}
-        title="AR.js Marker Tracking Scene"
+        title="MindAR Image Target Tracking Scene"
       />
 
       {/* Bottom Floating Controls */}
@@ -195,7 +195,7 @@ export const MarkerARScene: React.FC<MarkerARSceneProps> = ({
             border: '1px solid var(--colors-hairline)',
             padding: '5px 14px',
           }}>
-            AR.js 6DOF Tracking • Hiro & .patt
+            MindAR 6DOF Tracking • Natural Feature Card
           </div>
 
           <button

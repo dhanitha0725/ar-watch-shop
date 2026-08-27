@@ -530,7 +530,7 @@ model-viewer {
   animation: spin-slow 20s linear infinite;
 }
 
-/* AR.js Camera Video & Canvas Stacking */
+/* MindAR & Camera Video Canvas Stacking */
 body.arjs-mode,
 body.arjs-mode #root,
 body.arjs-mode main {
@@ -538,7 +538,14 @@ body.arjs-mode main {
   background-color: transparent !important;
 }
 
+.mindar-ui-overlay,
+.mindar-ui-loading,
+.mindar-ui-scanning {
+  display: none !important;
+}
+
 #arjs-video,
+#mindar-image-video,
 video.a-canvas-video {
   position: fixed !important;
   top: 0 !important;

@@ -211,18 +211,18 @@ export const TEST_MATRIX: TestMatrixItem[] = [
   {
     id: 'T03',
     category: 'Marker AR',
-    feature: 'AR.js Marker Tracking (Hiro & Custom Pattern)',
-    expectedResult: 'Camera feed launches, recognizes Hiro marker or custom watch pattern, and anchors 3D watch rigidly in 6DOF space.',
+    feature: 'MindAR Image Tracking (Natural Feature Target & Pattern)',
+    expectedResult: 'Camera feed launches, recognizes target card or pattern, and anchors 3D watch rigidly in 6DOF space via MindAR.',
     status: 'Pass',
-    notes: 'Tested with both printed marker and on-screen secondary display with instant detection.'
+    notes: 'Tested with both printed target card and on-screen secondary display with fast neural feature detection.'
   },
   {
     id: 'T04',
     category: 'Marker AR',
     feature: 'Tracking State Handling & UI Feedback',
-    expectedResult: 'HUD dynamically displays Searching... ➔ Marker Detected ✓ ➔ Marker Lost with clear guidance.',
+    expectedResult: 'HUD dynamically displays Searching... ➔ Target Detected ✓ ➔ Target Lost with clear guidance.',
     status: 'Pass',
-    notes: 'Reactive listeners hooked to A-Frame markerFound and markerLost lifecycle events.'
+    notes: 'Reactive listeners hooked to MindAR targetFound and targetLost lifecycle events.'
   },
   {
     id: 'T05',
