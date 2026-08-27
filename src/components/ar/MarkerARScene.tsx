@@ -83,7 +83,7 @@ export const MarkerARScene: React.FC<MarkerARSceneProps> = ({
         <ARStateBadge
           state={trackingState}
           customMessage={
-            trackingState === 'searching' ? 'Point camera at Image Target / Card' :
+            trackingState === 'searching' ? 'Point camera at Image Target Card' :
             trackingState === 'detected' ? `Tracking ${watch.name}` :
             'Target lost — realigning'
           }
@@ -92,7 +92,7 @@ export const MarkerARScene: React.FC<MarkerARSceneProps> = ({
         <button
           onClick={onOpenMarkerModal}
           className="btn-icon"
-          title="Display / Print AR Marker"
+          title="Display / Print Target Card"
         >
           <QrCode size={18} color="var(--colors-ink)" />
         </button>
