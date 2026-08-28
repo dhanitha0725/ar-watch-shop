@@ -41,15 +41,42 @@ export const MarkerlessARScene: React.FC<MarkerlessARSceneProps> = ({
   });
   const [activeStep, setActiveStep] = useState<number>(1);
   const [isPlaced, setIsPlaced] = useState<boolean>(false);
-  const [isReticleLocked, setIsReticleLocked] = useState<boolean>(false);
+  const [arState, setArState] = useState<'idle' | 'starting' | 'active' | 'failed'>('idle');
+  const [arError, setArError] = useState<string | null>(null);
 
   useEffect(() => {
     checkWebXRSupport().then((status) => {
       setXrStatus(status);
-      if (status.isSupported) {
-        setIsReticleLocked(true);
-      }
     });
+  }, []);
+
+  useEffect(() => {
+    const viewer = modelViewerRef.current;
+    if (!viewer) return;
+
+    const handleArStatus = (event: CustomEvent<{ status: string }>) => {
+      switch (event.detail.status) {
+        case 'session-started':
+          setArState('active');
+          setArError(null);
+          setIsPlaced(false);
+          break;
+        case 'object-placed':
+          setIsPlaced(true);
+          break;
+        case 'not-presenting':
+          setArState('idle');
+          setIsPlaced(false);
+          break;
+        case 'failed':
+          setArState('failed');
+          setArError('AR session could not start. Confirm that Google Play Services for AR is installed and camera access is allowed.');
+          break;
+      }
+    };
+
+    viewer.addEventListener('ar-status', handleArStatus);
+    return () => viewer.removeEventListener('ar-status', handleArStatus);
   }, []);
 
   useEffect(() => {
@@ -93,6 +120,28 @@ export const MarkerlessARScene: React.FC<MarkerlessARSceneProps> = ({
     };
   }, [watch, config.strapColor, config.dialColor]);
 
+  const launchAR = async () => {
+    const viewer = modelViewerRef.current;
+    if (!viewer) return;
+
+    setArState('starting');
+    setArError(null);
+
+    try {
+      if (!viewer.canActivateAR) {
+        throw new Error('AR is not ready yet. Wait for the 3D model to finish loading, then try again.');
+      }
+      await viewer.activateAR();
+    } catch (error) {
+      setArState('failed');
+      setArError(error instanceof Error ? error.message : 'AR session could not start.');
+    }
+  };
+
+  // All models are normalized to an approximately 12 cm maximum dimension.
+  // config.scale is a user-controlled multiplier on top of that baseline.
+  const normalizedScale = (watch.webARScale * config.scale).toFixed(4);
+
   return (
     <div style={{ position: 'relative', width: '100vw', height: '100vh', backgroundColor: '#000', overflow: 'hidden' }}>
       {/* 3D / WebXR Scene Viewport */}
@@ -104,7 +153,10 @@ export const MarkerlessARScene: React.FC<MarkerlessARSceneProps> = ({
           ar
           ar-modes="webxr scene-viewer quick-look"
           ar-scale="auto"
+          scale={`${normalizedScale} ${normalizedScale} ${normalizedScale}`}
+          xr-environment
           camera-controls
+          touch-action="pan-y"
           shadow-intensity="1.4"
           shadow-softness="0.6"
           exposure="1.2"
@@ -113,67 +165,36 @@ export const MarkerlessARScene: React.FC<MarkerlessARSceneProps> = ({
           camera-orbit={`${Math.round((config.rotationY * 180) / Math.PI)}deg 75deg 105%`}
           style={{ width: '100%', height: '100%', outline: 'none' }}
         >
-          <button 
-            slot="ar-button" 
-            className="btn-primary"
-            style={{
-              position: 'absolute',
-              bottom: '90px',
-              left: '50%',
-              transform: 'translateX(-50%)',
-              zIndex: 80,
-              padding: '12px 28px',
-              fontSize: '14px',
-              boxShadow: '0 8px 24px rgba(0, 102, 204, 0.35)',
-            }}
-          >
-            <Sparkles size={16} />
-            <span>Place on Real-World Surface</span>
-          </button>
+          <button slot="ar-button" style={{ display: 'none' }} aria-hidden="true" tabIndex={-1} />
         </model-viewer>
       </div>
 
-      {/* Surface Radar / Reticle Simulation Overlay */}
-      {!isPlaced && (
+      {/* This visible button preserves the required user gesture for WebXR. */}
+      {xrStatus.isSupported && arState !== 'active' && (
         <div style={{
           position: 'absolute',
-          bottom: '22%',
+          top: '76px',
           left: '50%',
           transform: 'translateX(-50%)',
-          pointerEvents: 'none',
           display: 'flex',
-          flexDirection: 'column',
-          alignItems: 'center',
-          gap: '8px',
-          zIndex: 10,
+          zIndex: 95,
         }}>
-          <div style={{
-            width: '120px',
-            height: '120px',
-            border: '2px dashed rgba(255, 255, 255, 0.6)',
-            borderRadius: '50%',
-            display: 'flex',
-            alignItems: 'center',
-            justifyContent: 'center',
-          }} className="animate-radar">
-            <div style={{
-              width: '10px',
-              height: '10px',
-              borderRadius: '50%',
-              backgroundColor: 'var(--colors-primary)',
-            }} />
-          </div>
-          <div style={{
-            fontSize: '12px',
-            color: 'var(--colors-ink)',
-            backgroundColor: 'rgba(255, 255, 255, 0.85)',
-            backdropFilter: 'blur(10px)',
-            padding: '5px 14px',
-            borderRadius: 'var(--rounded-pill)',
-            border: '1px solid var(--colors-hairline)',
-          }}>
-            Surface Detection Reticle
-          </div>
+          <button
+            onClick={launchAR}
+            disabled={arState === 'starting'}
+            className="btn-primary"
+            style={{
+              padding: '12px 22px',
+              fontSize: '14px',
+              whiteSpace: 'nowrap',
+              boxShadow: '0 8px 24px rgba(0, 102, 204, 0.35)',
+              opacity: arState === 'starting' ? 0.7 : 1,
+              cursor: arState === 'starting' ? 'wait' : 'pointer',
+            }}
+          >
+            <Sparkles size={16} />
+            <span>{arState === 'starting' ? 'Starting camera…' : 'Place on Real-World Surface'}</span>
+          </button>
         </div>
       )}
 
@@ -197,11 +218,15 @@ export const MarkerlessARScene: React.FC<MarkerlessARSceneProps> = ({
         </button>
 
         <ARStateBadge
-          state={isReticleLocked ? 'detected' : 'calibrating'}
+          state={arState === 'active' ? 'detected' : 'calibrating'}
           customMessage={
-            xrStatus.isSupported 
-              ? 'WebXR Surface Tracking Active' 
-              : 'Interactive 3D Studio Active'
+            arState === 'active'
+              ? (isPlaced ? 'Object placed on surface' : 'Move phone to find a surface')
+              : arState === 'starting'
+                ? 'Starting WebXR camera…'
+                : xrStatus.isSupported
+                  ? 'Ready to start WebXR surface tracking'
+                  : 'Interactive 3D Studio Active'
           }
         />
 
@@ -236,6 +261,24 @@ export const MarkerlessARScene: React.FC<MarkerlessARSceneProps> = ({
           <div style={{ fontSize: '13px', color: 'var(--colors-ink)' }}>
             <strong>Desktop Preview:</strong> Full 3D rotation & customization active. For camera plane placement, open on a <strong>WebXR-capable smartphone</strong>.
           </div>
+        </div>
+      )}
+
+      {arError && (
+        <div style={{
+          position: 'absolute',
+          top: '72px',
+          left: '16px',
+          right: '16px',
+          zIndex: 90,
+          padding: '10px 16px',
+          borderRadius: 'var(--rounded-md)',
+          backgroundColor: 'rgba(255, 244, 244, 0.95)',
+          border: '1px solid rgba(220, 38, 38, 0.25)',
+          color: 'var(--colors-ink)',
+          fontSize: '13px',
+        }}>
+          {arError}
         </div>
       )}
 
