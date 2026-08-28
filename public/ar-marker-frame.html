@@ -100,10 +100,10 @@
 
       <!-- MindAR Natural Feature Image Target 0 (Card / Pattern) -->
       <a-entity id="mindar-target-0" mindar-image-target="targetIndex: 0">
-        <a-entity id="watch-pivot" position="0 0 0.1">
+        <a-entity id="watch-pivot" position="0 0 0">
           <a-entity
             id="watch-model"
-            animation="property: rotation; to: 0 360 0; loop: true; dur: 14000; easing: linear;"
+            visible="false"
           ></a-entity>
         </a-entity>
       </a-entity>
@@ -114,6 +114,19 @@
       const targetEntity = document.getElementById('mindar-target-0');
       const watchModel = document.getElementById('watch-model');
       const loaderOverlay = document.getElementById('loader-overlay');
+      let targetFound = false;
+      let modelReady = false;
+      let currentModelUrl = '';
+
+      // These values are derived from each GLB's exported bounding box. Keeping
+      // the calibration static avoids the mobile A-Frame bounding-box bug that
+      // reported valid GLB meshes as zero-size geometry.
+      const MODEL_CALIBRATIONS = {
+        '/models/apple-watch-ultra.glb': { position: '-0.0103 -0.0080 -0.0317' },
+        '/models/chronograph-mudmaster.glb': { position: '-0.0002 -0.0001 0.1343' },
+        '/models/digital-watch.glb': { position: '0.2112 0.0265 -0.0005' },
+        '/models/seiko-classic.glb': { position: '-0.0169 -0.3575 -0.0137' },
+      };
 
       function notifyParent(type, data) {
         try {
@@ -132,6 +145,12 @@
         }
       }
 
+      function updateTrackingState() {
+        if (targetFound && modelReady) {
+          notifyParent('markerFound', 'mindar-card');
+        }
+      }
+
       // MindAR Lifecycle Events
       sceneEl.addEventListener('arReady', () => {
         hideLoader();
@@ -146,9 +165,11 @@
       // Target Tracking Events
       if (targetEntity) {
         targetEntity.addEventListener('targetFound', () => {
-          notifyParent('markerFound', 'mindar-card');
+          targetFound = true;
+          updateTrackingState();
         });
         targetEntity.addEventListener('targetLost', () => {
+          targetFound = false;
           notifyParent('markerLost', 'mindar-card');
         });
       }
@@ -158,14 +179,35 @@
         hideLoader();
       }, 3500);
 
+      // Reveal the model once A-Frame has parsed the GLB. Scaling and centering
+      // are pre-calibrated per asset, rather than calculated at runtime.
+      watchModel.addEventListener('model-loaded', () => {
+        const calibration = MODEL_CALIBRATIONS[currentModelUrl];
+        watchModel.setAttribute('position', calibration?.position || '0 0 0');
+        watchModel.setAttribute('visible', 'true');
+        modelReady = true;
+        notifyParent('modelLoaded', currentModelUrl);
+        updateTrackingState();
+      });
+
+      watchModel.addEventListener('model-error', (event) => {
+        modelReady = false;
+        watchModel.setAttribute('visible', 'false');
+        notifyParent('modelError', event.detail?.src || event.detail?.error?.message || 'Unable to fetch or parse the GLB file.');
+      });
+
       // Initial URL parameter parsing
       const params = new URLSearchParams(window.location.search);
       const initialModel = params.get('model');
-      const initialScale = params.get('scale') || '0.06 0.06 0.06';
+      const initialScale = params.get('scale') || '1.0 1.0 1.0';
       const initialRotation = params.get('rotation') || '0 0 0';
 
       function applyWatchAttributes(url, scale, rotation) {
         if (url && watchModel) {
+          modelReady = false;
+          currentModelUrl = url;
+          watchModel.setAttribute('visible', 'false');
+          notifyParent('modelLoading', url);
           watchModel.setAttribute('gltf-model', `url(${url})`);
         }
         if (scale && watchModel) {

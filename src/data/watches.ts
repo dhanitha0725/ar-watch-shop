@@ -43,7 +43,7 @@ export const WATCHES: Watch[] = [
     dialMeshNames: ['VHnHbLOyhEXLvWA', 'DCiPNWQGULbWNNE', 'joGEgikMuDmcVlT', 'ytGVVkppetlPrjk'],
     glassMeshNames: ['EZmdWXCjqrUDeoX'],
     defaultScale: 1.0,
-    markerScale: '0.06 0.06 0.06',
+    markerScale: '9.1813 9.1813 9.1813',
     markerRotation: '0 0 0',
     wristScaleFactor: 0.012,
     wristRotationOffset: [0, Math.PI / 2, 0]
@@ -90,7 +90,7 @@ export const WATCHES: Watch[] = [
     dialMeshNames: ['N6_JewelryGlossyGold.001_0', 'N9_3_JewelryGlossyGold.001_0', 'N12_JewelryGlossyGold.001_0', 'numbers_base_frame.001_BLACK_EMAL._SMOOSH_SS.001_0', 'A_PLASTIC_RED_1.001_0', 'MUDMUSTER_RED_PLASTIC_RED_1.001_0'],
     glassMeshNames: ['Main_glass.001_GLASS.001_0', 'WINDOW_GLASS_top.001_GLASS.001_0'],
     defaultScale: 0.08,
-    markerScale: '0.005 0.005 0.005',
+    markerScale: '0.0926 0.0926 0.0926',
     markerRotation: '0 0 0',
     wristScaleFactor: 0.001,
     wristRotationOffset: [0, Math.PI / 2, 0]
@@ -137,7 +137,7 @@ export const WATCHES: Watch[] = [
     dialMeshNames: ['screen_0', 'screen.001_0'],
     glassMeshNames: ['watch_0'],
     defaultScale: 1.0,
-    markerScale: '0.07 0.07 0.07',
+    markerScale: '0.0551 0.0551 0.0551',
     markerRotation: '0 0 0',
     wristScaleFactor: 0.015,
     wristRotationOffset: [0, Math.PI / 2, 0]
@@ -184,7 +184,7 @@ export const WATCHES: Watch[] = [
     dialMeshNames: ['defaultMaterial'],
     glassMeshNames: ['defaultMaterial'],
     defaultScale: 1.0,
-    markerScale: '0.07 0.07 0.07',
+    markerScale: '6.4927 6.4927 6.4927',
     markerRotation: '0 0 0',
     wristScaleFactor: 0.014,
     wristRotationOffset: [0, Math.PI / 2, 0]
