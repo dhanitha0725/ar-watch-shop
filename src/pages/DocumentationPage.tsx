@@ -1,13 +1,13 @@
 import React, { useState } from 'react';
 import { TEST_MATRIX } from '../data/watches';
-import { ArrowLeft } from 'lucide-react';
+import { ArrowLeft, CheckCircle2, ShieldCheck, Terminal } from 'lucide-react';
 
 interface DocumentationPageProps {
   onBack: () => void;
 }
 
 export const DocumentationPage: React.FC<DocumentationPageProps> = ({ onBack }) => {
-  const [activeDocTab, setActiveDocTab] = useState<'matrix' | 'troubleshooting' | 'credits' | 'architecture'>('matrix');
+  const [activeDocTab, setActiveDocTab] = useState<'matrix' | 'troubleshooting' | 'architecture' | 'credits'>('matrix');
 
   const challenges = [
     {
@@ -93,294 +93,298 @@ export const DocumentationPage: React.FC<DocumentationPageProps> = ({ onBack }) 
   ];
 
   return (
-    <div style={{ maxWidth: '1440px', margin: '0 auto', padding: '32px 24px' }}>
-      {/* Top Header */}
-      <div style={{ marginBottom: '32px' }}>
+    <div className="carbon-grid-container">
+      {/* Top Header Banner */}
+      <div style={{
+        padding: '32px 32px 24px',
+        borderBottom: '1px solid var(--colors-hairline)',
+        backgroundColor: 'var(--colors-canvas)',
+      }}>
         <button
           onClick={onBack}
-          className="btn-secondary"
-          style={{ padding: '8px 16px', fontSize: '13px', marginBottom: '16px', gap: '6px' }}
+          className="btn-dark-utility"
+          style={{ padding: '6px 12px', fontSize: '12px', marginBottom: '16px', gap: '6px' }}
         >
-          <ArrowLeft size={15} />
-          <span>Home</span>
+          <ArrowLeft size={14} />
+          <span>Return Home</span>
         </button>
-        <h1 style={{ fontSize: '36px', fontWeight: 600, marginBottom: '6px' }}>
-          Technical Verification Report
+
+        <div style={{
+          fontSize: '12px',
+          fontFamily: 'var(--font-mono)',
+          color: 'var(--colors-primary)',
+          marginBottom: '4px',
+        }}>
+          SYSTEM SPECIFICATION & QUALITY AUDIT
+        </div>
+
+        <h1 style={{ fontSize: 'clamp(1.8rem, 3.5vw, 36px)', fontWeight: 300, marginBottom: '6px', color: 'var(--colors-ink)' }}>
+          Technical Verification Report.
         </h1>
-        <p style={{ fontSize: '17px', color: 'var(--colors-body-muted)' }}>
-          Evaluation matrix T01–T10, engineering challenges, architecture details, and open-source licensing.
+
+        <p style={{ fontSize: '15px', color: 'var(--colors-ink-muted)' }}>
+          10-point evaluation test matrix (T01–T10), engineering challenges, architectural breakdown, and open-source licensing.
         </p>
       </div>
 
-      {/* Tabs */}
-      <div style={{
-        display: 'flex',
-        alignItems: 'center',
-        gap: '8px',
-        marginBottom: '32px',
-        overflowX: 'auto',
-      }}>
-        <div style={{
-          display: 'inline-flex',
-          backgroundColor: 'var(--colors-canvas-parchment)',
-          padding: '4px',
-          borderRadius: 'var(--rounded-pill)',
-          gap: '4px',
-        }}>
-          {[
-            { id: 'matrix', label: 'Testing Matrix (T01–T10)' },
-            { id: 'troubleshooting', label: 'Challenges & Fixes' },
-            { id: 'architecture', label: 'System Architecture' },
-            { id: 'credits', label: 'Credits & Licensing' },
-          ].map((tab) => {
-            const isActive = activeDocTab === tab.id;
-            return (
-              <button
-                key={tab.id}
-                onClick={() => setActiveDocTab(tab.id as any)}
-                style={{
-                  padding: '8px 18px',
-                  fontSize: '14px',
-                  fontFamily: 'var(--font-body)',
-                  fontWeight: isActive ? 600 : 400,
-                  color: isActive ? 'var(--colors-ink)' : 'var(--colors-body-muted)',
-                  backgroundColor: isActive ? '#ffffff' : 'transparent',
-                  borderRadius: 'var(--rounded-pill)',
-                  border: 'none',
-                  cursor: 'pointer',
-                  boxShadow: isActive ? '0 2px 8px rgba(0,0,0,0.06)' : 'none',
-                  whiteSpace: 'nowrap',
-                  transition: 'all 0.15s ease',
-                }}
-              >
-                <span>{tab.label}</span>
-              </button>
-            );
-          })}
-        </div>
+      {/* Carbon Horizontal Tab Strip */}
+      <div className="carbon-tab-bar" style={{ padding: '0 32px' }}>
+        {[
+          { id: 'matrix', label: 'Testing Matrix (T01–T10)' },
+          { id: 'troubleshooting', label: 'Technical Challenges & Fixes' },
+          { id: 'architecture', label: 'System Architecture' },
+          { id: 'credits', label: 'Attribution & Licensing' },
+        ].map((tab) => {
+          const isActive = activeDocTab === tab.id;
+          return (
+            <button
+              key={tab.id}
+              onClick={() => setActiveDocTab(tab.id as any)}
+              className={`product-tab ${isActive ? 'active product-tab-selected' : ''}`}
+            >
+              <span>{tab.label}</span>
+            </button>
+          );
+        })}
       </div>
 
-      {/* TAB 1: TESTING MATRIX */}
-      {activeDocTab === 'matrix' && (
-        <section className="store-utility-card" style={{ padding: '32px' }}>
-          <div style={{
-            display: 'flex',
-            justifyContent: 'space-between',
-            alignItems: 'center',
-            marginBottom: '20px',
-            flexWrap: 'wrap',
-            gap: '12px',
-          }}>
-            <div>
-              <h3 style={{ fontSize: '20px', fontWeight: 600, marginBottom: '4px' }}>10-Point Verification Matrix (T01–T10)</h3>
-              <p style={{ fontSize: '14px', color: 'var(--colors-body-muted)' }}>
-                Testing evidence covering 3D rendering, tracking engines, and Option B interaction state flow.
+      <div style={{ padding: '32px', backgroundColor: 'var(--colors-canvas)' }}>
+        {/* TAB 1: TESTING MATRIX */}
+        {activeDocTab === 'matrix' && (
+          <section>
+            <div style={{
+              display: 'flex',
+              justifyContent: 'space-between',
+              alignItems: 'center',
+              marginBottom: '20px',
+              flexWrap: 'wrap',
+              gap: '12px',
+            }}>
+              <div>
+                <h3 style={{ fontSize: '18px', fontWeight: 400, marginBottom: '4px', color: 'var(--colors-ink)' }}>
+                  10-Point Verification Matrix (T01–T10)
+                </h3>
+                <p style={{ fontSize: '14px', color: 'var(--colors-ink-muted)' }}>
+                  Verification suite covering 3D mesh rendering, spatial tracking pipelines, and Option B state machine transitions.
+                </p>
+              </div>
+
+              <span style={{
+                backgroundColor: 'var(--colors-surface-1)',
+                border: '1px solid var(--colors-semantic-success)',
+                color: 'var(--colors-semantic-success)',
+                padding: '6px 12px',
+                fontWeight: 600,
+                fontSize: '12px',
+                display: 'flex',
+                alignItems: 'center',
+                gap: '6px',
+                fontFamily: 'var(--font-mono)',
+              }}>
+                <ShieldCheck size={14} />
+                <span>10 / 10 TESTS VERIFIED</span>
+              </span>
+            </div>
+
+            <div style={{ overflowX: 'auto', border: '1px solid var(--colors-hairline)' }}>
+              <table style={{ width: '100%', borderCollapse: 'collapse', fontSize: '13px' }}>
+                <thead>
+                  <tr style={{ backgroundColor: 'var(--colors-surface-1)', borderBottom: '2px solid var(--colors-primary)', textAlign: 'left' }}>
+                    <th style={{ padding: '12px 14px', color: 'var(--colors-ink)', fontWeight: 600, fontFamily: 'var(--font-mono)' }}>ID</th>
+                    <th style={{ padding: '12px 14px', color: 'var(--colors-ink-muted)', fontWeight: 600, fontFamily: 'var(--font-mono)' }}>CATEGORY</th>
+                    <th style={{ padding: '12px 14px', color: 'var(--colors-ink)', fontWeight: 600 }}>FEATURE UNDER TEST</th>
+                    <th style={{ padding: '12px 14px', color: 'var(--colors-ink-muted)', fontWeight: 600 }}>EXPECTED BEHAVIOR</th>
+                    <th style={{ padding: '12px 14px', color: 'var(--colors-semantic-success)', fontWeight: 600, fontFamily: 'var(--font-mono)' }}>RESULT</th>
+                    <th style={{ padding: '12px 14px', color: 'var(--colors-ink-muted)', fontWeight: 600 }}>AUDIT EVIDENCE</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  {TEST_MATRIX.map((item, idx) => (
+                    <tr key={item.id} style={{ borderBottom: '1px solid var(--colors-hairline)', backgroundColor: idx % 2 === 0 ? 'var(--colors-canvas)' : '#fafafa' }}>
+                      <td style={{ padding: '12px 14px', fontWeight: 600, color: 'var(--colors-primary)', fontFamily: 'var(--font-mono)' }}>
+                        {item.id}
+                      </td>
+                      <td style={{ padding: '12px 14px', color: 'var(--colors-ink-muted)', fontSize: '12px' }}>
+                        {item.category}
+                      </td>
+                      <td style={{ padding: '12px 14px', fontWeight: 600, color: 'var(--colors-ink)' }}>
+                        {item.feature}
+                      </td>
+                      <td style={{ padding: '12px 14px', color: 'var(--colors-ink-muted)', lineHeight: 1.4 }}>
+                        {item.expectedResult}
+                      </td>
+                      <td style={{ padding: '12px 14px' }}>
+                        <span style={{
+                          color: 'var(--colors-semantic-success)',
+                          fontWeight: 600,
+                          fontSize: '12px',
+                          display: 'inline-flex',
+                          alignItems: 'center',
+                          gap: '4px',
+                          fontFamily: 'var(--font-mono)',
+                        }}>
+                          ✓ {item.status}
+                        </span>
+                      </td>
+                      <td style={{ padding: '12px 14px', color: 'var(--colors-ink-muted)', fontSize: '12px', lineHeight: 1.4 }}>
+                        {item.notes}
+                      </td>
+                    </tr>
+                  ))}
+                </tbody>
+              </table>
+            </div>
+          </section>
+        )}
+
+        {/* TAB 2: TECHNICAL CHALLENGES & FIXES */}
+        {activeDocTab === 'troubleshooting' && (
+          <section style={{ display: 'flex', flexDirection: 'column', gap: '16px' }}>
+            <div style={{ marginBottom: '8px' }}>
+              <h3 style={{ fontSize: '18px', fontWeight: 400, color: 'var(--colors-ink)' }}>
+                Technical Challenges & Solutions
+              </h3>
+              <p style={{ fontSize: '14px', color: 'var(--colors-ink-muted)' }}>
+                Engineering hurdles encountered during WebXR and MediaPipe integration and their systematic solutions.
               </p>
             </div>
-            <span style={{
-              backgroundColor: 'rgba(52, 199, 89, 0.12)',
-              color: 'var(--colors-success)',
-              padding: '6px 14px',
-              borderRadius: 'var(--rounded-pill)',
-              fontWeight: 600,
-              fontSize: '13px',
-            }}>
-              ✓ 10 / 10 Tests Passed
-            </span>
-          </div>
 
-          <div style={{ overflowX: 'auto' }}>
-            <table style={{ width: '100%', borderCollapse: 'collapse', fontSize: '13px' }}>
-              <thead>
-                <tr style={{ borderBottom: '2px solid var(--colors-primary)', textAlign: 'left' }}>
-                  <th style={{ padding: '12px 14px', color: 'var(--colors-ink)', fontWeight: 600 }}>ID</th>
-                  <th style={{ padding: '12px 14px', color: 'var(--colors-body-muted)', fontWeight: 600 }}>Category</th>
-                  <th style={{ padding: '12px 14px', color: 'var(--colors-ink)', fontWeight: 600 }}>Feature Under Test</th>
-                  <th style={{ padding: '12px 14px', color: 'var(--colors-body-muted)', fontWeight: 600 }}>Expected Result</th>
-                  <th style={{ padding: '12px 14px', color: 'var(--colors-success)', fontWeight: 600 }}>Status</th>
-                  <th style={{ padding: '12px 14px', color: 'var(--colors-body-muted)', fontWeight: 600 }}>Evidence</th>
-                </tr>
-              </thead>
-              <tbody>
-                {TEST_MATRIX.map((item) => (
-                  <tr key={item.id} style={{ borderBottom: '1px solid var(--colors-divider-soft)' }}>
-                    <td style={{ padding: '12px 14px', fontWeight: 600, color: 'var(--colors-primary)' }}>
-                      {item.id}
-                    </td>
-                    <td style={{ padding: '12px 14px', color: 'var(--colors-body-muted)' }}>
-                      {item.category}
-                    </td>
-                    <td style={{ padding: '12px 14px', fontWeight: 600, color: 'var(--colors-ink)' }}>
-                      {item.feature}
-                    </td>
-                    <td style={{ padding: '12px 14px', color: 'var(--colors-body-muted)', lineHeight: 1.4 }}>
-                      {item.expectedResult}
-                    </td>
-                    <td style={{ padding: '12px 14px' }}>
-                      <span style={{
-                        backgroundColor: 'rgba(52, 199, 89, 0.12)',
-                        color: 'var(--colors-success)',
-                        padding: '3px 8px',
-                        borderRadius: 'var(--rounded-pill)',
-                        fontWeight: 600,
-                        fontSize: '12px',
-                      }}>
-                        ✓ {item.status}
-                      </span>
-                    </td>
-                    <td style={{ padding: '12px 14px', color: 'var(--colors-body-muted)', fontSize: '12px', lineHeight: 1.4 }}>
-                      {item.notes}
-                    </td>
-                  </tr>
-                ))}
-              </tbody>
-            </table>
-          </div>
-        </section>
-      )}
-
-      {/* TAB 2: TECHNICAL CHALLENGES & FIXES */}
-      {activeDocTab === 'troubleshooting' && (
-        <section style={{ display: 'flex', flexDirection: 'column', gap: '16px' }}>
-          <div style={{ marginBottom: '8px' }}>
-            <h3 style={{ fontSize: '20px', fontWeight: 600 }}>Technical Challenges & Solutions</h3>
-            <p style={{ fontSize: '14px', color: 'var(--colors-body-muted)' }}>
-              Engineering problems encountered during development and their resolutions.
-            </p>
-          </div>
-
-          {challenges.map((ch) => (
-            <div key={ch.id} className="store-utility-card" style={{ padding: '24px' }}>
-              <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '10px' }}>
-                <span style={{ fontSize: '13px', fontWeight: 600, color: 'var(--colors-primary)' }}>{ch.id}</span>
-                <span style={{
-                  backgroundColor: 'rgba(52, 199, 89, 0.12)',
-                  color: 'var(--colors-success)',
-                  padding: '3px 8px',
-                  borderRadius: 'var(--rounded-pill)',
-                  fontWeight: 600,
-                  fontSize: '12px',
-                }}>
-                  {ch.status}
-                </span>
-              </div>
-              <h4 style={{ fontSize: '17px', fontWeight: 600, marginBottom: '14px' }}>{ch.title}</h4>
-              <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(280px, 1fr))', gap: '14px', fontSize: '14px' }}>
-                <div style={{ backgroundColor: 'var(--colors-canvas-parchment)', padding: '14px', borderRadius: 'var(--rounded-sm)' }}>
-                  <strong style={{ color: 'var(--colors-ink)', display: 'block', marginBottom: '4px', fontSize: '12px' }}>
-                    Root Cause:
-                  </strong>
-                  <p style={{ color: 'var(--colors-body-muted)', lineHeight: 1.45, fontSize: '14px' }}>{ch.cause}</p>
+            {challenges.map((ch) => (
+              <div key={ch.id} className="carbon-tile" style={{ padding: '20px' }}>
+                <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '8px' }}>
+                  <span style={{ fontSize: '12px', fontWeight: 600, color: 'var(--colors-primary)', fontFamily: 'var(--font-mono)' }}>
+                    ISSUE // {ch.id}
+                  </span>
+                  <span style={{
+                    color: 'var(--colors-semantic-success)',
+                    fontWeight: 600,
+                    fontSize: '12px',
+                    fontFamily: 'var(--font-mono)',
+                  }}>
+                    ✓ {ch.status.toUpperCase()}
+                  </span>
                 </div>
-                <div style={{ backgroundColor: 'var(--colors-canvas-parchment)', padding: '14px', borderRadius: 'var(--rounded-sm)' }}>
-                  <strong style={{ color: 'var(--colors-primary)', display: 'block', marginBottom: '4px', fontSize: '12px' }}>
-                    Solution:
-                  </strong>
-                  <p style={{ color: 'var(--colors-body-muted)', lineHeight: 1.45, fontSize: '14px' }}>{ch.fix}</p>
+                <h4 style={{ fontSize: '16px', fontWeight: 600, marginBottom: '12px', color: 'var(--colors-ink)' }}>{ch.title}</h4>
+                <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(280px, 1fr))', gap: '12px', fontSize: '13px' }}>
+                  <div style={{ backgroundColor: 'var(--colors-surface-1)', padding: '12px 16px', border: '1px solid var(--colors-hairline)' }}>
+                    <strong style={{ color: 'var(--colors-ink)', display: 'block', marginBottom: '4px', fontSize: '11px', fontFamily: 'var(--font-mono)' }}>
+                      ROOT CAUSE:
+                    </strong>
+                    <p style={{ color: 'var(--colors-ink-muted)', lineHeight: 1.45 }}>{ch.cause}</p>
+                  </div>
+                  <div style={{ backgroundColor: 'var(--colors-surface-1)', padding: '12px 16px', border: '1px solid var(--colors-hairline)' }}>
+                    <strong style={{ color: 'var(--colors-primary)', display: 'block', marginBottom: '4px', fontSize: '11px', fontFamily: 'var(--font-mono)' }}>
+                      RESOLUTION:
+                    </strong>
+                    <p style={{ color: 'var(--colors-ink-muted)', lineHeight: 1.45 }}>{ch.fix}</p>
+                  </div>
                 </div>
-              </div>
-            </div>
-          ))}
-        </section>
-      )}
-
-      {/* TAB 3: SYSTEM ARCHITECTURE */}
-      {activeDocTab === 'architecture' && (
-        <section className="store-utility-card" style={{ padding: '32px' }}>
-          <h3 style={{ fontSize: '20px', fontWeight: 600, marginBottom: '8px' }}>System Architecture & Data Flow</h3>
-          <p style={{ fontSize: '15px', color: 'var(--colors-body-muted)', marginBottom: '28px', lineHeight: 1.5 }}>
-            Client-side single-page application built with React 18, Vite, and TypeScript. All 3D assets and AR tracking run entirely in the browser with zero external server dependencies.
-          </p>
-
-          <div style={{
-            display: 'grid',
-            gridTemplateColumns: 'repeat(auto-fit, minmax(260px, 1fr))',
-            gap: '16px',
-          }}>
-            <div style={{ backgroundColor: 'var(--colors-canvas-parchment)', borderRadius: 'var(--rounded-md)', padding: '20px' }}>
-              <div style={{ fontSize: '13px', fontWeight: 600, color: 'var(--colors-primary)', marginBottom: '10px' }}>
-                1. Presentation Layer
-              </div>
-              <ul style={{ fontSize: '14px', color: 'var(--colors-body-muted)', listStyle: 'none', display: 'flex', flexDirection: 'column', gap: '6px', padding: 0 }}>
-                <li>• React 18 Components & State</li>
-                <li>• Apple Design System tokens</li>
-                <li>• Pure White & Parchment Canvas</li>
-                <li>• 18px / Pill UI Elements</li>
-              </ul>
-            </div>
-
-            <div style={{ backgroundColor: 'var(--colors-canvas-parchment)', borderRadius: 'var(--rounded-md)', padding: '20px' }}>
-              <div style={{ fontSize: '13px', fontWeight: 600, color: 'var(--colors-primary)', marginBottom: '10px' }}>
-                2. 3D & Tracking Engines
-              </div>
-              <ul style={{ fontSize: '14px', color: 'var(--colors-body-muted)', listStyle: 'none', display: 'flex', flexDirection: 'column', gap: '6px', padding: 0 }}>
-                <li>• Google &lt;model-viewer&gt; PBR</li>
-                <li>• WebXR Device API (immersive-ar)</li>
-                <li>• MindAR 1.2.5 6DOF Image Tracking</li>
-                <li>• MediaPipe Hand Landmarker Vision</li>
-              </ul>
-            </div>
-
-            <div style={{ backgroundColor: 'var(--colors-canvas-parchment)', borderRadius: 'var(--rounded-md)', padding: '20px' }}>
-              <div style={{ fontSize: '13px', fontWeight: 600, color: 'var(--colors-primary)', marginBottom: '10px' }}>
-                3. Option B State Machine
-              </div>
-              <ul style={{ fontSize: '14px', color: 'var(--colors-body-muted)', listStyle: 'none', display: 'flex', flexDirection: 'column', gap: '6px', padding: 0 }}>
-                <li>• 5-Step Guided State Flow</li>
-                <li>• In-Memory Mesh Hierarchy Traverser</li>
-                <li>• Exponential Moving Average Filters</li>
-                <li>• 1-Click Factory Defaults Reset</li>
-              </ul>
-            </div>
-          </div>
-        </section>
-      )}
-
-      {/* TAB 4: CREDITS.MD & LICENSING */}
-      {activeDocTab === 'credits' && (
-        <section className="store-utility-card" style={{ padding: '32px' }}>
-          <h3 style={{ fontSize: '20px', fontWeight: 600, marginBottom: '6px' }}>Asset Attribution & Licensing</h3>
-          <p style={{ fontSize: '14px', color: 'var(--colors-body-muted)', marginBottom: '20px' }}>
-            All 3D models and open-source packages utilized in this project are licensed under Creative Commons, MIT, or Apache 2.0 open licenses with full attribution.
-          </p>
-
-          <div style={{ display: 'flex', flexDirection: 'column', gap: '10px' }}>
-            {credits.map((item, idx) => (
-              <div
-                key={idx}
-                style={{
-                  backgroundColor: 'var(--colors-canvas-parchment)',
-                  borderRadius: 'var(--rounded-md)',
-                  padding: '16px 20px',
-                  display: 'flex',
-                  justifyContent: 'space-between',
-                  alignItems: 'center',
-                  flexWrap: 'wrap',
-                  gap: '10px',
-                }}
-              >
-                <div>
-                  <div style={{ fontSize: '15px', fontWeight: 600, color: 'var(--colors-ink)' }}>{item.name}</div>
-                  <div style={{ fontSize: '13px', color: 'var(--colors-body-muted)', marginTop: '2px' }}>Creator: {item.creator}</div>
-                  <div style={{ fontSize: '13px', color: 'var(--colors-body-muted)', marginTop: '2px' }}>{item.notes}</div>
-                </div>
-
-                <span style={{
-                  backgroundColor: '#ffffff',
-                  border: '1px solid var(--colors-hairline)',
-                  borderRadius: 'var(--rounded-pill)',
-                  padding: '4px 12px',
-                  fontSize: '12px',
-                  fontWeight: 600,
-                  color: 'var(--colors-ink)',
-                }}>
-                  {item.license}
-                </span>
               </div>
             ))}
-          </div>
-        </section>
-      )}
+          </section>
+        )}
+
+        {/* TAB 3: SYSTEM ARCHITECTURE */}
+        {activeDocTab === 'architecture' && (
+          <section className="carbon-tile" style={{ padding: '28px' }}>
+            <h3 style={{ fontSize: '18px', fontWeight: 400, marginBottom: '8px', color: 'var(--colors-ink)' }}>
+              System Architecture & Data Flow
+            </h3>
+            <p style={{ fontSize: '14px', color: 'var(--colors-ink-muted)', marginBottom: '24px', lineHeight: 1.5 }}>
+              Client-side application built with React 18, Vite, and TypeScript. All 3D CAD meshes and real-time vision pipelines execute in-browser via WebAssembly and WebGL.
+            </p>
+
+            <div style={{
+              display: 'grid',
+              gridTemplateColumns: 'repeat(auto-fit, minmax(260px, 1fr))',
+              gap: '12px',
+            }}>
+              <div style={{ backgroundColor: 'var(--colors-surface-1)', border: '1px solid var(--colors-hairline)', padding: '18px' }}>
+                <div style={{ fontSize: '12px', fontWeight: 600, color: 'var(--colors-primary)', marginBottom: '8px', fontFamily: 'var(--font-mono)' }}>
+                  01. PRESENTATION LAYER
+                </div>
+                <ul style={{ fontSize: '13px', color: 'var(--colors-ink-muted)', listStyle: 'none', display: 'flex', flexDirection: 'column', gap: '6px', padding: 0 }}>
+                  <li>• IBM Carbon Design System</li>
+                  <li>• IBM Plex Sans Typography (300 / 400)</li>
+                  <li>• Flush Zero-Padding Grid Layout</li>
+                  <li>• Flat 0px Corner Geometry</li>
+                </ul>
+              </div>
+
+              <div style={{ backgroundColor: 'var(--colors-surface-1)', border: '1px solid var(--colors-hairline)', padding: '18px' }}>
+                <div style={{ fontSize: '12px', fontWeight: 600, color: 'var(--colors-primary)', marginBottom: '8px', fontFamily: 'var(--font-mono)' }}>
+                  02. 3D & VISION ENGINES
+                </div>
+                <ul style={{ fontSize: '13px', color: 'var(--colors-ink-muted)', listStyle: 'none', display: 'flex', flexDirection: 'column', gap: '6px', padding: 0 }}>
+                  <li>• Google &lt;model-viewer&gt; PBR Pipeline</li>
+                  <li>• WebXR Device API (immersive-ar)</li>
+                  <li>• MindAR 1.2.5 6DOF Natural Feature Tracking</li>
+                  <li>• MediaPipe Vision Hand Landmarker (21 Poses)</li>
+                </ul>
+              </div>
+
+              <div style={{ backgroundColor: 'var(--colors-surface-1)', border: '1px solid var(--colors-hairline)', padding: '18px' }}>
+                <div style={{ fontSize: '12px', fontWeight: 600, color: 'var(--colors-primary)', marginBottom: '8px', fontFamily: 'var(--font-mono)' }}>
+                  03. OPTION B STATE FLOW
+                </div>
+                <ul style={{ fontSize: '13px', color: 'var(--colors-ink-muted)', listStyle: 'none', display: 'flex', flexDirection: 'column', gap: '6px', padding: 0 }}>
+                  <li>• 5-Step Guided Configurator Wizard</li>
+                  <li>• In-Memory Three.js Mesh Traverser</li>
+                  <li>• Exponential Moving Average Filters</li>
+                  <li>• 1-Click State Defaults Reset</li>
+                </ul>
+              </div>
+            </div>
+          </section>
+        )}
+
+        {/* TAB 4: CREDITS & LICENSING */}
+        {activeDocTab === 'credits' && (
+          <section className="carbon-tile" style={{ padding: '28px' }}>
+            <h3 style={{ fontSize: '18px', fontWeight: 400, marginBottom: '6px', color: 'var(--colors-ink)' }}>
+              Asset Attribution & Open-Source Licensing
+            </h3>
+            <p style={{ fontSize: '14px', color: 'var(--colors-ink-muted)', marginBottom: '20px' }}>
+              All 3D CAD models and open-source runtime engines utilized in this implementation are licensed under Creative Commons, MIT, or Apache 2.0.
+            </p>
+
+            <div style={{ display: 'flex', flexDirection: 'column', gap: '8px' }}>
+              {credits.map((item, idx) => (
+                <div
+                  key={idx}
+                  style={{
+                    backgroundColor: 'var(--colors-surface-1)',
+                    border: '1px solid var(--colors-hairline)',
+                    padding: '14px 18px',
+                    display: 'flex',
+                    justifyContent: 'space-between',
+                    alignItems: 'center',
+                    flexWrap: 'wrap',
+                    gap: '10px',
+                  }}
+                >
+                  <div>
+                    <div style={{ fontSize: '14px', fontWeight: 600, color: 'var(--colors-ink)' }}>{item.name}</div>
+                    <div style={{ fontSize: '12px', color: 'var(--colors-ink-muted)', marginTop: '2px' }}>Creator: {item.creator}</div>
+                    <div style={{ fontSize: '12px', color: 'var(--colors-ink-muted)', marginTop: '2px' }}>{item.notes}</div>
+                  </div>
+
+                  <span style={{
+                    backgroundColor: 'var(--colors-canvas)',
+                    border: '1px solid var(--colors-hairline)',
+                    padding: '4px 10px',
+                    fontSize: '11px',
+                    fontFamily: 'var(--font-mono)',
+                    color: 'var(--colors-ink)',
+                  }}>
+                    {item.license}
+                  </span>
+                </div>
+              ))}
+            </div>
+          </section>
+        )}
+      </div>
     </div>
   );
 };

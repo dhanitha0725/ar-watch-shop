@@ -10,30 +10,33 @@ interface WatchFilterProps {
 export const WatchFilter: React.FC<WatchFilterProps> = ({
   selectedCategory,
   onSelectCategory,
+  searchQuery,
+  onSearchChange,
 }) => {
   const categories: { id: string; label: string }[] = [
-    { id: 'All', label: 'All Models' },
-    { id: 'Smart', label: 'Smartwatches' },
-    { id: 'Sport', label: 'Sport Chronographs' },
-    { id: 'Luxury', label: 'Luxury Automatic' },
-    { id: 'Digital', label: 'Digital Display' },
+    { id: 'All', label: 'All Models (04)' },
+    { id: 'Smart', label: 'Smartwatch (01)' },
+    { id: 'Sport', label: 'Sport Chronograph (01)' },
+    { id: 'Luxury', label: 'Luxury Automatic (01)' },
+    { id: 'Digital', label: 'Digital Display (01)' },
   ];
 
   return (
     <div style={{
       display: 'flex',
-      alignItems: 'center',
-      gap: '8px',
-      marginBottom: '32px',
-      overflowX: 'auto',
-      padding: '4px 0',
+      alignItems: 'stretch',
+      justifyContent: 'space-between',
+      flexWrap: 'wrap',
+      gap: '16px',
+      borderBottom: '1px solid var(--colors-hairline)',
+      backgroundColor: 'var(--colors-canvas)',
+      marginBottom: '0',
     }}>
+      {/* Carbon Horizontal Category Tabs */}
       <div style={{
-        display: 'inline-flex',
-        backgroundColor: 'var(--colors-canvas-parchment)',
-        padding: '4px',
-        borderRadius: 'var(--rounded-pill)',
-        gap: '4px',
+        display: 'flex',
+        alignItems: 'center',
+        overflowX: 'auto',
       }}>
         {categories.map((cat) => {
           const isActive = selectedCategory === cat.id;
@@ -43,24 +46,44 @@ export const WatchFilter: React.FC<WatchFilterProps> = ({
               key={cat.id}
               onClick={() => onSelectCategory(cat.id)}
               style={{
-                padding: '8px 18px',
+                padding: '14px 20px',
                 fontSize: '14px',
                 fontFamily: 'var(--font-body)',
                 fontWeight: isActive ? 600 : 400,
-                color: isActive ? 'var(--colors-ink)' : 'var(--colors-body-muted)',
-                backgroundColor: isActive ? '#ffffff' : 'transparent',
-                borderRadius: 'var(--rounded-pill)',
+                color: isActive ? 'var(--colors-ink)' : 'var(--colors-ink-muted)',
+                backgroundColor: isActive ? 'var(--colors-surface-1)' : 'transparent',
                 border: 'none',
+                borderBottom: isActive ? '2px solid var(--colors-primary)' : '2px solid transparent',
                 cursor: 'pointer',
-                boxShadow: isActive ? '0 2px 8px rgba(0,0,0,0.06)' : 'none',
                 whiteSpace: 'nowrap',
-                transition: 'all 0.15s ease',
+                transition: 'all 0.1s ease',
+                letterSpacing: '0.16px',
               }}
             >
               <span>{cat.label}</span>
             </button>
           );
         })}
+      </div>
+
+      {/* Carbon Search Input */}
+      <div style={{ display: 'flex', alignItems: 'center', padding: '6px 12px' }}>
+        <input
+          type="text"
+          placeholder="Filter timepieces by keyword..."
+          value={searchQuery}
+          onChange={(e) => onSearchChange(e.target.value)}
+          style={{
+            height: '36px',
+            padding: '8px 14px',
+            fontSize: '13px',
+            backgroundColor: 'var(--colors-surface-1)',
+            border: 'none',
+            borderBottom: '1px solid var(--colors-hairline-strong)',
+            width: '240px',
+            color: 'var(--colors-ink)',
+          }}
+        />
       </div>
     </div>
   );

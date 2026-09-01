@@ -293,22 +293,20 @@ export const Interactive3DViewer: React.FC<Interactive3DViewerProps> = ({
         bottom: '14px',
         left: '50%',
         transform: 'translateX(-50%)',
-        backgroundColor: 'rgba(255, 255, 255, 0.85)',
-        backdropFilter: 'blur(10px)',
-        WebkitBackdropFilter: 'blur(10px)',
+        backgroundColor: 'var(--colors-surface-1)',
         border: '1px solid var(--colors-hairline)',
-        borderRadius: 'var(--rounded-pill)',
-        padding: '5px 14px',
+        padding: '4px 12px',
         display: 'flex',
         alignItems: 'center',
         gap: '6px',
-        fontSize: '12px',
-        color: 'var(--colors-body-muted)',
+        fontSize: '11px',
+        fontFamily: 'var(--font-mono)',
+        color: 'var(--colors-ink-muted)',
         pointerEvents: 'none',
       }}>
-        <span>Drag to rotate</span>
-        <span>•</span>
-        <span>Scroll to zoom</span>
+        <span>DRAG TO ORBIT</span>
+        <span>//</span>
+        <span>SCROLL TO ZOOM</span>
       </div>
     </div>
   );
