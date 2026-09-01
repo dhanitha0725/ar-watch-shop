@@ -29,4 +29,5 @@ Thumbs.db
 *.swo
 .idea/
 .vscode/
+.chrome-ar-cdp
 
