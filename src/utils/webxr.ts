@@ -3,11 +3,15 @@ export interface XRSupportStatus {
   hasWebXR: boolean;
   isMobile: boolean;
   isSecureContext: boolean;
+  hasDepthSensing?: boolean;
   reason?: string;
 }
 
 export async function checkWebXRSupport(): Promise<XRSupportStatus> {
-  const isSecureContext = window.isSecureContext || window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1';
+  const isSecureContext =
+    window.isSecureContext ||
+    window.location.hostname === 'localhost' ||
+    window.location.hostname === '127.0.0.1';
   const isMobile = /Android|iPhone|iPad|iPod/i.test(navigator.userAgent);
   const hasWebXR = 'xr' in navigator;
 
@@ -17,7 +21,7 @@ export async function checkWebXRSupport(): Promise<XRSupportStatus> {
       hasWebXR,
       isMobile,
       isSecureContext: false,
-      reason: 'WebXR requires a secure HTTPS context or localhost.'
+      reason: 'WebXR requires a secure HTTPS context or localhost.',
     };
   }
 
@@ -27,7 +31,7 @@ export async function checkWebXRSupport(): Promise<XRSupportStatus> {
       hasWebXR: false,
       isMobile,
       isSecureContext,
-      reason: 'WebXR Device API is not available in this browser.'
+      reason: 'WebXR Device API is not available in this browser.',
     };
   }
 
@@ -40,7 +44,10 @@ export async function checkWebXRSupport(): Promise<XRSupportStatus> {
         hasWebXR: true,
         isMobile,
         isSecureContext,
-        reason: isImmersiveARSupported ? undefined : 'WebXR immersive-ar session is not supported on this device/hardware.'
+        hasDepthSensing: isImmersiveARSupported && isMobile,
+        reason: isImmersiveARSupported
+          ? undefined
+          : 'WebXR immersive-ar session is not supported on this device/hardware.',
       };
     }
   } catch (err) {
@@ -52,7 +59,7 @@ export async function checkWebXRSupport(): Promise<XRSupportStatus> {
     hasWebXR: true,
     isMobile,
     isSecureContext,
-    reason: 'Immersive AR session check did not return true.'
+    reason: 'Immersive AR session check did not return true.',
   };
 }
 

@@ -58,6 +58,13 @@ export interface WatchConfiguration {
 
 export type TrackingState = 'searching' | 'detected' | 'lost' | 'calibrating' | 'unsupported';
 
+export type DepthStatusType =
+  | 'checking'
+  | 'depth-gpu-active'
+  | 'depth-cpu-active'
+  | 'depth-unavailable'
+  | 'ar-unsupported';
+
 export interface TestMatrixItem {
   id: string;
   category: 'Mandatory 3D' | 'Marker AR' | 'Markerless WebXR' | 'Option B Interaction' | 'Showcase Wrist AR' | 'System & UX';

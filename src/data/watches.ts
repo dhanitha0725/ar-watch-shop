@@ -275,5 +275,14 @@ export const TEST_MATRIX: TestMatrixItem[] = [
     expectedResult: 'Webcam detects hand landmarks 0 (wrist), 5 (Index MCP), 17 (Pinky MCP) and overlays 3D watch with exponential filter.',
     status: 'Pass',
     notes: 'Exponential smoothing filter (alpha=0.25) eliminates high-frequency webcam landmark jitter.'
+  },
+  {
+    id: 'T11',
+    category: 'Showcase Wrist AR',
+    feature: 'WebXR Depth Sensing Per-Pixel Wrist Occlusion & Fallback',
+    expectedResult: 'WebXR depth texture is sampled in custom shader (onBeforeCompile) to discard watch fragments physically behind the wrist, hiding the rear strap with seamless non-occluded fallback.',
+    status: 'Pass',
+    notes: 'Real-time per-pixel occlusion using WebXR GPU depth buffer, dynamic format support (float32 / luminance-alpha), and configurable bias slider.'
   }
 ];
+
