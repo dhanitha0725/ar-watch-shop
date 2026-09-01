@@ -36,6 +36,7 @@ export interface Watch {
   dialMeshNames: string[];
   glassMeshNames: string[];
   defaultScale: number;
+  webARScale: number;
   markerScale: string; // e.g. "0.08 0.08 0.08"
   markerRotation?: string;
   wristScaleFactor: number;

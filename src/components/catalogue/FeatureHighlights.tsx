@@ -66,7 +66,7 @@ export const FeatureHighlights: React.FC<FeatureHighlightsProps> = ({
           </button>
         </div>
 
-        {/* Mode 2: Marker-Based AR.js */}
+        {/* Mode 2: Marker-Based MindAR */}
         <div className="store-utility-card" style={{ display: 'flex', flexDirection: 'column' }}>
           <div style={{
             width: '44px',
@@ -83,10 +83,10 @@ export const FeatureHighlights: React.FC<FeatureHighlightsProps> = ({
           </div>
 
           <h3 style={{ fontSize: '20px', fontWeight: 600, marginBottom: '8px' }}>
-            Marker Tracking
+            Marker & Target Tracking
           </h3>
           <p style={{ fontSize: '15px', color: 'var(--colors-body-muted)', lineHeight: 1.5, marginBottom: '24px', flex: 1 }}>
-            High-precision 6DOF physical anchoring with AR.js. Point your camera at a Hiro pattern on screen or paper for locked tracking.
+            High-precision 6DOF physical anchoring with MindAR. Point your camera at a target card or pattern on screen or paper for locked tracking.
           </p>
 
           <div style={{ display: 'flex', gap: '8px' }}>

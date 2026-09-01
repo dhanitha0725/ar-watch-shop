@@ -1,5 +1,5 @@
-import React, { useState } from 'react';
-import { X, Download, Printer, Smartphone } from 'lucide-react';
+import React from 'react';
+import { X, Download, Printer, CheckCircle2, Sparkles } from 'lucide-react';
 
 interface ModalProps {
   isOpen: boolean;
@@ -7,30 +7,66 @@ interface ModalProps {
 }
 
 export const MarkerModal: React.FC<ModalProps> = ({ isOpen, onClose }) => {
-  const [activeTab, setActiveTab] = useState<'hiro' | 'custom'>('hiro');
-
   if (!isOpen) return null;
 
-  const currentMarkerUrl = activeTab === 'hiro' ? '/markers/hiro.svg' : '/markers/watch-marker.svg';
-  const markerName = activeTab === 'hiro' ? 'Hiro Standard Marker' : 'Custom Watch Store Marker';
+  const currentMarkerUrl = '/markers/card.png';
+  const markerName = 'MindAR Product Target Card';
 
   const handlePrint = () => {
     const win = window.open('', '_blank');
     if (win) {
       win.document.write(`
+        <!DOCTYPE html>
         <html>
           <head>
-            <title>Print AR Marker - ${markerName}</title>
+            <title>Print AR Target - ${markerName}</title>
             <style>
-              body { display: flex; flex-direction: column; align-items: center; justify-content: center; min-height: 100vh; margin: 0; font-family: -apple-system, sans-serif; background: #fff; color: #1d1d1f; }
-              img { max-width: 360px; max-height: 360px; border: 1px solid #e0e0e0; padding: 16px; border-radius: 12px; }
-              p { margin-top: 16px; color: #86868b; font-size: 14px; }
+              body {
+                display: flex;
+                flex-direction: column;
+                align-items: center;
+                justify-content: center;
+                min-height: 100vh;
+                margin: 0;
+                font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+                background: #ffffff;
+                color: #1d1d1f;
+                text-align: center;
+                padding: 20px;
+                box-sizing: border-box;
+              }
+              .card-container {
+                border: 2px dashed #0071e3;
+                border-radius: 16px;
+                padding: 24px;
+                background: #fbfbfd;
+                max-width: 460px;
+              }
+              img {
+                max-width: 100%;
+                height: auto;
+                border-radius: 8px;
+                box-shadow: 0 4px 16px rgba(0, 0, 0, 0.08);
+              }
+              h2 {
+                font-size: 20px;
+                margin: 0 0 12px 0;
+                color: #1d1d1f;
+              }
+              p {
+                margin: 14px 0 0 0;
+                color: #6e6e73;
+                font-size: 13px;
+                line-height: 1.5;
+              }
             </style>
           </head>
           <body onload="window.print();">
-            <h2>Chrono AR Tracking Marker: ${markerName}</h2>
-            <img src="${window.location.origin}${currentMarkerUrl}" alt="${markerName}" />
-            <p>Point your mobile camera at this marker in the WebAR Watch Store to view the 3D model.</p>
+            <div class="card-container">
+              <h2>Chrono AR Image Target Card</h2>
+              <img src="${window.location.origin}${currentMarkerUrl}" alt="${markerName}" />
+              <p>Point your mobile camera at this Target Card in the WebAR Watch Store to view and inspect the 3D watch in 6DOF Augmented Reality.</p>
+            </div>
           </body>
         </html>
       `);
@@ -43,170 +79,165 @@ export const MarkerModal: React.FC<ModalProps> = ({ isOpen, onClose }) => {
       position: 'fixed',
       inset: 0,
       zIndex: 1000,
-      backgroundColor: 'rgba(0, 0, 0, 0.45)',
+      backgroundColor: 'rgba(0, 0, 0, 0.55)',
       backdropFilter: 'blur(20px)',
       WebkitBackdropFilter: 'blur(20px)',
       display: 'flex',
       alignItems: 'center',
       justifyContent: 'center',
-      padding: '24px',
+      padding: '20px',
     }}>
       <div 
         style={{
           width: '100%',
-          maxWidth: '520px',
+          maxWidth: '500px',
           backgroundColor: 'var(--colors-canvas)',
           borderRadius: 'var(--rounded-lg)',
           border: '1px solid var(--colors-hairline)',
-          boxShadow: '0 25px 50px rgba(0, 0, 0, 0.15)',
+          boxShadow: '0 25px 50px rgba(0, 0, 0, 0.25)',
           position: 'relative',
           maxHeight: '90vh',
           overflowY: 'auto',
         }}
       >
-        <div style={{ padding: '32px' }}>
+        <div style={{ padding: '28px' }}>
           {/* Close Button */}
           <button
             onClick={onClose}
             className="btn-icon"
             style={{
               position: 'absolute',
-              top: '20px',
-              right: '20px',
-              width: '36px',
-              height: '36px',
+              top: '18px',
+              right: '18px',
+              width: '34px',
+              height: '34px',
             }}
             aria-label="Close modal"
           >
             <X size={16} />
           </button>
 
-          {/* Title */}
-          <div style={{ marginBottom: '20px' }}>
-            <h3 style={{ fontSize: '24px', fontWeight: 600, marginBottom: '6px' }}>
-              AR Tracking Marker
+          {/* Header */}
+          <div style={{ marginBottom: '18px' }}>
+            <div style={{
+              display: 'inline-flex',
+              alignItems: 'center',
+              gap: '6px',
+              backgroundColor: 'rgba(0, 113, 227, 0.08)',
+              color: 'var(--colors-primary)',
+              padding: '4px 10px',
+              borderRadius: 'var(--rounded-pill)',
+              fontSize: '11px',
+              fontWeight: 600,
+              letterSpacing: '0.04em',
+              textTransform: 'uppercase',
+              marginBottom: '8px'
+            }}>
+              <Sparkles size={12} />
+              <span>MindAR Natural Feature Tracking</span>
+            </div>
+            <h3 style={{ fontSize: '22px', fontWeight: 600, margin: '0 0 6px 0', color: 'var(--colors-ink)' }}>
+              AR Tracking Target Card
             </h3>
-            <p style={{ fontSize: '15px', color: 'var(--colors-body-muted)', lineHeight: 1.4 }}>
-              Point your camera at this marker on-screen or print it on paper.
+            <p style={{ fontSize: '14px', color: 'var(--colors-body-muted)', margin: 0, lineHeight: 1.45 }}>
+              Point your smartphone camera at this graphic card on your second screen or print it out on paper.
             </p>
           </div>
 
-          {/* Marker Switcher Segmented Control */}
-          <div style={{
-            display: 'flex',
-            backgroundColor: 'var(--colors-canvas-parchment)',
-            padding: '4px',
-            borderRadius: 'var(--rounded-pill)',
-            marginBottom: '24px',
-          }}>
-            <button
-              onClick={() => setActiveTab('hiro')}
-              style={{
-                flex: 1,
-                padding: '8px 16px',
-                borderRadius: 'var(--rounded-pill)',
-                border: 'none',
-                backgroundColor: activeTab === 'hiro' ? '#ffffff' : 'transparent',
-                color: activeTab === 'hiro' ? 'var(--colors-ink)' : 'var(--colors-body-muted)',
-                fontWeight: activeTab === 'hiro' ? 600 : 400,
-                fontSize: '13px',
-                cursor: 'pointer',
-                boxShadow: activeTab === 'hiro' ? '0 2px 6px rgba(0,0,0,0.08)' : 'none',
-                transition: 'all 0.15s ease',
-              }}
-            >
-              Hiro Marker
-            </button>
-            <button
-              onClick={() => setActiveTab('custom')}
-              style={{
-                flex: 1,
-                padding: '8px 16px',
-                borderRadius: 'var(--rounded-pill)',
-                border: 'none',
-                backgroundColor: activeTab === 'custom' ? '#ffffff' : 'transparent',
-                color: activeTab === 'custom' ? 'var(--colors-ink)' : 'var(--colors-body-muted)',
-                fontWeight: activeTab === 'custom' ? 600 : 400,
-                fontSize: '13px',
-                cursor: 'pointer',
-                boxShadow: activeTab === 'custom' ? '0 2px 6px rgba(0,0,0,0.08)' : 'none',
-                transition: 'all 0.15s ease',
-              }}
-            >
-              Watch Marker
-            </button>
-          </div>
-
-          {/* Marker Image Display Container */}
+          {/* Target Card Image Preview Container */}
           <div style={{
             backgroundColor: 'var(--colors-canvas-parchment)',
-            padding: '24px',
+            padding: '20px',
             borderRadius: 'var(--rounded-md)',
             display: 'flex',
+            flexDirection: 'column',
             justifyContent: 'center',
             alignItems: 'center',
-            marginBottom: '24px',
+            marginBottom: '20px',
             border: '1px solid var(--colors-hairline)',
+            position: 'relative',
           }}>
             <img
               src={currentMarkerUrl}
               alt={markerName}
               style={{
-                width: '200px',
-                height: '200px',
+                width: '100%',
+                maxHeight: '190px',
                 objectFit: 'contain',
                 display: 'block',
                 borderRadius: '8px',
+                boxShadow: '0 4px 14px rgba(0, 0, 0, 0.08)',
               }}
             />
+            <div style={{
+              marginTop: '10px',
+              fontSize: '11px',
+              color: 'var(--colors-body-muted)',
+              display: 'flex',
+              alignItems: 'center',
+              gap: '4px',
+            }}>
+              <CheckCircle2 size={13} color="#30d158" />
+              <span>Official 6DOF target compiled in <code style={{ fontSize: '11px', fontFamily: 'var(--font-mono)' }}>card.mind</code></span>
+            </div>
           </div>
 
-          {/* Actions */}
+          {/* Action Buttons */}
           <div style={{
             display: 'grid',
             gridTemplateColumns: '1fr 1fr',
-            gap: '12px',
-            marginBottom: '24px',
+            gap: '10px',
+            marginBottom: '20px',
           }}>
             <a
               href={currentMarkerUrl}
-              download={`${activeTab}-marker.svg`}
+              download="chrono-ar-target-card.png"
               className="btn-secondary"
               style={{
-                fontSize: '14px',
+                fontSize: '13px',
                 justifyContent: 'center',
+                padding: '10px 14px',
               }}
             >
-              <Download size={15} />
-              <span>Download SVG</span>
+              <Download size={14} />
+              <span>Download Image</span>
             </a>
 
             <button
               onClick={handlePrint}
               className="btn-secondary"
               style={{
-                fontSize: '14px',
+                fontSize: '13px',
                 justifyContent: 'center',
+                padding: '10px 14px',
               }}
             >
-              <Printer size={15} />
-              <span>Print Marker</span>
+              <Printer size={14} />
+              <span>Print Target Card</span>
             </button>
           </div>
 
-          {/* Instructions */}
+          {/* Step-by-Step Instructions */}
           <div style={{
             backgroundColor: 'var(--colors-surface-pearl)',
             borderRadius: 'var(--rounded-md)',
-            padding: '16px',
-            fontSize: '13px',
+            padding: '14px 16px',
+            fontSize: '12px',
             color: 'var(--colors-body-muted)',
             lineHeight: 1.5,
+            border: '1px solid var(--colors-hairline)',
           }}>
-            <strong style={{ color: 'var(--colors-ink)', display: 'block', marginBottom: '4px' }}>Quick Instructions:</strong>
-            1. Open Marker AR mode on your smartphone.<br />
-            2. Point your camera at this marker.<br />
-            3. The 3D watch will anchor directly on top of the pattern.
+            <strong style={{ color: 'var(--colors-ink)', display: 'block', marginBottom: '6px', fontSize: '13px' }}>
+              How to view the 3D watch:
+            </strong>
+            <ol style={{ margin: '0 0 8px 0', paddingLeft: '18px' }}>
+              <li style={{ marginBottom: '4px' }}>Open <strong>Marker AR mode</strong> on your smartphone.</li>
+              <li style={{ marginBottom: '4px' }}>Point your camera at the <strong>Target Card image</strong> above (keep it clearly in frame).</li>
+              <li>The 3D watch anchors instantly in full 6DOF 3D space on top of the card.</li>
+            </ol>
+            <div style={{ fontSize: '11px', color: 'var(--colors-body-muted)', borderTop: '1px solid var(--colors-hairline)', paddingTop: '6px', marginTop: '6px' }}>
+              💡 <em>Note: MindAR uses Natural Feature Tracking (NFT). Pointing at old black-and-white square QR/Hiro markers is not supported.</em>
+            </div>
           </div>
         </div>
       </div>

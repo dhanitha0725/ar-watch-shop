@@ -3,10 +3,10 @@
   <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
-    <title>AR.js Marker Camera View</title>
-    <!-- A-Frame 1.3.0 & AR.js 3.4.5 for rock-solid webcam tracking -->
-    <script src="https://aframe.io/releases/1.3.0/aframe.min.js"></script>
-    <script src="https://raw.githack.com/AR-js-org/AR.js/3.4.5/aframe/build/aframe-ar.js"></script>
+    <title>MindAR Image Target Camera View</title>
+    <!-- A-Frame 1.5.0 & MindAR 1.2.5 for reliable Natural Feature Tracking on modern iOS & Android -->
+    <script src="https://aframe.io/releases/1.5.0/aframe.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/mind-ar@1.2.5/dist/mindar-image-aframe.prod.js"></script>
     <style>
       html, body {
         margin: 0;
@@ -16,8 +16,12 @@
         overflow: hidden;
         background: transparent !important;
         background-color: transparent !important;
+        font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
       }
-      #arjs-video {
+      .mindar-ui-overlay {
+        display: none !important;
+      }
+      video {
         position: fixed !important;
         top: 0 !important;
         left: 0 !important;
@@ -44,82 +48,173 @@
         height: 100vh !important;
         z-index: 1 !important;
       }
+      #loader-overlay {
+        position: fixed;
+        inset: 0;
+        z-index: 999;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+        background: rgba(0, 0, 0, 0.7);
+        backdrop-filter: blur(12px);
+        -webkit-backdrop-filter: blur(12px);
+        color: #ffffff;
+        transition: opacity 0.4s ease;
+      }
+      .spinner {
+        width: 38px;
+        height: 38px;
+        border: 3px solid rgba(255, 255, 255, 0.2);
+        border-top-color: #0071e3;
+        border-radius: 50%;
+        animation: spin 0.8s linear infinite;
+        margin-bottom: 12px;
+      }
+      @keyframes spin {
+        to { transform: rotate(360deg); }
+      }
     </style>
   </head>
   <body>
+    <!-- Sleek Initialization Overlay -->
+    <div id="loader-overlay">
+      <div class="spinner"></div>
+      <div style="font-size: 14px; font-weight: 500; letter-spacing: -0.01em;">Initializing MindAR Engine...</div>
+      <div style="font-size: 12px; opacity: 0.7; margin-top: 4px;">Loading camera and neural tracking WASM</div>
+    </div>
+
     <a-scene
-      embedded
-      arjs="sourceType: webcam; debugUIEnabled: false; detectionMode: mono_and_matrix; matrixCodeType: 3x3; trackingMethod: best;"
-      renderer="logarithmicDepthBuffer: true; antialias: true; alpha: true; colorManagement: true;"
+      mindar-image="imageTargetSrc: /markers/card.mind; autoStart: true; uiLoading: no; uiScanning: no; filterMinCF: 0.0001; filterBeta: 0.001;"
+      color-space="sRGB"
+      renderer="colorManagement: true, physicallyCorrectLights: true, antialias: true, alpha: true"
       vr-mode-ui="enabled: false"
+      device-orientation-permission-ui="enabled: false"
     >
+      <a-camera position="0 0 0" look-controls="enabled: false"></a-camera>
+
+      <!-- Balanced studio lighting for PBR watch materials -->
       <a-entity light="type: ambient; color: #ffffff; intensity: 1.8;"></a-entity>
       <a-entity light="type: directional; color: #ffffff; intensity: 2.2; position: 2 4 3"></a-entity>
       <a-entity light="type: directional; color: #90cdf4; intensity: 1.0; position: -2 -1 2"></a-entity>
 
-      <!-- Standard Hiro Marker -->
-      <a-marker preset="hiro" id="hiro-marker" emitevents="true" smooth="true" smoothCount="8" smoothTolerance="0.01" smoothThreshold="4">
-        <a-entity id="watch-pivot-hiro" position="0 0.15 0">
+      <!-- MindAR Natural Feature Image Target 0 (Card / Pattern) -->
+      <a-entity id="mindar-target-0" mindar-image-target="targetIndex: 0">
+        <a-entity id="watch-pivot" position="0 0 0">
           <a-entity
-            id="watch-model-hiro"
-            animation="property: rotation; to: 0 360 0; loop: true; dur: 14000; easing: linear;"
+            id="watch-model"
+            visible="false"
           ></a-entity>
         </a-entity>
-      </a-marker>
-
-      <!-- Custom Pattern Marker -->
-      <a-marker type="pattern" url="/markers/watch-marker.patt" id="custom-marker" emitevents="true" smooth="true" smoothCount="8" smoothTolerance="0.01" smoothThreshold="4">
-        <a-entity id="watch-pivot-custom" position="0 0.15 0">
-          <a-entity
-            id="watch-model-custom"
-            animation="property: rotation; to: 0 360 0; loop: true; dur: 14000; easing: linear;"
-          ></a-entity>
-        </a-entity>
-      </a-marker>
-
-      <a-entity camera></a-entity>
+      </a-entity>
     </a-scene>
 
     <script>
-      const hiroMarker = document.getElementById('hiro-marker');
-      const customMarker = document.getElementById('custom-marker');
-      const modelHiro = document.getElementById('watch-model-hiro');
-      const modelCustom = document.getElementById('watch-model-custom');
+      const sceneEl = document.querySelector('a-scene');
+      const targetEntity = document.getElementById('mindar-target-0');
+      const watchModel = document.getElementById('watch-model');
+      const loaderOverlay = document.getElementById('loader-overlay');
+      let targetFound = false;
+      let modelReady = false;
+      let currentModelUrl = '';
+
+      // These values are derived from each GLB's exported bounding box. Keeping
+      // the calibration static avoids the mobile A-Frame bounding-box bug that
+      // reported valid GLB meshes as zero-size geometry.
+      const MODEL_CALIBRATIONS = {
+        '/models/apple-watch-ultra.glb': { position: '-0.0103 -0.0080 -0.0317' },
+        '/models/chronograph-mudmaster.glb': { position: '-0.0002 -0.0001 0.1343' },
+        '/models/digital-watch.glb': { position: '0.2112 0.0265 -0.0005' },
+        '/models/seiko-classic.glb': { position: '-0.0169 -0.3575 -0.0137' },
+      };
 
       function notifyParent(type, data) {
         try {
+          // Send with both arjs-marker-frame and mindar-marker-frame sources for full compatibility
+          window.parent.postMessage({ source: 'mindar-marker-frame', type, data }, '*');
           window.parent.postMessage({ source: 'arjs-marker-frame', type, data }, '*');
         } catch (e) {}
       }
 
-      if (hiroMarker) {
-        hiroMarker.addEventListener('markerFound', () => notifyParent('markerFound', 'hiro'));
-        hiroMarker.addEventListener('markerLost', () => notifyParent('markerLost', 'hiro'));
+      function hideLoader() {
+        if (loaderOverlay) {
+          loaderOverlay.style.opacity = '0';
+          setTimeout(() => {
+            loaderOverlay.style.display = 'none';
+          }, 400);
+        }
       }
 
-      if (customMarker) {
-        customMarker.addEventListener('markerFound', () => notifyParent('markerFound', 'custom'));
-        customMarker.addEventListener('markerLost', () => notifyParent('markerLost', 'custom'));
+      function updateTrackingState() {
+        if (targetFound && modelReady) {
+          notifyParent('markerFound', 'mindar-card');
+        }
       }
+
+      // MindAR Lifecycle Events
+      sceneEl.addEventListener('arReady', () => {
+        hideLoader();
+        notifyParent('arReady');
+      });
+
+      sceneEl.addEventListener('arError', (event) => {
+        hideLoader();
+        notifyParent('arError', event.detail);
+      });
+
+      // Target Tracking Events
+      if (targetEntity) {
+        targetEntity.addEventListener('targetFound', () => {
+          targetFound = true;
+          updateTrackingState();
+        });
+        targetEntity.addEventListener('targetLost', () => {
+          targetFound = false;
+          notifyParent('markerLost', 'mindar-card');
+        });
+      }
+
+      // Fallback timer to hide loader if arReady fired before listener
+      setTimeout(() => {
+        hideLoader();
+      }, 3500);
+
+      // Reveal the model once A-Frame has parsed the GLB. Scaling and centering
+      // are pre-calibrated per asset, rather than calculated at runtime.
+      watchModel.addEventListener('model-loaded', () => {
+        const calibration = MODEL_CALIBRATIONS[currentModelUrl];
+        watchModel.setAttribute('position', calibration?.position || '0 0 0');
+        watchModel.setAttribute('visible', 'true');
+        modelReady = true;
+        notifyParent('modelLoaded', currentModelUrl);
+        updateTrackingState();
+      });
+
+      watchModel.addEventListener('model-error', (event) => {
+        modelReady = false;
+        watchModel.setAttribute('visible', 'false');
+        notifyParent('modelError', event.detail?.src || event.detail?.error?.message || 'Unable to fetch or parse the GLB file.');
+      });
 
       // Initial URL parameter parsing
       const params = new URLSearchParams(window.location.search);
       const initialModel = params.get('model');
-      const initialScale = params.get('scale') || '0.06 0.06 0.06';
+      const initialScale = params.get('scale') || '1.0 1.0 1.0';
       const initialRotation = params.get('rotation') || '0 0 0';
 
       function applyWatchAttributes(url, scale, rotation) {
-        if (url) {
-          modelHiro.setAttribute('gltf-model', `url(${url})`);
-          modelCustom.setAttribute('gltf-model', `url(${url})`);
+        if (url && watchModel) {
+          modelReady = false;
+          currentModelUrl = url;
+          watchModel.setAttribute('visible', 'false');
+          notifyParent('modelLoading', url);
+          watchModel.setAttribute('gltf-model', `url(${url})`);
         }
-        if (scale) {
-          modelHiro.setAttribute('scale', scale);
-          modelCustom.setAttribute('scale', scale);
+        if (scale && watchModel) {
+          watchModel.setAttribute('scale', scale);
         }
-        if (rotation) {
-          modelHiro.setAttribute('rotation', rotation);
-          modelCustom.setAttribute('rotation', rotation);
+        if (rotation && watchModel) {
+          watchModel.setAttribute('rotation', rotation);
         }
       }
 
@@ -129,15 +224,17 @@
 
       // Handle real-time updates from parent React application
       window.addEventListener('message', (event) => {
-        if (!event.data || event.data.target !== 'arjs-marker-frame') return;
+        if (!event.data) return;
+        const target = event.data.target;
+        if (target !== 'mindar-marker-frame' && target !== 'arjs-marker-frame') return;
+
         const { action, modelUrl, scale, rotation } = event.data;
 
         if (action === 'updateWatch') {
           applyWatchAttributes(modelUrl, scale, rotation);
         } else if (action === 'updateScale') {
-          if (scale) {
-            modelHiro.setAttribute('scale', scale);
-            modelCustom.setAttribute('scale', scale);
+          if (scale && watchModel) {
+            watchModel.setAttribute('scale', scale);
           }
         }
       });

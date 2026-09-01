@@ -19,6 +19,8 @@ export const MarkerARScene: React.FC<MarkerARSceneProps> = ({
   onOpenMarkerModal,
 }) => {
   const [trackingState, setTrackingState] = useState<TrackingState>('searching');
+  const [modelState, setModelState] = useState<'loading' | 'ready' | 'error'>('loading');
+  const [modelError, setModelError] = useState<string | null>(null);
   const [modelScaleMultiplier, setModelScaleMultiplier] = useState<number>(1.0);
   const [showControls, setShowControls] = useState(true);
 
@@ -29,8 +31,17 @@ export const MarkerARScene: React.FC<MarkerARSceneProps> = ({
 
   useEffect(() => {
     const handleMessage = (event: MessageEvent) => {
-      if (event.data?.source === 'arjs-marker-frame') {
-        if (event.data.type === 'markerFound') {
+      if (event.data?.source === 'mindar-marker-frame' || event.data?.source === 'arjs-marker-frame') {
+        if (event.data.type === 'modelLoading') {
+          setModelState('loading');
+          setModelError(null);
+        } else if (event.data.type === 'modelLoaded') {
+          setModelState('ready');
+          setModelError(null);
+        } else if (event.data.type === 'modelError') {
+          setModelState('error');
+          setModelError(event.data.data || 'Unable to load the 3D model.');
+        } else if (event.data.type === 'markerFound') {
           setTrackingState('detected');
         } else if (event.data.type === 'markerLost') {
           setTrackingState('lost');
@@ -48,7 +59,7 @@ export const MarkerARScene: React.FC<MarkerARSceneProps> = ({
   useEffect(() => {
     if (iframeRef.current?.contentWindow) {
       iframeRef.current.contentWindow.postMessage({
-        target: 'arjs-marker-frame',
+        target: 'mindar-marker-frame',
         action: 'updateWatch',
         modelUrl: watch.modelUrl,
         scale: computedScale,
@@ -56,6 +67,12 @@ export const MarkerARScene: React.FC<MarkerARSceneProps> = ({
       }, '*');
     }
   }, [watch, computedScale]);
+
+  useEffect(() => {
+    setModelState('loading');
+    setModelError(null);
+    setTrackingState('searching');
+  }, [watch.modelUrl]);
 
   const iframeSrc = `/ar-marker-frame.html?model=${encodeURIComponent(watch.modelUrl)}&scale=${encodeURIComponent(computedScale)}&rotation=${encodeURIComponent(watch.markerRotation || '0 0 0')}`;
 
@@ -83,22 +100,24 @@ export const MarkerARScene: React.FC<MarkerARSceneProps> = ({
         <ARStateBadge
           state={trackingState}
           customMessage={
-            trackingState === 'searching' ? 'Point camera at Hiro / Marker' :
+            modelState === 'error' ? `3D model failed: ${modelError}` :
+            modelState === 'loading' ? `Loading ${watch.name}…` :
+            trackingState === 'searching' ? 'Point camera at Image Target Card' :
             trackingState === 'detected' ? `Tracking ${watch.name}` :
-            'Marker lost — realigning'
+            'Target lost — realigning'
           }
         />
 
         <button
           onClick={onOpenMarkerModal}
           className="btn-icon"
-          title="Display / Print AR Marker"
+          title="Display / Print Target Card"
         >
           <QrCode size={18} color="var(--colors-ink)" />
         </button>
       </div>
 
-      {/* Standalone AR.js Camera & Tracking Frame */}
+      {/* Standalone MindAR Camera & Tracking Frame */}
       <iframe
         ref={iframeRef}
         src={iframeSrc}
@@ -112,7 +131,7 @@ export const MarkerARScene: React.FC<MarkerARSceneProps> = ({
           left: 0,
           zIndex: 1,
         }}
-        title="AR.js Marker Tracking Scene"
+        title="MindAR Image Target Tracking Scene"
       />
 
       {/* Bottom Floating Controls */}
@@ -195,7 +214,7 @@ export const MarkerARScene: React.FC<MarkerARSceneProps> = ({
             border: '1px solid var(--colors-hairline)',
             padding: '5px 14px',
           }}>
-            AR.js 6DOF Tracking • Hiro & .patt
+            MindAR 6DOF Tracking • Natural Feature Card
           </div>
 
           <button

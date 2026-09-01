@@ -127,7 +127,7 @@ export const ProductDetailPage: React.FC<ProductDetailPageProps> = ({
                 onClick={() => onLaunchAR('marker')}
                 className="btn-secondary"
                 style={{ padding: '8px 16px', fontSize: '12px' }}
-                title="AR.js Marker Tracking"
+                title="MindAR Image Target Tracking"
               >
                 <Scan size={13} />
                 <span>Marker</span>
