@@ -19,9 +19,9 @@ export const DocumentationPage: React.FC<DocumentationPageProps> = ({ onBack }) 
     },
     {
       id: 'CH-02',
-      title: 'AR.js Marker Jitter and Occlusion Loss',
-      cause: 'High-frequency webcam noise caused slight frame-to-frame trembling on high-resolution displays.',
-      fix: 'Configured AR.js matrixCodeType: 3x3 with logarithmicDepthBuffer and applied lerp damping on virtual camera transform.',
+      title: 'Marker & Image Target Mobile Viewport Tracking Reliability',
+      cause: 'Legacy matrix tracking suffered from WebKit alpha compositing and canvas resize issues on modern mobile browsers.',
+      fix: 'Migrated to MindAR 1.2.5 with A-Frame 1.5.0, enabling GPU/WASM Natural Feature Tracking (NFT) with calibrated filter smoothing.',
       status: 'Resolved'
     },
     {
@@ -73,10 +73,10 @@ export const DocumentationPage: React.FC<DocumentationPageProps> = ({ onBack }) 
       notes: 'Polished stainless steel mechanical dress watch.'
     },
     {
-      name: 'AR.js & A-Frame Marker Tracking',
-      creator: 'AR.js Org & Supermedium',
+      name: 'MindAR & A-Frame Image Tracking',
+      creator: 'HiuKim & A-Frame Community',
       license: 'MIT License',
-      notes: 'Web-based Augmented Reality marker tracking engine.'
+      notes: 'Web-based Augmented Reality Natural Feature Image Tracking engine.'
     },
     {
       name: 'Google Model Viewer',
@@ -316,7 +316,7 @@ export const DocumentationPage: React.FC<DocumentationPageProps> = ({ onBack }) 
               <ul style={{ fontSize: '14px', color: 'var(--colors-body-muted)', listStyle: 'none', display: 'flex', flexDirection: 'column', gap: '6px', padding: 0 }}>
                 <li>• Google &lt;model-viewer&gt; PBR</li>
                 <li>• WebXR Device API (immersive-ar)</li>
-                <li>• AR.js 6DOF Hiro Marker Engine</li>
+                <li>• MindAR 1.2.5 6DOF Image Tracking</li>
                 <li>• MediaPipe Hand Landmarker Vision</li>
               </ul>
             </div>

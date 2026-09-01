@@ -23,6 +23,7 @@ declare global {
         ar?: boolean;
         'ar-modes'?: string;
         'ar-scale'?: string;
+        scale?: string;
         'camera-orbit'?: string;
         'min-camera-orbit'?: string;
         'max-camera-orbit'?: string;
