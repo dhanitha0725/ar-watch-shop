@@ -120,14 +120,6 @@ export const Navbar: React.FC<NavbarProps> = ({
             }}>
               CHRONO
             </span>
-            <span style={{
-              fontSize: '12px',
-              fontWeight: 400,
-              color: 'var(--colors-primary)',
-              fontFamily: 'var(--font-mono)',
-            }}>
-              [WebAR]
-            </span>
           </div>
         </div>
 
