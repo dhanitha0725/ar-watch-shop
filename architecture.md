@@ -220,6 +220,17 @@ model.traverse((child) => {
 });
 ```
 
+### 5.5 GLB Asset Optimization & Texture Sampling
+
+All production 3D assets remain self-contained `.glb` files so the `<model-viewer>` markerless path and the A-Frame/MindAR marker path load the same URL:
+
+- Textures are compressed to WebP with glTF Transform at quality `95` using a texture-only pass.
+- Geometry, node hierarchy, mesh names, material names, and AR calibration transforms are preserved.
+- Draco, Meshopt geometry compression, KTX2, and texture resizing are not enabled in the shared production assets because the marker AR loader has no explicit decoder configuration for those extensions.
+- Each model keeps the glTF sampler `minFilter: 9987` (`LINEAR_MIPMAP_LINEAR`). The browser renderer generates and uses runtime mipmaps for the regular WebP textures, improving distant-view stability and reducing texture shimmering.
+
+The default all-in-one `gltf-transform optimize` pipeline was evaluated separately. It also enables mesh simplification, quantization, joining, and Meshopt compression, so those outputs require separate compatibility and visual QA before they can be used by both AR modes.
+
 ---
 
 ## 6. 3D Model Catalog & Mesh Name Mapping
