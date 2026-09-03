@@ -39,6 +39,11 @@
         width: 100vw !important;
         height: 100vh !important;
         z-index: 1 !important;
+        touch-action: none;
+        cursor: grab;
+      }
+      .a-canvas.is-rotating {
+        cursor: grabbing;
       }
       a-scene {
         position: fixed !important;
@@ -117,6 +122,11 @@
       let targetFound = false;
       let modelReady = false;
       let currentModelUrl = '';
+      let baseRotation = { x: 0, y: 0, z: 0 };
+      let sessionRotation = { x: 0, y: 0, z: 0 };
+
+      const DRAG_ROTATION_SENSITIVITY = 0.5;
+      const MAX_PITCH = 80;
 
       // These values are derived from each GLB's exported bounding box. Keeping
       // the calibration static avoids the mobile A-Frame bounding-box bug that
@@ -127,6 +137,76 @@
         '/models/digital-watch.glb': { position: '0.2112 0.0265 -0.0005' },
         '/models/seiko-classic.glb': { position: '-0.0169 -0.3575 -0.0137' },
       };
+
+      function parseRotation(rotation) {
+        const values = String(rotation || '0 0 0').trim().split(/\s+/).map(Number);
+        return {
+          x: Number.isFinite(values[0]) ? values[0] : 0,
+          y: Number.isFinite(values[1]) ? values[1] : 0,
+          z: Number.isFinite(values[2]) ? values[2] : 0,
+        };
+      }
+
+      function applySessionRotation() {
+        if (!watchModel) return;
+
+        watchModel.setAttribute('rotation', {
+          x: baseRotation.x + sessionRotation.x,
+          y: baseRotation.y + sessionRotation.y,
+          z: baseRotation.z + sessionRotation.z,
+        });
+      }
+
+      function enableDragRotation() {
+        const canvas = sceneEl.canvas;
+        if (!canvas) return;
+
+        let activePointerId = null;
+        let lastX = 0;
+        let lastY = 0;
+
+        const stopDragging = (event) => {
+          if (activePointerId !== event.pointerId) return;
+
+          if (canvas.hasPointerCapture(event.pointerId)) {
+            canvas.releasePointerCapture(event.pointerId);
+          }
+          activePointerId = null;
+          canvas.classList.remove('is-rotating');
+        };
+
+        canvas.addEventListener('pointerdown', (event) => {
+          if (activePointerId !== null || (event.pointerType === 'mouse' && event.button !== 0)) return;
+
+          activePointerId = event.pointerId;
+          lastX = event.clientX;
+          lastY = event.clientY;
+          canvas.setPointerCapture(event.pointerId);
+          canvas.classList.add('is-rotating');
+          event.preventDefault();
+        });
+
+        canvas.addEventListener('pointermove', (event) => {
+          if (activePointerId !== event.pointerId) return;
+
+          const deltaX = event.clientX - lastX;
+          const deltaY = event.clientY - lastY;
+          lastX = event.clientX;
+          lastY = event.clientY;
+
+          sessionRotation.y += deltaX * DRAG_ROTATION_SENSITIVITY;
+          sessionRotation.x = Math.max(
+            -MAX_PITCH,
+            Math.min(MAX_PITCH, sessionRotation.x - deltaY * DRAG_ROTATION_SENSITIVITY)
+          );
+          applySessionRotation();
+          event.preventDefault();
+        });
+
+        canvas.addEventListener('pointerup', stopDragging);
+        canvas.addEventListener('pointercancel', stopDragging);
+        canvas.addEventListener('lostpointercapture', stopDragging);
+      }
 
       function notifyParent(type, data) {
         try {
@@ -159,6 +239,12 @@
         hideLoader();
         notifyParent('arError', event.detail);
       });
+
+      if (sceneEl.canvas) {
+        enableDragRotation();
+      } else {
+        sceneEl.addEventListener('renderstart', enableDragRotation, { once: true });
+      }
 
       // Target Tracking Events
       if (targetEntity) {
@@ -212,7 +298,9 @@
           watchModel.setAttribute('scale', scale);
         }
         if (rotation && watchModel) {
-          watchModel.setAttribute('rotation', rotation);
+          baseRotation = parseRotation(rotation);
+          sessionRotation = { x: 0, y: 0, z: 0 };
+          applySessionRotation();
         }
       }
 

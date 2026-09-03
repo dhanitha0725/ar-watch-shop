@@ -1,7 +1,7 @@
 # WebAR Watch Store — Technical Testing & Evaluation Report (TESTING_REPORT.md)
 
-**Project Title**: WebAR Watch Store: Interactive 3D Product Visualization, AR Placement, and Virtual Watch Try-On  
-**Scope**: Graded Technical Competency (Mandatory 3D, MindAR Natural Feature Image AR, WebXR Markerless AR, Option B Complex Interaction, Mobile UX) + Showcase Virtual Try-On (MediaPipe Hand Landmarker).
+**Project Title**: WebAR Watch Store: Interactive 3D Product Visualization and AR Placement  
+**Scope**: Graded Technical Competency (Mandatory 3D, MindAR Natural Feature Image AR, WebXR Markerless AR, Option B Complex Interaction, Mobile UX).
 
 ---
 
