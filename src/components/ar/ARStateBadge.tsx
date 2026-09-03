@@ -1,6 +1,7 @@
 import React from 'react';
 import { TrackingState } from '../../types/watch';
 import { Loader2, CheckCircle2, AlertTriangle, Eye } from 'lucide-react';
+import { AR_COPY } from '../../data/arCopy';
 
 interface ARStateBadgeProps {
   state: TrackingState;
@@ -35,7 +36,7 @@ export const ARStateBadge: React.FC<ARStateBadgeProps> = ({ state, customMessage
         <div style={badgeStyle}>
           <Loader2 size={14} className="animate-spin" color="var(--colors-primary)" />
           <span style={textStyle}>
-            {customMessage || 'Searching for surface...'}
+            {customMessage || AR_COPY.surface.searching}
           </span>
           <style>{`
             @keyframes spin { 100% { transform: rotate(360deg); } }
@@ -49,7 +50,7 @@ export const ARStateBadge: React.FC<ARStateBadgeProps> = ({ state, customMessage
         <div style={badgeStyle}>
           <CheckCircle2 size={14} color="var(--colors-success)" />
           <span style={textStyle}>
-            {customMessage || 'Anchor locked'}
+            {customMessage || AR_COPY.surface.found}
           </span>
         </div>
       );
@@ -59,7 +60,7 @@ export const ARStateBadge: React.FC<ARStateBadgeProps> = ({ state, customMessage
         <div style={badgeStyle}>
           <AlertTriangle size={14} color="var(--colors-danger)" />
           <span style={textStyle}>
-            {customMessage || 'Tracking lost'}
+            {customMessage || AR_COPY.card.lost}
           </span>
         </div>
       );
@@ -69,7 +70,7 @@ export const ARStateBadge: React.FC<ARStateBadgeProps> = ({ state, customMessage
         <div style={badgeStyle}>
           <Eye size={14} color="var(--colors-primary)" />
           <span style={textStyle}>
-            {customMessage || 'Calibrating view...'}
+            {customMessage || AR_COPY.surface.ready}
           </span>
         </div>
       );
@@ -80,7 +81,7 @@ export const ARStateBadge: React.FC<ARStateBadgeProps> = ({ state, customMessage
         <div style={badgeStyle}>
           <span style={{ width: '8px', height: '8px', borderRadius: '50%', backgroundColor: 'var(--colors-body-muted)' }} />
           <span style={textStyle}>
-            {customMessage || 'Simulation active'}
+            {customMessage || AR_COPY.surface.desktop}
           </span>
         </div>
       );

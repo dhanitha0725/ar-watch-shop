@@ -1,5 +1,6 @@
 import React from 'react';
 import { Scan, Eye, QrCode, ArrowRight } from 'lucide-react';
+import { AR_COPY } from '../../data/arCopy';
 
 interface FeatureHighlightsProps {
   onLaunchMode: (mode: 'markerless' | 'marker') => void;
@@ -31,7 +32,7 @@ export const FeatureHighlights: React.FC<FeatureHighlightsProps> = ({
           letterSpacing: '0.16px',
           marginBottom: '4px',
         }}>
-          AUGMENTED REALITY CAPABILITIES
+          SEE IT IN YOUR SPACE
         </div>
         <h2 style={{
           fontSize: 'clamp(1.6rem, 3.5vw, 36px)',
@@ -39,7 +40,7 @@ export const FeatureHighlights: React.FC<FeatureHighlightsProps> = ({
           lineHeight: 1.2,
           color: 'var(--colors-ink)',
         }}>
-          Two Spatial Tracking Modalities.
+          Choose how you want to explore.
         </h2>
         <p style={{
           fontSize: '15px',
@@ -48,7 +49,7 @@ export const FeatureHighlights: React.FC<FeatureHighlightsProps> = ({
           marginTop: '6px',
           maxWidth: '720px',
         }}>
-          Calibrated WebXR hit-testing for planar surface placement and 6DOF Natural Feature Tracking (NFT) image targets via MindAR.
+          Place a watch on a table, or point your camera at the watch card to see it appear.
         </p>
       </div>
 
@@ -85,15 +86,15 @@ export const FeatureHighlights: React.FC<FeatureHighlightsProps> = ({
               color: 'var(--colors-ink-muted)',
               marginBottom: '4px',
             }}>
-              MODALITY 01 // WEBXR
+              OPTION 01
             </div>
 
             <h3 style={{ fontSize: '20px', fontWeight: 400, marginBottom: '8px', color: 'var(--colors-ink)' }}>
-              WebXR Space AR
+              {AR_COPY.surface.title}
             </h3>
 
             <p style={{ fontSize: '14px', color: 'var(--colors-ink-muted)', lineHeight: 1.5, marginBottom: '24px' }}>
-              Real-time horizontal surface hit-testing using WebXR Device API. Anchors timepiece models to physical tables with 1:1 metric scale and lighting estimation.
+              {AR_COPY.surface.description}
             </p>
           </div>
 
@@ -102,7 +103,7 @@ export const FeatureHighlights: React.FC<FeatureHighlightsProps> = ({
             className="btn-primary"
             style={{ width: '100%', justifyContent: 'space-between' }}
           >
-            <span>Launch Surface AR</span>
+            <span>{AR_COPY.surface.button}</span>
             <ArrowRight size={15} />
           </button>
         </div>
@@ -135,15 +136,15 @@ export const FeatureHighlights: React.FC<FeatureHighlightsProps> = ({
               color: 'var(--colors-ink-muted)',
               marginBottom: '4px',
             }}>
-              MODALITY 02 // MINDAR
+              OPTION 02
             </div>
 
             <h3 style={{ fontSize: '20px', fontWeight: 400, marginBottom: '8px', color: 'var(--colors-ink)' }}>
-              6DOF Target Tracking
+              {AR_COPY.card.title}
             </h3>
 
             <p style={{ fontSize: '14px', color: 'var(--colors-ink-muted)', lineHeight: 1.5, marginBottom: '24px' }}>
-              GPU-accelerated Natural Feature Tracking (NFT) compiled with WASM. Point smartphone camera at printable target card for ultra-stable orientation lock.
+              {AR_COPY.card.description} Open it on a laptop or another phone, then keep the full card in view.
             </p>
           </div>
 
@@ -153,14 +154,14 @@ export const FeatureHighlights: React.FC<FeatureHighlightsProps> = ({
               className="btn-primary"
               style={{ flex: 1, justifyContent: 'space-between' }}
             >
-              <span>Scan Marker</span>
+              <span>{AR_COPY.card.button}</span>
               <ArrowRight size={15} />
             </button>
             <button
               onClick={onOpenMarkerModal}
               className="btn-secondary"
               style={{ padding: '10px 14px' }}
-              title="View Printable Target Card"
+              title="View watch card"
             >
               <QrCode size={16} />
             </button>

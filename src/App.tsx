@@ -181,7 +181,7 @@ export const App: React.FC = () => {
         <Footer onNavigate={handleNavigate} />
       )}
 
-      {/* Global Printable / On-Screen AR Marker Modal */}
+      {/* Global on-screen AR marker modal */}
       <MarkerModal
         isOpen={isMarkerModalOpen}
         onClose={() => setIsMarkerModalOpen(false)}

@@ -3,6 +3,8 @@ import '@google/model-viewer';
 import { Watch, WatchConfiguration } from '../../types/watch';
 import { checkWebXRSupport, XRSupportStatus } from '../../utils/webxr';
 import { ARStateBadge } from './ARStateBadge';
+import { ARHelpPanel } from './ARHelpPanel';
+import { AR_COPY } from '../../data/arCopy';
 import { 
   ArrowLeft, 
   Sparkles, 
@@ -10,7 +12,9 @@ import {
   Palette, 
   RotateCcw, 
   Smartphone, 
-  Sliders
+  Sliders,
+  HelpCircle,
+  X
 } from 'lucide-react';
 
 interface MarkerlessARSceneProps {
@@ -43,6 +47,9 @@ export const MarkerlessARScene: React.FC<MarkerlessARSceneProps> = ({
   const [isPlaced, setIsPlaced] = useState<boolean>(false);
   const [arState, setArState] = useState<'idle' | 'starting' | 'active' | 'failed'>('idle');
   const [arError, setArError] = useState<string | null>(null);
+  const [showHelp, setShowHelp] = useState(true);
+  const [showControls, setShowControls] = useState(true);
+  const [isAutoRotating, setIsAutoRotating] = useState(false);
 
   useEffect(() => {
     checkWebXRSupport().then((status) => {
@@ -70,7 +77,7 @@ export const MarkerlessARScene: React.FC<MarkerlessARSceneProps> = ({
           break;
         case 'failed':
           setArState('failed');
-          setArError('AR session could not start. Confirm that Google Play Services for AR is installed and camera access is allowed.');
+          setArError(AR_COPY.surface.error);
           break;
       }
     };
@@ -129,13 +136,20 @@ export const MarkerlessARScene: React.FC<MarkerlessARSceneProps> = ({
 
     try {
       if (!viewer.canActivateAR) {
-        throw new Error('AR is not ready yet. Wait for the 3D model to finish loading, then try again.');
+        throw new Error(AR_COPY.surface.notReady);
       }
       await viewer.activateAR();
     } catch (error) {
       setArState('failed');
-      setArError(error instanceof Error ? error.message : 'AR session could not start.');
+      setArError(error instanceof Error && error.message === AR_COPY.surface.notReady
+        ? error.message
+        : AR_COPY.surface.error);
     }
+  };
+
+  const handleDoubleTap = (event: React.MouseEvent<HTMLElement>) => {
+    event.preventDefault();
+    setIsAutoRotating(current => !current);
   };
 
   // All models are normalized to an approximately 12 cm maximum dimension.
@@ -156,7 +170,11 @@ export const MarkerlessARScene: React.FC<MarkerlessARSceneProps> = ({
           scale={`${normalizedScale} ${normalizedScale} ${normalizedScale}`}
           xr-environment
           camera-controls
+          auto-rotate={isAutoRotating}
+          auto-rotate-delay="1000"
+          rotation-per-second="18deg"
           touch-action="pan-y"
+          onDoubleClick={handleDoubleTap}
           shadow-intensity="1.4"
           shadow-softness="0.6"
           exposure="1.2"
@@ -169,296 +187,338 @@ export const MarkerlessARScene: React.FC<MarkerlessARSceneProps> = ({
         </model-viewer>
       </div>
 
-      {/* This visible button preserves the required user gesture for WebXR. */}
-      {xrStatus.isSupported && arState !== 'active' && (
-        <div style={{
-          position: 'absolute',
-          top: '76px',
-          left: '50%',
-          transform: 'translateX(-50%)',
-          display: 'flex',
-          zIndex: 95,
-        }}>
+      {/* Top Navigation HUD */}
+      <header className="ar-hud-top" role="banner">
+        {/* Left Side: Back + Reset/Start Over Button */}
+        <div className="ar-hud-left">
           <button
-            onClick={launchAR}
-            disabled={arState === 'starting'}
-            className="btn-primary"
-            style={{
-              padding: '12px 22px',
-              fontSize: '14px',
-              whiteSpace: 'nowrap',
-              boxShadow: '0 8px 24px rgba(0, 102, 204, 0.35)',
-              opacity: arState === 'starting' ? 0.7 : 1,
-              cursor: arState === 'starting' ? 'wait' : 'pointer',
-            }}
+            onClick={onBack}
+            className="btn-icon"
+            title="Back"
+            aria-label="Back"
           >
-            <Sparkles size={16} />
-            <span>{arState === 'starting' ? 'Starting camera…' : 'Place on Real-World Surface'}</span>
+            <ArrowLeft size={18} color="var(--colors-ink)" />
+          </button>
+
+          <button
+            onClick={() => {
+              setIsPlaced(false);
+              onResetConfig();
+            }}
+            className="btn-icon"
+            title={AR_COPY.common.startOver}
+            aria-label={AR_COPY.common.startOver}
+          >
+            <RotateCcw size={18} color="var(--colors-ink)" />
           </button>
         </div>
+
+        {/* Center: Top State Showing Component */}
+        <div className="ar-hud-center">
+          <ARStateBadge
+            state={arState === 'active' ? 'detected' : 'calibrating'}
+            customMessage={
+              arError ? arError :
+              arState === 'active'
+                ? (isPlaced ? AR_COPY.surface.placed : AR_COPY.surface.searching)
+                : arState === 'starting'
+                  ? AR_COPY.surface.starting
+                  : xrStatus.isSupported
+                    ? AR_COPY.surface.ready
+                    : AR_COPY.surface.desktop
+            }
+          />
+        </div>
+
+        {/* Right Side: Help and Controls Toggles */}
+        <div className="ar-hud-right">
+          <button
+            onClick={() => setShowHelp(!showHelp)}
+            className="btn-icon"
+            title={showHelp ? AR_COPY.common.closeHelp : AR_COPY.common.help}
+            aria-label={showHelp ? AR_COPY.common.closeHelp : AR_COPY.common.help}
+            style={{
+              backgroundColor: showHelp ? 'var(--colors-ink)' : 'var(--colors-canvas)',
+              color: showHelp ? '#ffffff' : 'var(--colors-ink)',
+            }}
+          >
+            <HelpCircle size={18} />
+          </button>
+
+          {!showControls && (
+            <button
+              onClick={() => setShowControls(true)}
+              className="btn-secondary"
+              title={AR_COPY.common.showControls}
+              aria-label={AR_COPY.common.showControls}
+              style={{ padding: '0 14px', minHeight: '44px', fontSize: '13px' }}
+            >
+              <Sliders size={14} />
+              <span>Controls</span>
+            </button>
+          )}
+        </div>
+      </header>
+
+      {/* User Guideline Model on the Left Side */}
+      {showHelp && (
+        <ARHelpPanel
+          mode="surface"
+          placement="left"
+          onClose={() => setShowHelp(false)}
+        />
       )}
 
-      {/* Top Navigation HUD */}
-      <div style={{
-        position: 'absolute',
-        top: '16px',
-        left: '16px',
-        right: '16px',
-        zIndex: 100,
-        display: 'flex',
-        justifyContent: 'space-between',
-        alignItems: 'center',
-      }}>
-        <button
-          onClick={onBack}
-          className="btn-icon"
-          title="Back"
-        >
-          <ArrowLeft size={18} color="var(--colors-ink)" />
-        </button>
-
-        <ARStateBadge
-          state={arState === 'active' ? 'detected' : 'calibrating'}
-          customMessage={
-            arState === 'active'
-              ? (isPlaced ? 'Object placed on surface' : 'Move phone to find a surface')
-              : arState === 'starting'
-                ? 'Starting WebXR camera…'
-                : xrStatus.isSupported
-                  ? 'Ready to start WebXR surface tracking'
-                  : 'Interactive 3D Studio Active'
-          }
-        />
-
-        <button
-          onClick={onResetConfig}
-          className="btn-icon"
-          title="Reset to Defaults"
-        >
-          <RotateCcw size={18} color="var(--colors-ink)" />
-        </button>
-      </div>
-
-      {/* WebXR Notice Banner for Desktop */}
+      {/* WebXR Notice Banner for Non-Supported Desktop */}
       {!xrStatus.isSupported && (
         <div style={{
           position: 'absolute',
-          top: '72px',
+          bottom: '16px',
           left: '16px',
-          right: '16px',
           zIndex: 90,
           backgroundColor: 'rgba(255, 255, 255, 0.9)',
           backdropFilter: 'blur(20px)',
-          borderRadius: 'var(--rounded-md)',
+          WebkitBackdropFilter: 'blur(20px)',
           border: '1px solid var(--colors-hairline)',
           boxShadow: '0 4px 16px rgba(0,0,0,0.08)',
-          padding: '10px 16px',
+          padding: '10px 14px',
           display: 'flex',
           alignItems: 'center',
           gap: '10px',
+          maxWidth: '360px',
         }}>
           <Smartphone size={18} color="var(--colors-primary)" />
-          <div style={{ fontSize: '13px', color: 'var(--colors-ink)' }}>
-            <strong>Desktop Preview:</strong> Full 3D rotation & customization active. For camera plane placement, open on a <strong>WebXR-capable smartphone</strong>.
+          <div style={{ fontSize: '12px', color: 'var(--colors-ink)', lineHeight: 1.4 }}>
+            <strong>{AR_COPY.surface.desktop}</strong>
           </div>
         </div>
       )}
 
-      {arError && (
-        <div style={{
-          position: 'absolute',
-          top: '72px',
-          left: '16px',
-          right: '16px',
-          zIndex: 90,
-          padding: '10px 16px',
-          borderRadius: 'var(--rounded-md)',
-          backgroundColor: 'rgba(255, 244, 244, 0.95)',
-          border: '1px solid rgba(220, 38, 38, 0.25)',
-          color: 'var(--colors-ink)',
-          fontSize: '13px',
-        }}>
-          {arError}
-        </div>
-      )}
+      {/* Right-Side Operator Window */}
+      {showControls && (
+        <aside
+          className="ar-operator-window"
+          role="region"
+          aria-label="AR Operator Controls"
+        >
+          {/* Header */}
+          <div className="ar-operator-header">
+            <div className="ar-operator-title">
+              <Sliders size={14} color="var(--colors-primary)" />
+              <span>Controls</span>
+              <span style={{ fontSize: '12px', fontWeight: 600, color: 'var(--colors-primary)', marginLeft: '6px' }}>
+                ${watch.price}
+              </span>
+            </div>
+            <button
+              onClick={() => setShowControls(false)}
+              className="btn-icon"
+              title={AR_COPY.common.hideControls}
+              aria-label={AR_COPY.common.hideControls}
+              style={{ width: '28px', height: '28px', border: 'none', background: 'transparent' }}
+            >
+              <X size={15} />
+            </button>
+          </div>
 
-      {/* Bottom Option B Interactive HUD Configurator */}
-      <div style={{
-        position: 'absolute',
-        bottom: '16px',
-        left: '16px',
-        right: '16px',
-        zIndex: 100,
-        display: 'flex',
-        flexDirection: 'column',
-        gap: '8px',
-      }}>
-        <div style={{
-          padding: '16px 20px',
-          backgroundColor: 'rgba(255, 255, 255, 0.92)',
-          backdropFilter: 'blur(20px)',
-          WebkitBackdropFilter: 'blur(20px)',
-          borderRadius: 'var(--rounded-lg)',
-          border: '1px solid var(--colors-hairline)',
-          boxShadow: '0 8px 32px rgba(0,0,0,0.12)',
-        }}>
-          {/* Step Selector Ribbon */}
-          <div style={{
-            display: 'flex',
-            alignItems: 'center',
-            justifyContent: 'space-between',
-            borderBottom: '1px solid var(--colors-hairline)',
-            paddingBottom: '10px',
-            marginBottom: '14px',
-          }}>
-            <div style={{ display: 'flex', gap: '8px' }}>
+          {/* Body */}
+          <div className="ar-operator-body">
+            {/* Launch AR Button when supported */}
+            {xrStatus.isSupported && arState !== 'active' && (
+              <button
+                onClick={launchAR}
+                disabled={arState === 'starting'}
+                className="btn-primary"
+                style={{
+                  width: '100%',
+                  padding: '10px 16px',
+                  fontSize: '13px',
+                  boxShadow: '0 4px 16px rgba(15, 98, 254, 0.3)',
+                  opacity: arState === 'starting' ? 0.7 : 1,
+                  cursor: arState === 'starting' ? 'wait' : 'pointer',
+                }}
+              >
+                <Sparkles size={15} />
+                <span>{arState === 'starting' ? AR_COPY.surface.starting : AR_COPY.surface.button}</span>
+              </button>
+            )}
+
+            {/* Step Selector Ribbon */}
+            <div className="ar-operator-tabs">
               {[
                 { step: 1, label: 'Model', icon: Layers },
                 { step: 2, label: 'Materials', icon: Palette },
                 { step: 3, label: 'Transform', icon: Sliders },
               ].map(s => {
                 const active = activeStep === s.step;
+                const Icon = s.icon;
                 return (
                   <button
                     key={s.step}
                     onClick={() => setActiveStep(s.step)}
-                    style={{
-                      padding: '6px 14px',
-                      borderRadius: 'var(--rounded-pill)',
-                      backgroundColor: active ? 'var(--colors-ink)' : 'transparent',
-                      color: active ? '#ffffff' : 'var(--colors-body-muted)',
-                      border: 'none',
-                      fontSize: '13px',
-                      fontWeight: active ? 600 : 400,
-                      cursor: 'pointer',
-                      transition: 'all 0.15s ease',
-                    }}
+                    className={`ar-tab-pill ${active ? 'active' : ''}`}
+                    type="button"
                   >
+                    <Icon size={12} />
                     <span>{s.label}</span>
                   </button>
                 );
               })}
             </div>
 
-            <div style={{ fontSize: '15px', fontWeight: 600, color: 'var(--colors-ink)' }}>
-              ${watch.price}
-            </div>
+            {/* Step 1: Model Switcher */}
+            {activeStep === 1 && (
+              <div>
+                <div className="ar-operator-section-label">Select Model</div>
+                <div className="ar-model-list">
+                  {watches.map(w => {
+                    const isSelected = w.id === watch.id;
+                    return (
+                      <button
+                        key={w.id}
+                        onClick={() => {
+                          onSelectWatch(w);
+                          onUpdateConfig({
+                            watchId: w.id,
+                            strapColor: w.strapColors[0]?.hex || '#18181b',
+                            strapMaterial: w.strapColors[0]?.materialType || 'silicone',
+                            dialColor: w.dialColors[0]?.hex || '#00f0ff',
+                          });
+                        }}
+                        className={`ar-model-btn ${isSelected ? 'active' : ''}`}
+                        type="button"
+                      >
+                        <div>
+                          <div style={{ fontWeight: isSelected ? 600 : 400 }}>{w.name}</div>
+                          <div style={{ fontSize: '11px', opacity: 0.65 }}>{w.brand}</div>
+                        </div>
+                        {isSelected && (
+                          <span style={{
+                            width: '6px',
+                            height: '6px',
+                            borderRadius: '50%',
+                            backgroundColor: 'var(--colors-primary)',
+                            display: 'inline-block'
+                          }} />
+                        )}
+                      </button>
+                    );
+                  })}
+                </div>
+              </div>
+            )}
+
+            {/* Step 2: Live Material Color Customization */}
+            {activeStep === 2 && (
+              <div style={{ display: 'flex', flexDirection: 'column', gap: '14px' }}>
+                <div>
+                  <div className="ar-operator-section-label">Band Finish</div>
+                  <div style={{ display: 'flex', gap: '8px', flexWrap: 'wrap' }}>
+                    {watch.strapColors.map(color => (
+                      <button
+                        key={color.name}
+                        onClick={() => onUpdateConfig({
+                          strapColor: color.hex,
+                          strapMaterial: color.materialType || 'silicone'
+                        })}
+                        className={`swatch-circle ${config.strapColor.toLowerCase() === color.hex.toLowerCase() ? 'active' : ''}`}
+                        style={{ backgroundColor: color.hex, width: '26px', height: '26px' }}
+                        title={color.name}
+                        aria-label={`Select ${color.name} band`}
+                      />
+                    ))}
+                  </div>
+                </div>
+
+                <div>
+                  <div className="ar-operator-section-label">Dial Accent</div>
+                  <div style={{ display: 'flex', gap: '8px', flexWrap: 'wrap' }}>
+                    {watch.dialColors.map(dial => (
+                      <button
+                        key={dial.name}
+                        onClick={() => onUpdateConfig({ dialColor: dial.hex })}
+                        className={`swatch-circle ${config.dialColor.toLowerCase() === dial.hex.toLowerCase() ? 'active' : ''}`}
+                        style={{ backgroundColor: dial.hex, width: '26px', height: '26px' }}
+                        title={dial.name}
+                        aria-label={`Select ${dial.name} dial`}
+                      />
+                    ))}
+                  </div>
+                </div>
+              </div>
+            )}
+
+            {/* Step 3: Scale & Rotation Gestures */}
+            {activeStep === 3 && (
+              <div style={{ display: 'flex', flexDirection: 'column', gap: '14px' }}>
+                <div>
+                  <div className="ar-operator-section-label">Scale</div>
+                  <div className="ar-scale-container">
+                    <button
+                      type="button"
+                      className="ar-scale-btn"
+                      title="Decrease scale"
+                      aria-label="Decrease scale"
+                      onClick={() => onUpdateConfig({ scale: Math.max(0.5, parseFloat((config.scale - 0.05).toFixed(2))) })}
+                    >
+                      -
+                    </button>
+                    <input
+                      type="range"
+                      min="0.5"
+                      max="2.0"
+                      step="0.05"
+                      value={config.scale}
+                      onChange={(e) => onUpdateConfig({ scale: parseFloat(e.target.value) })}
+                      className="ar-scale-slider"
+                      aria-label="Adjust scale"
+                    />
+                    <button
+                      type="button"
+                      className="ar-scale-btn"
+                      title="Increase scale"
+                      aria-label="Increase scale"
+                      onClick={() => onUpdateConfig({ scale: Math.min(2.0, parseFloat((config.scale + 0.05).toFixed(2))) })}
+                    >
+                      +
+                    </button>
+                    <span className="ar-scale-val">
+                      {config.scale.toFixed(2)}x
+                    </span>
+                  </div>
+                </div>
+
+                <div>
+                  <div className="ar-operator-section-label">Rotation</div>
+                  <div className="ar-scale-container">
+                    <input
+                      type="range"
+                      min="0"
+                      max={Math.PI * 2}
+                      step="0.05"
+                      value={config.rotationY}
+                      onChange={(e) => onUpdateConfig({ rotationY: parseFloat(e.target.value) })}
+                      className="ar-scale-slider"
+                      style={{ flex: 1, width: 'auto', maxWidth: 'none' }}
+                      aria-label="Adjust rotation"
+                    />
+                    <span className="ar-scale-val">
+                      {Math.round((config.rotationY * 180) / Math.PI)}°
+                    </span>
+                  </div>
+                </div>
+              </div>
+            )}
           </div>
 
-          {/* Step 1: Model Switcher */}
-          {activeStep === 1 && (
-            <div style={{ display: 'flex', gap: '8px', overflowX: 'auto', paddingBottom: '4px' }}>
-              {watches.map(w => {
-                const isSelected = w.id === watch.id;
-                return (
-                  <button
-                    key={w.id}
-                    onClick={() => {
-                      onSelectWatch(w);
-                      onUpdateConfig({
-                        watchId: w.id,
-                        strapColor: w.strapColors[0]?.hex || '#18181b',
-                        strapMaterial: w.strapColors[0]?.materialType || 'silicone',
-                        dialColor: w.dialColors[0]?.hex || '#00f0ff',
-                      });
-                    }}
-                    style={{
-                      flexShrink: 0,
-                      padding: '8px 14px',
-                      borderRadius: 'var(--rounded-md)',
-                      backgroundColor: isSelected ? 'var(--colors-canvas-parchment)' : '#ffffff',
-                      border: isSelected ? '2px solid var(--colors-primary)' : '1px solid var(--colors-hairline)',
-                      color: 'var(--colors-ink)',
-                      cursor: 'pointer',
-                      textAlign: 'left',
-                    }}
-                  >
-                    <div style={{ fontSize: '13px', fontWeight: 600 }}>{w.name}</div>
-                    <div style={{ fontSize: '11px', color: 'var(--colors-body-muted)' }}>{w.brand}</div>
-                  </button>
-                );
-              })}
-            </div>
-          )}
-
-          {/* Step 2: Live Material Color Customization */}
-          {activeStep === 2 && (
-            <div style={{ display: 'flex', flexDirection: 'column', gap: '12px' }}>
-              <div>
-                <div style={{ fontSize: '12px', color: 'var(--colors-body-muted)', marginBottom: '6px' }}>
-                  Band Finish:
-                </div>
-                <div style={{ display: 'flex', gap: '8px', flexWrap: 'wrap' }}>
-                  {watch.strapColors.map(color => (
-                    <button
-                      key={color.name}
-                      onClick={() => onUpdateConfig({
-                        strapColor: color.hex,
-                        strapMaterial: color.materialType || 'silicone'
-                      })}
-                      className={`swatch-circle ${config.strapColor.toLowerCase() === color.hex.toLowerCase() ? 'active' : ''}`}
-                      style={{ backgroundColor: color.hex, width: '26px', height: '26px' }}
-                      title={color.name}
-                    />
-                  ))}
-                </div>
-              </div>
-
-              <div>
-                <div style={{ fontSize: '12px', color: 'var(--colors-body-muted)', marginBottom: '6px' }}>
-                  Dial Accent:
-                </div>
-                <div style={{ display: 'flex', gap: '8px', flexWrap: 'wrap' }}>
-                  {watch.dialColors.map(dial => (
-                    <button
-                      key={dial.name}
-                      onClick={() => onUpdateConfig({ dialColor: dial.hex })}
-                      className={`swatch-circle ${config.dialColor.toLowerCase() === dial.hex.toLowerCase() ? 'active' : ''}`}
-                      style={{ backgroundColor: dial.hex, width: '26px', height: '26px' }}
-                      title={dial.name}
-                    />
-                  ))}
-                </div>
-              </div>
-            </div>
-          )}
-
-          {/* Step 3: Scale & Rotation Gestures */}
-          {activeStep === 3 && (
-            <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '16px' }}>
-              <div>
-                <div style={{ display: 'flex', justifyContent: 'space-between', fontSize: '12px', marginBottom: '4px' }}>
-                  <span style={{ color: 'var(--colors-body-muted)' }}>Scale:</span>
-                  <span style={{ fontWeight: 600 }}>{config.scale.toFixed(2)}x</span>
-                </div>
-                <input
-                  type="range"
-                  min="0.5"
-                  max="2.0"
-                  step="0.05"
-                  value={config.scale}
-                  onChange={(e) => onUpdateConfig({ scale: parseFloat(e.target.value) })}
-                />
-              </div>
-
-              <div>
-                <div style={{ display: 'flex', justifyContent: 'space-between', fontSize: '12px', marginBottom: '4px' }}>
-                  <span style={{ color: 'var(--colors-body-muted)' }}>Rotation:</span>
-                  <span style={{ fontWeight: 600 }}>{Math.round((config.rotationY * 180) / Math.PI)}°</span>
-                </div>
-                <input
-                  type="range"
-                  min="0"
-                  max={Math.PI * 2}
-                  step="0.05"
-                  value={config.rotationY}
-                  onChange={(e) => onUpdateConfig({ rotationY: parseFloat(e.target.value) })}
-                />
-              </div>
-            </div>
-          )}
-        </div>
-      </div>
+          {/* Footer Status Hint */}
+          <div className="ar-operator-footer">
+            {arState === 'active'
+              ? (isPlaced ? AR_COPY.surface.placed : AR_COPY.surface.searching)
+              : 'Pinch to resize · drag to look around'}
+          </div>
+        </aside>
+      )}
     </div>
   );
 };

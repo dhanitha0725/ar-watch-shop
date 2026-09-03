@@ -96,7 +96,7 @@ export const ComparePage: React.FC<ComparePageProps> = ({
                 </select>
               </div>
 
-              <div style={{ border: '1px solid var(--colors-hairline)', backgroundColor: 'var(--colors-surface-1)', marginBottom: '16px' }}>
+              <div style={{ border: 'none', backgroundColor: 'var(--colors-surface-1)', marginBottom: '16px' }}>
                 <Interactive3DViewer
                   watch={watch1}
                   selectedStrapColor={watch1.strapColors[0]}
@@ -154,7 +154,7 @@ export const ComparePage: React.FC<ComparePageProps> = ({
                 </select>
               </div>
 
-              <div style={{ border: '1px solid var(--colors-hairline)', backgroundColor: 'var(--colors-surface-1)', marginBottom: '16px' }}>
+              <div style={{ border: 'none', backgroundColor: 'var(--colors-surface-1)', marginBottom: '16px' }}>
                 <Interactive3DViewer
                   watch={watch2}
                   selectedStrapColor={watch2.strapColors[0]}

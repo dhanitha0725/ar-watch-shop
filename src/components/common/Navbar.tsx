@@ -35,46 +35,6 @@ export const Navbar: React.FC<NavbarProps> = ({
       backgroundColor: 'var(--colors-canvas)',
       borderBottom: '1px solid var(--colors-hairline)',
     }}>
-      {/* Carbon Utility Bar (32px) */}
-      <div style={{
-        height: '32px',
-        backgroundColor: 'var(--colors-surface-1)',
-        borderBottom: '1px solid var(--colors-hairline)',
-        display: 'flex',
-        alignItems: 'center',
-        justifyContent: 'space-between',
-        padding: '0 24px',
-        fontSize: '12px',
-        color: 'var(--colors-ink-muted)',
-      }} className="utility-bar">
-        <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
-          <Terminal size={12} color="var(--colors-primary)" />
-          <span style={{ fontFamily: 'var(--font-mono)', fontSize: '11px', letterSpacing: '0.2px' }}>
-            CARBON DESIGN SYSTEM // WEBAR RUNTIME 2.4
-          </span>
-        </div>
-
-        <div style={{ display: 'flex', alignItems: 'center', gap: '16px' }}>
-          <button
-            onClick={() => onNavigate('docs')}
-            style={{
-              background: 'none',
-              border: 'none',
-              color: 'var(--colors-ink-muted)',
-              fontSize: '12px',
-              cursor: 'pointer',
-              display: 'flex',
-              alignItems: 'center',
-              gap: '4px',
-            }}
-          >
-            <span>Verification Spec (T01–T09)</span>
-            <ExternalLink size={10} />
-          </button>
-          <span style={{ color: 'var(--colors-hairline)' }}>|</span>
-          <span>Status: <strong>PBR Ready</strong></span>
-        </div>
-      </div>
 
       {/* Main Carbon Top Navigation Bar (48px) */}
       <div style={{
@@ -176,7 +136,7 @@ export const Navbar: React.FC<NavbarProps> = ({
             title="AR Marker"
           >
             <QrCode size={13} />
-            <span style={{ display: 'none' }} className="marker-btn-text">Target Card</span>
+            <span style={{ display: 'none' }} className="marker-btn-text">Watch Card</span>
           </button>
 
           <button
@@ -253,7 +213,7 @@ export const Navbar: React.FC<NavbarProps> = ({
               style={{ width: '100%', justifyContent: 'center' }}
             >
               <QrCode size={15} />
-              <span>Printable Target Card</span>
+              <span>Show Watch Card</span>
             </button>
           </div>
         </div>

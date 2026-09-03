@@ -85,12 +85,12 @@
     <!-- Sleek Initialization Overlay -->
     <div id="loader-overlay">
       <div class="spinner"></div>
-      <div style="font-size: 14px; font-weight: 500; letter-spacing: -0.01em;">Initializing MindAR Engine...</div>
-      <div style="font-size: 12px; opacity: 0.7; margin-top: 4px;">Loading camera and neural tracking WASM</div>
+      <div style="font-size: 14px; font-weight: 500; letter-spacing: -0.01em;">Opening your camera…</div>
+      <div style="font-size: 12px; opacity: 0.7; margin-top: 4px;">Getting things ready for the watch card</div>
     </div>
 
     <a-scene
-      mindar-image="imageTargetSrc: /markers/marker.mind; autoStart: true; uiLoading: no; uiScanning: no; filterMinCF: 0.0001; filterBeta: 0.001;"
+        mindar-image="imageTargetSrc: /markers/marker.mind; autoStart: true; uiLoading: no; uiScanning: no; filterMinCF: 0.0001; filterBeta: 0.001;"
       color-space="sRGB"
       renderer="colorManagement: true; physicallyCorrectLights: true; toneMapping: ACESFilmic; exposure: 1.05; antialias: true; alpha: true;"
       vr-mode-ui="enabled: false"
@@ -126,9 +126,13 @@
       let baseRotation = { x: 0, y: 0, z: 0 };
       let sessionRotation = { x: 0, y: 0, z: 0 };
       let currentEnvTexture = null;
+      let autoRotateEnabled = false;
+      let autoRotateFrameId = null;
+      let lastAutoRotateTime = 0;
 
       const DRAG_ROTATION_SENSITIVITY = 0.5;
       const MAX_PITCH = 80;
+      const AUTO_ROTATION_SPEED = 18;
 
       // These values are derived from each GLB's exported bounding box. Keeping
       // the calibration static avoids the mobile A-Frame bounding-box bug that
@@ -271,6 +275,46 @@
         });
       }
 
+      function setAutoRotate(enabled) {
+        autoRotateEnabled = Boolean(enabled);
+        if (!autoRotateEnabled) {
+          if (autoRotateFrameId !== null) {
+            cancelAnimationFrame(autoRotateFrameId);
+            autoRotateFrameId = null;
+          }
+          lastAutoRotateTime = 0;
+          return;
+        }
+
+        if (autoRotateFrameId === null) {
+          lastAutoRotateTime = 0;
+          autoRotateFrameId = requestAnimationFrame(autoRotateModel);
+        }
+      }
+
+      function autoRotateModel(timestamp) {
+        if (!autoRotateEnabled) {
+          autoRotateFrameId = null;
+          return;
+        }
+
+        if (lastAutoRotateTime === 0) lastAutoRotateTime = timestamp;
+        const elapsedSeconds = Math.min((timestamp - lastAutoRotateTime) / 1000, 0.1);
+        lastAutoRotateTime = timestamp;
+
+        if (modelReady && watchModel) {
+          sessionRotation.y += elapsedSeconds * AUTO_ROTATION_SPEED;
+          applySessionRotation();
+        }
+
+        autoRotateFrameId = requestAnimationFrame(autoRotateModel);
+      }
+
+      function toggleAutoRotate() {
+        setAutoRotate(!autoRotateEnabled);
+        notifyParent('autoRotateChanged', { enabled: autoRotateEnabled });
+      }
+
       function enableDragRotation() {
         const canvas = sceneEl.canvas;
         if (!canvas) return;
@@ -278,6 +322,12 @@
         let activePointerId = null;
         let lastX = 0;
         let lastY = 0;
+        let tapStartTime = 0;
+        let tapStartX = 0;
+        let tapStartY = 0;
+        let lastTapTime = 0;
+        let lastTapX = 0;
+        let lastTapY = 0;
 
         const stopDragging = (event) => {
           if (activePointerId !== event.pointerId) return;
@@ -287,6 +337,23 @@
           }
           activePointerId = null;
           canvas.classList.remove('is-rotating');
+
+          const tapDuration = performance.now() - tapStartTime;
+          const tapDistance = Math.hypot(event.clientX - tapStartX, event.clientY - tapStartY);
+          if (tapStartTime && tapDuration < 300 && tapDistance < 12) {
+            const timeSinceLastTap = performance.now() - lastTapTime;
+            const distanceFromLastTap = Math.hypot(event.clientX - lastTapX, event.clientY - lastTapY);
+            if (timeSinceLastTap < 350 && distanceFromLastTap < 30) {
+              lastTapTime = 0;
+              toggleAutoRotate();
+              event.preventDefault();
+            } else {
+              lastTapTime = performance.now();
+              lastTapX = event.clientX;
+              lastTapY = event.clientY;
+            }
+          }
+          tapStartTime = 0;
         };
 
         canvas.addEventListener('pointerdown', (event) => {
@@ -295,6 +362,9 @@
           activePointerId = event.pointerId;
           lastX = event.clientX;
           lastY = event.clientY;
+          tapStartTime = performance.now();
+          tapStartX = event.clientX;
+          tapStartY = event.clientY;
           canvas.setPointerCapture(event.pointerId);
           canvas.classList.add('is-rotating');
           event.preventDefault();
@@ -307,6 +377,10 @@
           const deltaY = event.clientY - lastY;
           lastX = event.clientX;
           lastY = event.clientY;
+
+          if (Math.hypot(event.clientX - tapStartX, event.clientY - tapStartY) >= 12) {
+            tapStartTime = 0;
+          }
 
           sessionRotation.y += deltaX * DRAG_ROTATION_SENSITIVITY;
           sessionRotation.x = Math.max(
@@ -466,7 +540,7 @@
         const target = event.data.target;
         if (target !== 'mindar-marker-frame') return;
 
-        const { action, modelUrl, scale, rotation } = event.data;
+        const { action, modelUrl, scale, rotation, enabled } = event.data;
 
         if (action === 'updateWatch') {
           applyWatchAttributes(modelUrl, scale, rotation);
@@ -474,6 +548,8 @@
           if (scale && watchModel) {
             watchModel.setAttribute('scale', scale);
           }
+        } else if (action === 'updateAutoRotate') {
+          setAutoRotate(enabled);
         }
       });
     </script>

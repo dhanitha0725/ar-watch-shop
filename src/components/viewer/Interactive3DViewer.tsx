@@ -175,7 +175,7 @@ export const Interactive3DViewer: React.FC<Interactive3DViewerProps> = ({
       height: height,
       backgroundColor: 'var(--colors-canvas-parchment)',
       borderRadius: 'var(--rounded-lg)',
-      border: '1px solid var(--colors-hairline)',
+      border: 'none',
       overflow: 'hidden',
     }}>
       {/* 3D Loading State */}
