@@ -777,6 +777,43 @@ a-scene {
   background-color: var(--colors-surface-2);
 }
 
+/* Operator Tab Switcher */
+.ar-operator-tabs {
+  display: flex;
+  gap: 6px;
+  border-bottom: 1px solid var(--colors-hairline);
+  padding-bottom: 10px;
+  margin-bottom: 12px;
+}
+
+.ar-tab-pill {
+  padding: 5px 12px;
+  border-radius: var(--rounded-pill);
+  border: none;
+  font-size: 12px;
+  cursor: pointer;
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+  transition: all 0.15s ease;
+}
+
+.ar-tab-pill.active {
+  background-color: var(--colors-ink);
+  color: #ffffff;
+  font-weight: 600;
+}
+
+.ar-tab-pill:not(.active) {
+  background-color: transparent;
+  color: var(--colors-body-muted);
+}
+
+.ar-tab-pill:not(.active):hover {
+  background-color: var(--colors-surface-1);
+  color: var(--colors-ink);
+}
+
 /* Tip / footer */
 .ar-operator-footer {
   padding: 10px 14px;
