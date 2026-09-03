@@ -27,6 +27,7 @@ export const MarkerARScene: React.FC<MarkerARSceneProps> = ({
   const [showControls, setShowControls] = useState(true);
   const [showHelp, setShowHelp] = useState(true);
   const [cameraError, setCameraError] = useState<string | null>(null);
+  const [isAutoRotating, setIsAutoRotating] = useState(false);
 
   const iframeRef = useRef<HTMLIFrameElement>(null);
 
@@ -52,6 +53,8 @@ export const MarkerARScene: React.FC<MarkerARSceneProps> = ({
           setTrackingState('detected');
         } else if (event.data.type === 'markerLost') {
           setTrackingState('lost');
+        } else if (event.data.type === 'autoRotateChanged') {
+          setIsAutoRotating(Boolean(event.data.data?.enabled));
         }
       }
     };
@@ -87,6 +90,14 @@ export const MarkerARScene: React.FC<MarkerARSceneProps> = ({
       }, '*');
     }
   }, [computedScale]);
+
+  useEffect(() => {
+    iframeRef.current?.contentWindow?.postMessage({
+      target: 'mindar-marker-frame',
+      action: 'updateAutoRotate',
+      enabled: isAutoRotating,
+    }, '*');
+  }, [isAutoRotating]);
 
   useEffect(() => {
     setModelState('loading');
@@ -188,6 +199,11 @@ export const MarkerARScene: React.FC<MarkerARSceneProps> = ({
             modelUrl: watch.modelUrl,
             scale: computedScale,
             rotation: watch.markerRotation || '0 0 0',
+          }, '*');
+          iframeRef.current?.contentWindow?.postMessage({
+            target: 'mindar-marker-frame',
+            action: 'updateAutoRotate',
+            enabled: isAutoRotating,
           }, '*');
         }}
         allow="camera; microphone; display-capture"

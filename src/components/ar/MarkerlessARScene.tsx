@@ -149,7 +149,7 @@ export const MarkerlessARScene: React.FC<MarkerlessARSceneProps> = ({
 
   const handleDoubleTap = (event: React.MouseEvent<HTMLElement>) => {
     event.preventDefault();
-    setIsAutoRotating(true);
+    setIsAutoRotating(current => !current);
   };
 
   // All models are normalized to an approximately 12 cm maximum dimension.
