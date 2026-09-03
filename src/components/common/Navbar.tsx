@@ -136,7 +136,7 @@ export const Navbar: React.FC<NavbarProps> = ({
             title="AR Marker"
           >
             <QrCode size={13} />
-            <span style={{ display: 'none' }} className="marker-btn-text">Target Card</span>
+            <span style={{ display: 'none' }} className="marker-btn-text">Watch Card</span>
           </button>
 
           <button
