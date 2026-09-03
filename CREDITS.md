@@ -48,9 +48,15 @@ This project, **WebAR Watch Store: Interactive 3D Product Visualization and AR P
 - **License**: Apache License 2.0
 - **URL**: [https://modelviewer.dev](https://modelviewer.dev)
 
-### 3. MindAR & A-Frame
+### 3. MediaPipe Tasks Vision (`@mediapipe/tasks-vision`)
+- **Author**: Google LLC
+- **License**: Apache License 2.0
+- **URL**: [https://developers.google.com/mediapipe](https://developers.google.com/mediapipe)
+
+### 4. MindAR & A-Frame
 - **Author**: HiuKim & A-Frame Community
 - **License**: MIT License
+- **URL**: [https://hiukim.github.io/mind-ar-js-doc/](https://hiukim.github.io/mind-ar-js-doc/)
 - **URL**: [https://hiukim.github.io/mind-ar-js-doc/](https://hiukim.github.io/mind-ar-js-doc/)
 
 ### 4. React & Vite
@@ -65,7 +71,7 @@ This project, **WebAR Watch Store: Interactive 3D Product Visualization and AR P
 
 ## Statement of Originality & Technical Contribution
 Original 3D modeling from scratch is explicitly not required by the project brief. The primary technical contributions of this project encompass:
-1. Multi-modal WebAR client architecture unifying WebXR surface placement and MindAR natural feature target tracking in a single responsive React application.
+1. Multi-modal WebAR client architecture unifying WebXR, MindAR Natural Feature Tracking, and MediaPipe Vision in a single responsive React application.
 2. Option B Complex Interaction state machine managing real-time PBR material mutation, transformation constraints, and resets.
 3. High-fidelity in-memory Three.js mesh traversal dynamically updating PBR properties without network reloading.
 4. Comprehensive 9-point test matrix and device fallback safeguards.

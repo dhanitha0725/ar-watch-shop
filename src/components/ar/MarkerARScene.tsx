@@ -31,7 +31,7 @@ export const MarkerARScene: React.FC<MarkerARSceneProps> = ({
 
   useEffect(() => {
     const handleMessage = (event: MessageEvent) => {
-      if (event.data?.source === 'mindar-marker-frame' || event.data?.source === 'arjs-marker-frame') {
+      if (event.data?.source === 'mindar-marker-frame') {
         if (event.data.type === 'modelLoading') {
           setModelState('loading');
           setModelError(null);
@@ -55,7 +55,8 @@ export const MarkerARScene: React.FC<MarkerARSceneProps> = ({
     };
   }, []);
 
-  // Update iframe model/scale when watch or scale multiplier changes
+  // A model change resets the iframe's session-only rotation to the watch's
+  // configured base rotation.
   useEffect(() => {
     if (iframeRef.current?.contentWindow) {
       iframeRef.current.contentWindow.postMessage({
@@ -66,7 +67,19 @@ export const MarkerARScene: React.FC<MarkerARSceneProps> = ({
         rotation: watch.markerRotation || '0 0 0',
       }, '*');
     }
-  }, [watch, computedScale]);
+  }, [watch]);
+
+  // Keep scale updates separate so they do not reset a rotation made by
+  // dragging the model inside the AR iframe.
+  useEffect(() => {
+    if (iframeRef.current?.contentWindow) {
+      iframeRef.current.contentWindow.postMessage({
+        target: 'mindar-marker-frame',
+        action: 'updateScale',
+        scale: computedScale,
+      }, '*');
+    }
+  }, [computedScale]);
 
   useEffect(() => {
     setModelState('loading');
@@ -74,7 +87,7 @@ export const MarkerARScene: React.FC<MarkerARSceneProps> = ({
     setTrackingState('searching');
   }, [watch.modelUrl]);
 
-  const iframeSrc = `/ar-marker-frame.html?model=${encodeURIComponent(watch.modelUrl)}&scale=${encodeURIComponent(computedScale)}&rotation=${encodeURIComponent(watch.markerRotation || '0 0 0')}`;
+  const iframeSrc = '/ar-marker-frame.html';
 
   return (
     <div style={{ position: 'relative', width: '100vw', height: '100vh', backgroundColor: '#000', overflow: 'hidden' }}>
@@ -121,6 +134,15 @@ export const MarkerARScene: React.FC<MarkerARSceneProps> = ({
       <iframe
         ref={iframeRef}
         src={iframeSrc}
+        onLoad={() => {
+          iframeRef.current?.contentWindow?.postMessage({
+            target: 'mindar-marker-frame',
+            action: 'updateWatch',
+            modelUrl: watch.modelUrl,
+            scale: computedScale,
+            rotation: watch.markerRotation || '0 0 0',
+          }, '*');
+        }}
         allow="camera; microphone; display-capture"
         style={{
           width: '100%',
