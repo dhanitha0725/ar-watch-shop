@@ -39,8 +39,6 @@ export interface Watch {
   webARScale: number;
   markerScale: string; // e.g. "0.08 0.08 0.08"
   markerRotation?: string;
-  wristScaleFactor: number;
-  wristRotationOffset: [number, number, number];
 }
 
 export type ConfiguratorStep = 'select' | 'place' | 'customize' | 'manipulate' | 'complete';
@@ -60,7 +58,7 @@ export type TrackingState = 'searching' | 'detected' | 'lost' | 'calibrating' | 
 
 export interface TestMatrixItem {
   id: string;
-  category: 'Mandatory 3D' | 'Marker AR' | 'Markerless WebXR' | 'Option B Interaction' | 'Showcase Wrist AR' | 'System & UX';
+  category: 'Mandatory 3D' | 'Marker AR' | 'Markerless WebXR' | 'Option B Interaction' | 'System & UX';
   feature: string;
   expectedResult: string;
   status: 'Pass' | 'Pass (with fallback)' | 'In Progress';

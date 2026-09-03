@@ -2,14 +2,13 @@
 
 ## 1. Executive Summary & System Overview
 
-**WebAR Watch Store** is a client-side Augmented Reality (AR) and 3D e-commerce web application engineered with **React 18, TypeScript, Vite, Three.js, Google `<model-viewer>`, MindAR / A-Frame 1.5.0, and MediaPipe Tasks Vision ML**.
+**WebAR Watch Store** is a client-side Augmented Reality (AR) and 3D e-commerce web application engineered with **React 18, TypeScript, Vite, Three.js, Google `<model-viewer>`, and MindAR / A-Frame 1.5.0**.
 
 ### Core Problem Solved:
-Online watch shopping historically suffers from high return rates because 2D photography cannot communicate true physical scale, wrist curvature ergonomics, metallic material reflectivity, or real-world lighting interaction. WebAR Watch Store addresses this by providing three complementary immersive visualization modalities:
+Online watch shopping historically suffers from high return rates because 2D photography cannot communicate true physical scale, metallic material reflectivity, or real-world lighting interaction. WebAR Watch Store addresses this by providing three complementary immersive visualization modalities:
 1. **Interactive 3D Turntable:** 360° orbital inspection with PBR environment reflections, customizable strap/dial materials, and exploded/dimension views.
 2. **Marker & Image Target 6DOF AR:** Pinned rigid 3D tracking on physical cards, packaging, or screen targets via MindAR GPU/WASM Natural Feature Tracking (NFT).
 3. **Markerless WebXR Surface AR:** True 1:1 real-world surface placement on desks and floors using device SLAM and hit-testing (with desktop 3D ground-plane fallback).
-4. **Virtual Wrist Try-On (ML-Powered):** Real-time on-device machine learning hand tracking that detects 21 3D hand joints and anchors the watch dynamically to the user's wrist with exponential smoothing.
 
 ---
 
@@ -28,13 +27,10 @@ flowchart TD
             subgraph ARModes ["AR Tracking Engines"]
                 MindAR["Marker AR Sandbox (Iframe)<br/>MindAR 1.2.5 + A-Frame 1.5.0<br/>6DOF Natural Feature Tracking on .mind Targets"]
                 WebXR["Markerless WebXR AR<br/>WebXR Device API + Hit-Test<br/>(ARCore / Quick Look / Desktop Fallback)"]
-                MediaPipe["Wrist Try-On Vision ML<br/>@mediapipe/tasks-vision<br/>21 3D Joint Landmarks + EMA Filter"]
             end
         end
         
-        subgraph MathUtils ["Mathematics & Filter Pipeline"]
-            EMA["Vector3Smoother & ScalarSmoother<br/>(EMA Filter alpha = 0.22)"]
-            PoseEst["estimateWristPose()<br/>(Joints 0, 5, 9, 17 Vector Math)"]
+        subgraph MutatorPipeline ["Dynamic Material Pipeline"]
             MatMut["applyWatchMaterialCustomization()<br/>(Scene-Graph Traverser)"]
         end
     end
@@ -49,9 +45,7 @@ flowchart TD
     StateMgr --> ThreeCore
     StateMgr --> MindAR
     StateMgr --> WebXR
-    StateMgr --> MediaPipe
     
-    MediaPipe --> PoseEst --> EMA --> ThreeCore
     StateMgr --> MatMut --> ThreeCore
     
     GLB --> MV
@@ -69,10 +63,9 @@ flowchart TD
 | **Framework** | React + TypeScript | `^18.3.1` | Declarative component tree, lifecycle control, UI overlays |
 | **Build Tool** | Vite | `^5.4.21` | Hot module replacement, bundling, asset optimization |
 | **3D Rendering** | Three.js | `^0.183.0` | Custom scene graphs, lights, cameras, real-time material traversal |
-| **Product Viewer** | `@google/model-viewer` | `^3.5.0` | Standardized glTF 2.0 PBR rendering, auto-poster, AR launch bridge |
-| **Computer Vision** | `@mediapipe/tasks-vision` | `^0.10.14` | Client-side WebAssembly / WebGL ML hand landmark detection |
+| **Product Viewer** | `@google/model-viewer` | `^4.0.0` | Standardized glTF 2.0 PBR rendering, auto-poster, AR launch bridge |
 | **Marker / Image AR** | MindAR + A-Frame | `1.2.5` / `1.5.0` | Neural & GPU Natural Feature Tracking (NFT) on `.mind` image targets |
-| **Icons** | `lucide-react` | `^0.344.0` | Apple-style minimal functional vector iconography |
+| **Icons** | `lucide-react` | `^0.475.0` | Apple-style minimal functional vector iconography |
 | **Styling** | Modern Vanilla CSS | Custom Tokens | Responsive grid, typography scale, frosted glass, micro-animations |
 
 ---
@@ -99,10 +92,9 @@ d:\ar\
 │   │   ├── ar/
 │   │   │   ├── ARStateBadge.tsx          # Dynamic HUD state indicator badge
 │   │   │   ├── MarkerARScene.tsx         # Iframe bridge and HUD for Marker/Image AR
-│   │   │   ├── MarkerlessARScene.tsx     # WebXR surface placement + desktop fallback
-│   │   │   └── WristTryOnScene.tsx       # MediaPipe ML hand landmark wrist overlay
+│   │   │   └── MarkerlessARScene.tsx     # WebXR surface placement + desktop fallback
 │   │   ├── catalogue/
-│   │   │   ├── FeatureHighlights.tsx     # Core selling proposition badges
+│   │   │   ├── FeatureHighlights.tsx     # Core selling proposition badges (2 Modalities)
 │   │   │   ├── WatchCard.tsx             # Interactive 3D preview product card
 │   │   │   └── WatchFilter.tsx           # Category, brand, and price filter chips
 │   │   ├── common/
@@ -121,13 +113,11 @@ d:\ar\
 │   │   ├── HomePage.tsx          # Hero section, catalogue grid, AR feature links
 │   │   ├── MarkerARPage.tsx      # Marker tracking entry view
 │   │   ├── MarkerlessARPage.tsx  # Surface tracking entry view
-│   │   ├── ProductDetailPage.tsx # Single product deep-dive + configurator wizard
-│   │   └── WristTryOnPage.tsx    # Virtual wrist try-on entry view
+│   │   └── ProductDetailPage.tsx # Single product deep-dive + configurator wizard
 │   ├── types/
 │   │   └── watch.ts              # TypeScript interfaces for models, configs, tests
 │   ├── utils/
 │   │   ├── materialModifier.ts   # In-memory Three.js PBR material mutator
-│   │   ├── mathSmoothing.ts      # Exponential Moving Average filters & joint vector math
 │   │   └── webxr.ts              # WebXR session detection & permission queries
 │   ├── App.tsx                   # Top-level view routing & global configuration state
 │   ├── index.css                 # Apple Design System design tokens and CSS rules
@@ -137,7 +127,7 @@ d:\ar\
 ├── DESIGN-apple.md               # Apple Clean Photography-first Design System tokens
 ├── DESIGN-bmw-m.md               # High-contrast BMW M Motorsport Design System
 ├── DESIGN.md                     # Active design system master reference
-├── TESTING_REPORT.md             # Formal T01–T10 test suite execution report
+├── TESTING_REPORT.md             # Formal T01–T09 test suite execution report
 └── package.json                  # Dependencies, build scripts, and metadata
 ```
 
@@ -202,43 +192,7 @@ sequenceDiagram
 
 ---
 
-### 5.4 Virtual Wrist Try-On Machine Learning Subsystem (`WristTryOnScene.tsx`)
-The wrist try-on subsystem uses Google MediaPipe Vision running client-side on GPU/WebAssembly:
-
-```mermaid
-flowchart LR
-    Video["Webcam Feed<br/>(1280x720 60fps)"] --> MP["MediaPipe HandLandmarker<br/>(float16 ML Model)"]
-    MP --> LM["21 3D Landmarks<br/>(Joints 0 to 20)"]
-    
-    subgraph MathCalc ["Mathematical Pose Estimation"]
-        LM --> Extract["Extract:<br/>Wrist (0)<br/>Index MCP (5)<br/>Pinky MCP (17)<br/>Middle MCP (9)"]
-        Extract --> PalmVec["Palm Vector:<br/>Width = ||Index - Pinky||"]
-        Extract --> ArmVec["Forearm Axis:<br/>Angle = atan2(Middle - Wrist)"]
-        PalmVec --> Scale["Scale Factor:<br/>palmWidth / 120px"]
-        ArmVec --> Rot["Rotation (Euler):<br/>Yaw, Pitch, Roll Alignment"]
-    end
-    
-    subgraph Smoothing ["EMA Smoothing Filter"]
-        Scale --> EMAScale["ScalarSmoother<br/>alpha = 0.20"]
-        Rot --> EMAThree["Vector3Smoother<br/>alpha = 0.22"]
-    end
-    
-    Smoothing --> ThreeScene["Three.js Overlay<br/>(Transparent WebGL Canvas)"]
-```
-
-#### Mathematical Pose Estimation Details (`mathSmoothing.ts`):
-1. **Coordinate Conversion:** Normalizes video landmark coordinates $[0, 1]$ into centered Three.js camera projection coordinates:
-   $$X_{\text{screen}} = (x_{\text{norm}} - 0.5) \times W_{\text{canvas}}$$
-   $$Y_{\text{screen}} = -(y_{\text{norm}} - 0.5) \times H_{\text{canvas}}$$
-2. **Wrist Offset Alignment:** To ensure the watch sits naturally on the dorsal wrist rather than inside the palm joint, the center point is shifted backwards along the forearm axis:
-   $$X_{\text{watch}} = X_{\text{wrist}} - \cos(\theta_{\text{axis}}) \times (\text{palmWidth} \times 0.15)$$
-   $$Y_{\text{watch}} = Y_{\text{wrist}} - \sin(\theta_{\text{axis}}) \times (\text{palmWidth} \times 0.15)$$
-3. **Exponential Moving Average (EMA) Filter:** Removes high-frequency webcam optical noise:
-   $$S_t = \alpha \cdot X_t + (1 - \alpha) \cdot S_{t-1} \quad (\alpha = 0.22)$$
-
----
-
-### 5.5 Dynamic Material Mutation Pipeline (`materialModifier.ts`)
+### 5.4 Dynamic Material Mutation Pipeline (`materialModifier.ts`)
 Rather than re-downloading GLB assets when users pick colors or materials, the application traverses the Three.js scene-graph in-memory:
 
 ```typescript
@@ -287,7 +241,7 @@ The Option B Configurator implements a strict 5-step guided state machine:
 stateDiagram-v2
     [*] --> Select: Step 1
     Select --> Place: Choose Model & Dimensions
-    Place --> Customize: Choose Environment (3D / Marker / Surface / Wrist)
+    Place --> Customize: Choose Environment (3D / Marker / Surface)
     Customize --> Manipulate: Mutate Strap & Dial PBR Materials
     Manipulate --> Complete: Adjust Scale, Rotation & Elevation
     Complete --> [*]: Final Review, Snapshot & Order Checkout
@@ -297,7 +251,7 @@ stateDiagram-v2
 ```
 
 - **Step 1 (`select`):** Model selection with real-time specs inspection.
-- **Step 2 (`place`):** Viewport selection (Studio Turntable, Marker AR, Surface AR, or Wrist Try-On).
+- **Step 2 (`place`):** Viewport selection (Studio Turntable, Marker AR, or Surface AR).
 - **Step 3 (`customize`):** Interactive PBR material palette (Silicone, Titanium, Leather, Gold, Steel).
 - **Step 4 (`manipulate`):** 3D rotation, pitch, elevation offset, and scale multiplier.
 - **Step 5 (`complete`):** High-resolution snapshot export, configuration summary, and checkout action.
@@ -335,7 +289,7 @@ The application implements the **Apple Clean Photography-First Design System** (
 
 ---
 
-## 9. Verification & Testing Matrix (T01–T10)
+## 9. Verification & Testing Matrix (T01–T09)
 
 | Test ID | Category | Feature Verified | Verification Status | Fallback Behavior |
 | :---: | :--- | :--- | :---: | :--- |
@@ -348,7 +302,6 @@ The application implements the **Apple Clean Photography-First Design System** (
 | **T07** | Option B | 3D Transform Sliders (Scale, Yaw, Elevation)| ✅ **Pass** | Clamped bounds $(0.5\text{x} - 2.5\text{x})$ |
 | **T08** | Option B | 5-Step Guided Configurator State Machine | ✅ **Pass** | 1-Click "Reset to Default" button |
 | **T09** | System / UX | Hardware Capability & HTTPS Detection | ✅ **Pass** | Graceful alerts & permission modals |
-| **T10** | Wrist AR | MediaPipe 21 Joint Landmark Tracking + EMA | ✅ **Pass** | Visual hand positioning guide |
 
 ---
 
