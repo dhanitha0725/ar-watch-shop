@@ -30,7 +30,7 @@ export const AR_COPY = {
     error: 'We couldn’t load the watch. Check your connection and try again.',
     helpTitle: 'Use the watch card',
     helpSteps: [
-      'Open the card on another screen or print it.',
+      'Open the card on a laptop or another phone.',
       'Keep the whole card visible in your camera.',
       'Use bright, even light and hold your phone steady.',
     ],

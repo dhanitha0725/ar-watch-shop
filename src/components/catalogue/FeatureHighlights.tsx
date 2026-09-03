@@ -144,7 +144,7 @@ export const FeatureHighlights: React.FC<FeatureHighlightsProps> = ({
             </h3>
 
             <p style={{ fontSize: '14px', color: 'var(--colors-ink-muted)', lineHeight: 1.5, marginBottom: '24px' }}>
-              {AR_COPY.card.description} Open or print the card first, then keep the full card in view.
+              {AR_COPY.card.description} Open it on a laptop or another phone, then keep the full card in view.
             </p>
           </div>
 
@@ -161,7 +161,7 @@ export const FeatureHighlights: React.FC<FeatureHighlightsProps> = ({
               onClick={onOpenMarkerModal}
               className="btn-secondary"
               style={{ padding: '10px 14px' }}
-              title="View Printable Target Card"
+              title="View watch card"
             >
               <QrCode size={16} />
             </button>

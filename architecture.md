@@ -37,7 +37,7 @@ flowchart TD
 
     subgraph Assets ["Static Assets (public/)"]
         GLB["Optimized GLB Models<br/>(Apple, Mudmaster, Cyber, Seiko)"]
-        Markers["AR Targets<br/>(card.mind, card.png, watch-marker.svg)"]
+        Markers["AR Targets<br/>(marker.mind, marker.jpg, watch-marker.svg)"]
     end
 
     UI --> StateMgr
@@ -75,10 +75,10 @@ flowchart TD
 ```
 d:\ar\
 ├── public/
+│   ├── marker.jpg                # Marker image shown on a laptop or another phone
 │   ├── ar-marker-frame.html      # Isolated sandbox for MindAR image-target camera tracking
 │   ├── markers/
-│   │   ├── card.mind             # Compiled binary feature map for natural image target
-│   │   ├── card.png              # High-resolution print/display target image
+│   │   ├── marker.mind           # Compiled binary feature map for the on-screen marker image
 │   │   ├── hiro.svg              # Universal standard Hiro high-contrast marker
 │   │   ├── watch-marker.svg      # Custom branded watch AR marker
 │   │   └── watch-marker.patt     # Trained binary pattern file for custom marker
@@ -99,7 +99,7 @@ d:\ar\
 │   │   │   └── WatchFilter.tsx           # Category, brand, and price filter chips
 │   │   ├── common/
 │   │   │   ├── Footer.tsx                # Site navigation & system status footer
-│   │   │   ├── Modal.tsx                 # Printable / digital AR marker popup modal
+│   │   │   ├── Modal.tsx                 # On-screen AR marker popup modal
 │   │   │   └── Navbar.tsx                # Floating frosted glass navigation header
 │   │   ├── configurator/
 │   │   │   └── ConfiguratorWizard.tsx    # 5-step Option B state machine
@@ -159,7 +159,7 @@ sequenceDiagram
     ReactHUD->>Iframe: Load /ar-marker-frame.html?model=...&scale=...
     Iframe->>Camera: Request getUserMedia({ video: true })
     Camera-->>Iframe: Active Video Stream (60fps)
-    Iframe->>MindAR: Initialize WASM Neural Engine & load /markers/card.mind
+    Iframe->>MindAR: Start camera tracking & load /markers/marker.mind
     
     loop Every Video Frame
         MindAR->>MindAR: Match Natural Feature Points (NFT) against Target 0

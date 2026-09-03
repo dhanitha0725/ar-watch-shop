@@ -133,7 +133,7 @@ export const MarkerARScene: React.FC<MarkerARSceneProps> = ({
         <button
           onClick={onOpenMarkerModal}
           className="btn-icon"
-          title="Display / Print Target Card"
+          title={AR_COPY.common.showCard}
           aria-label={AR_COPY.common.showCard}
         >
           <QrCode size={18} color="var(--colors-ink)" />
