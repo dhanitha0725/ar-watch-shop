@@ -85,7 +85,7 @@
     </div>
 
     <a-scene
-      mindar-image="imageTargetSrc: /markers/card.mind; autoStart: true; uiLoading: no; uiScanning: no; filterMinCF: 0.0001; filterBeta: 0.001;"
+      mindar-image="imageTargetSrc: /markers/marker.mind; autoStart: true; uiLoading: no; uiScanning: no; filterMinCF: 0.0001; filterBeta: 0.001;"
       color-space="sRGB"
       renderer="colorManagement: true, physicallyCorrectLights: true, antialias: true, alpha: true"
       vr-mode-ui="enabled: false"
@@ -130,9 +130,7 @@
 
       function notifyParent(type, data) {
         try {
-          // Send with both arjs-marker-frame and mindar-marker-frame sources for full compatibility
           window.parent.postMessage({ source: 'mindar-marker-frame', type, data }, '*');
-          window.parent.postMessage({ source: 'arjs-marker-frame', type, data }, '*');
         } catch (e) {}
       }
 
@@ -226,7 +224,7 @@
       window.addEventListener('message', (event) => {
         if (!event.data) return;
         const target = event.data.target;
-        if (target !== 'mindar-marker-frame' && target !== 'arjs-marker-frame') return;
+        if (target !== 'mindar-marker-frame') return;
 
         const { action, modelUrl, scale, rotation } = event.data;
 

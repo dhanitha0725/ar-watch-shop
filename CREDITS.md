@@ -53,10 +53,10 @@ This project, **WebAR Watch Store: Interactive 3D Product Visualization, AR Plac
 - **License**: Apache License 2.0
 - **URL**: [https://developers.google.com/mediapipe](https://developers.google.com/mediapipe)
 
-### 4. AR.js & A-Frame
-- **Author**: AR-js-org & Supermedium
+### 4. MindAR & A-Frame
+- **Author**: HiuKim & A-Frame Community
 - **License**: MIT License
-- **URL**: [https://ar-js-org.github.io/AR.js-Docs/](https://ar-js-org.github.io/AR.js-Docs/)
+- **URL**: [https://hiukim.github.io/mind-ar-js-doc/](https://hiukim.github.io/mind-ar-js-doc/)
 
 ### 5. React & Vite
 - **License**: MIT License
@@ -70,7 +70,7 @@ This project, **WebAR Watch Store: Interactive 3D Product Visualization, AR Plac
 
 ## Statement of Originality & Technical Contribution
 Original 3D modeling from scratch is explicitly not required by the project brief. The primary technical contributions of this project encompass:
-1. Multi-modal WebAR client architecture unifying WebXR, AR.js, and MediaPipe Vision in a single responsive React application.
+1. Multi-modal WebAR client architecture unifying WebXR, MindAR Natural Feature Tracking, and MediaPipe Vision in a single responsive React application.
 2. Option B Complex Interaction state machine managing real-time PBR material mutation, transformation constraints, and resets.
 3. Hand landmark pose estimation and Exponential Moving Average (EMA) mathematical jitter filtering for webcam wrist virtual try-on.
 4. Comprehensive 10-point test matrix and device fallback safeguards.

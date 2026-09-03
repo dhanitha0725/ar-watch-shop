@@ -31,7 +31,7 @@ export const MarkerARScene: React.FC<MarkerARSceneProps> = ({
 
   useEffect(() => {
     const handleMessage = (event: MessageEvent) => {
-      if (event.data?.source === 'mindar-marker-frame' || event.data?.source === 'arjs-marker-frame') {
+      if (event.data?.source === 'mindar-marker-frame') {
         if (event.data.type === 'modelLoading') {
           setModelState('loading');
           setModelError(null);
