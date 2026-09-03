@@ -4,11 +4,7 @@ import {
   Check, 
   Palette, 
   Sliders, 
-  Sparkles, 
   RotateCcw, 
-  ArrowRight, 
-  ArrowLeft,
-  Layers,
   ShoppingBag
 } from 'lucide-react';
 
@@ -21,7 +17,7 @@ interface ConfiguratorWizardProps {
   onUpdateConfig: (partial: Partial<WatchConfiguration>) => void;
   onSetStep: (step: ConfiguratorStep) => void;
   onReset: () => void;
-  onLaunchAR: (mode: 'marker' | 'markerless' | 'wrist') => void;
+  onLaunchAR?: (mode: 'marker' | 'markerless') => void;
 }
 
 export const ConfiguratorWizard: React.FC<ConfiguratorWizardProps> = ({
@@ -33,110 +29,77 @@ export const ConfiguratorWizard: React.FC<ConfiguratorWizardProps> = ({
   onUpdateConfig,
   onSetStep,
   onReset,
-  onLaunchAR,
 }) => {
   const steps: { id: ConfiguratorStep; title: string; subtitle: string; icon: any }[] = [
-    { id: 'select', title: 'Model', subtitle: 'Choose Timepiece', icon: ShoppingBag },
-    { id: 'place', title: 'Placement', subtitle: 'Spatial Anchor', icon: Layers },
-    { id: 'customize', title: 'Materials', subtitle: 'Band & Dial', icon: Palette },
+    { id: 'select', title: 'Model', subtitle: 'Base Mesh', icon: ShoppingBag },
+    { id: 'customize', title: 'Materials', subtitle: 'PBR Shaders', icon: Palette },
     { id: 'manipulate', title: 'Transform', subtitle: 'Scale & Rotate', icon: Sliders },
-    { id: 'complete', title: 'Review', subtitle: 'Launch in AR', icon: Sparkles },
   ];
 
-  const currentStepIndex = steps.findIndex(s => s.id === currentStep);
-
-  const handleNext = () => {
-    if (currentStepIndex < steps.length - 1) {
-      onSetStep(steps[currentStepIndex + 1].id);
-    }
-  };
-
-  const handlePrev = () => {
-    if (currentStepIndex > 0) {
-      onSetStep(steps[currentStepIndex - 1].id);
-    }
-  };
+  const currentStepIndex = Math.max(0, steps.findIndex(s => s.id === currentStep));
 
   return (
-    <div className="store-utility-card" style={{ padding: '28px' }}>
-      {/* Wizard Progress Stepper */}
+    <div className="carbon-tile" style={{ padding: '28px', backgroundColor: 'var(--colors-canvas)' }}>
+      {/* Carbon 3-Step Stepper Bar */}
       <div style={{
-        display: 'flex',
-        alignItems: 'center',
-        justifyContent: 'space-between',
+        display: 'grid',
+        gridTemplateColumns: 'repeat(3, 1fr)',
+        gap: '1px',
+        backgroundColor: 'var(--colors-hairline)',
         marginBottom: '24px',
-        position: 'relative',
+        border: '1px solid var(--colors-hairline)',
       }}>
         {steps.map((step, idx) => {
           const isActive = currentStep === step.id;
           const isPassed = idx < currentStepIndex;
 
           return (
-            <div
+            <button
               key={step.id}
               onClick={() => onSetStep(step.id)}
               style={{
                 display: 'flex',
                 flexDirection: 'column',
-                alignItems: 'center',
-                gap: '6px',
+                alignItems: 'flex-start',
+                padding: '12px 14px',
                 cursor: 'pointer',
-                flex: 1,
-                zIndex: 2,
+                backgroundColor: isActive
+                  ? 'var(--colors-surface-1)'
+                  : isPassed
+                  ? 'var(--colors-canvas)'
+                  : 'var(--colors-surface-1)',
+                border: 'none',
+                borderTop: isActive ? '3px solid var(--colors-primary)' : '3px solid transparent',
+                textAlign: 'left',
+                transition: 'background-color 0.1s ease',
               }}
             >
               <div style={{
-                width: '32px',
-                height: '32px',
-                borderRadius: '50%',
+                fontSize: '11px',
+                fontFamily: 'var(--font-mono)',
+                color: isActive ? 'var(--colors-primary)' : 'var(--colors-ink-muted)',
+                fontWeight: 600,
                 display: 'flex',
                 alignItems: 'center',
-                justifyContent: 'center',
-                backgroundColor: isActive
-                  ? 'var(--colors-primary)'
-                  : isPassed
-                  ? 'var(--colors-canvas-parchment)'
-                  : 'var(--colors-canvas)',
-                border: isActive
-                  ? '1px solid var(--colors-primary)'
-                  : '1px solid var(--colors-hairline)',
-                color: isActive ? '#ffffff' : isPassed ? 'var(--colors-ink)' : 'var(--colors-body-muted)',
-                fontWeight: 600,
-                fontSize: '13px',
-                transition: 'all 0.2s ease',
+                gap: '4px',
               }}>
-                {isPassed ? <Check size={14} /> : (idx + 1)}
+                {isPassed ? <Check size={11} color="var(--colors-semantic-success)" /> : `0${idx + 1}`}
               </div>
               <div style={{
-                fontSize: '12px',
-                color: isActive ? 'var(--colors-ink)' : 'var(--colors-body-muted)',
+                fontSize: '13px',
+                color: isActive ? 'var(--colors-ink)' : 'var(--colors-ink-muted)',
                 fontWeight: isActive ? 600 : 400,
-                textAlign: 'center',
-                display: 'none',
-              }} className="stepper-label">
+                marginTop: '2px',
+                whiteSpace: 'nowrap',
+                overflow: 'hidden',
+                textOverflow: 'ellipsis',
+                width: '100%',
+              }}>
                 {step.title}
               </div>
-            </div>
+            </button>
           );
         })}
-
-        {/* Step Connecting Line */}
-        <div style={{
-          position: 'absolute',
-          top: '16px',
-          left: '10%',
-          right: '10%',
-          height: '1px',
-          backgroundColor: 'var(--colors-hairline)',
-          zIndex: 1,
-        }}>
-          <div style={{
-            height: '100%',
-            backgroundColor: 'var(--colors-primary)',
-            width: `${(currentStepIndex / (steps.length - 1)) * 100}%`,
-            transition: 'width 0.25s ease',
-          }} />
-        </div>
       </div>
 
       {/* Step Header */}
@@ -150,41 +113,41 @@ export const ConfiguratorWizard: React.FC<ConfiguratorWizardProps> = ({
       }}>
         <div>
           <div style={{
-            fontSize: '12px',
+            fontSize: '11px',
+            fontFamily: 'var(--font-mono)',
             color: 'var(--colors-primary)',
-            fontWeight: 600,
             marginBottom: '2px',
           }}>
-            Step {currentStepIndex + 1} of 5
+            CONFIGURATOR STEP 0{currentStepIndex + 1} // 0{steps.length}
           </div>
-          <h3 style={{ fontSize: '18px', fontWeight: 600 }}>
-            {steps[currentStepIndex].title} — {steps[currentStepIndex].subtitle}
+          <h3 style={{ fontSize: '18px', fontWeight: 400, color: 'var(--colors-ink)' }}>
+            {steps[currentStepIndex].title} — <span style={{ color: 'var(--colors-ink-muted)' }}>{steps[currentStepIndex].subtitle}</span>
           </h3>
         </div>
 
         <button
           onClick={onReset}
-          className="btn-secondary"
-          style={{ padding: '6px 12px', minHeight: '30px', fontSize: '12px', gap: '4px' }}
-          title="Restore defaults"
+          className="btn-dark-utility"
+          style={{ padding: '6px 10px', height: '30px', fontSize: '12px', gap: '4px' }}
+          title="Restore factory configuration"
         >
           <RotateCcw size={12} />
-          <span>Reset</span>
+          <span>Reset Defaults</span>
         </button>
       </div>
 
       {/* Step Contents */}
-      <div style={{ minHeight: '180px', marginBottom: '24px' }}>
+      <div style={{ minHeight: '190px' }}>
         {/* STEP 1: MODEL SELECTION */}
-        {currentStep === 'select' && (
+        {(currentStep === 'select' || (!['customize', 'manipulate'].includes(currentStep))) && (
           <div>
-            <p style={{ fontSize: '14px', color: 'var(--colors-body-muted)', marginBottom: '14px' }}>
-              Choose a base model to customize:
+            <p style={{ fontSize: '14px', color: 'var(--colors-ink-muted)', marginBottom: '14px' }}>
+              Select base 3D CAD mesh to configure:
             </p>
             <div style={{
               display: 'grid',
-              gridTemplateColumns: 'repeat(auto-fill, minmax(130px, 1fr))',
-              gap: '10px',
+              gridTemplateColumns: 'repeat(auto-fill, minmax(140px, 1fr))',
+              gap: '8px',
             }}>
               {watches.map((w) => {
                 const isSelected = w.id === selectedWatch.id;
@@ -202,22 +165,21 @@ export const ConfiguratorWizard: React.FC<ConfiguratorWizardProps> = ({
                     }}
                     style={{
                       padding: '12px',
-                      borderRadius: 'var(--rounded-md)',
-                      backgroundColor: isSelected ? 'var(--colors-canvas-parchment)' : '#ffffff',
+                      backgroundColor: isSelected ? 'var(--colors-surface-1)' : 'var(--colors-canvas)',
                       border: isSelected ? '2px solid var(--colors-primary)' : '1px solid var(--colors-hairline)',
                       color: 'var(--colors-ink)',
                       cursor: 'pointer',
                       textAlign: 'left',
-                      transition: 'all 0.15s ease',
+                      transition: 'border-color 0.1s ease',
                     }}
                   >
-                    <div style={{ fontSize: '11px', color: 'var(--colors-body-muted)' }}>
+                    <div style={{ fontSize: '11px', color: 'var(--colors-ink-muted)', fontFamily: 'var(--font-mono)' }}>
                       {w.brand}
                     </div>
-                    <div style={{ fontSize: '14px', fontWeight: 600, marginTop: '2px', whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis' }}>
+                    <div style={{ fontSize: '13px', fontWeight: 600, marginTop: '2px', whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis' }}>
                       {w.name}
                     </div>
-                    <div style={{ fontSize: '13px', fontWeight: 600, color: 'var(--colors-primary)', marginTop: '4px' }}>
+                    <div style={{ fontSize: '12px', color: 'var(--colors-primary)', marginTop: '4px' }}>
                       ${w.price}
                     </div>
                   </button>
@@ -227,72 +189,20 @@ export const ConfiguratorWizard: React.FC<ConfiguratorWizardProps> = ({
           </div>
         )}
 
-        {/* STEP 2: PLACEMENT & ANCHORING */}
-        {currentStep === 'place' && (
-          <div>
-            <p style={{ fontSize: '14px', color: 'var(--colors-body-muted)', marginBottom: '14px' }}>
-              Choose placement anchor style:
-            </p>
-            <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(180px, 1fr))', gap: '12px' }}>
-              <div
-                onClick={() => onUpdateConfig({ isPlaced: true })}
-                style={{
-                  padding: '16px',
-                  borderRadius: 'var(--rounded-md)',
-                  backgroundColor: config.isPlaced ? 'var(--colors-canvas-parchment)' : '#ffffff',
-                  border: config.isPlaced ? '2px solid var(--colors-primary)' : '1px solid var(--colors-hairline)',
-                  cursor: 'pointer',
-                }}
-              >
-                <div style={{ display: 'flex', alignItems: 'center', gap: '8px', marginBottom: '6px' }}>
-                  <Layers size={16} color="var(--colors-primary)" />
-                  <span style={{ fontWeight: 600, fontSize: '14px' }}>
-                    Horizontal Plane
-                  </span>
-                </div>
-                <p style={{ fontSize: '13px', color: 'var(--colors-body-muted)', lineHeight: 1.4 }}>
-                  WebXR plane hit-testing on desks and tables with 1:1 true scale.
-                </p>
-              </div>
-
-              <div
-                onClick={() => onUpdateConfig({ isPlaced: true })}
-                style={{
-                  padding: '16px',
-                  borderRadius: 'var(--rounded-md)',
-                  backgroundColor: '#ffffff',
-                  border: '1px solid var(--colors-hairline)',
-                  cursor: 'pointer',
-                }}
-              >
-                <div style={{ display: 'flex', alignItems: 'center', gap: '8px', marginBottom: '6px' }}>
-                  <Sparkles size={16} color="var(--colors-primary)" />
-                  <span style={{ fontWeight: 600, fontSize: '14px' }}>
-                    Studio Pedestal
-                  </span>
-                </div>
-                <p style={{ fontSize: '13px', color: 'var(--colors-body-muted)', lineHeight: 1.4 }}>
-                  360° orbital preview with studio reflection lighting.
-                </p>
-              </div>
-            </div>
-          </div>
-        )}
-
-        {/* STEP 3: CUSTOM MATERIALS */}
+        {/* STEP 2: CUSTOM MATERIALS */}
         {currentStep === 'customize' && (
           <div style={{ display: 'flex', flexDirection: 'column', gap: '20px' }}>
             {/* Strap Swatches */}
             <div>
-              <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '10px' }}>
+              <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '8px' }}>
                 <span style={{ fontSize: '13px', fontWeight: 600 }}>
-                  Band Material & Finish
+                  Strap Material & Color:
                 </span>
-                <span style={{ fontSize: '13px', color: 'var(--colors-primary)' }}>
+                <span style={{ fontSize: '13px', color: 'var(--colors-primary)', fontFamily: 'var(--font-mono)' }}>
                   {selectedWatch.strapColors.find(c => c.hex.toLowerCase() === config.strapColor.toLowerCase())?.name || config.strapMaterial}
                 </span>
               </div>
-              <div style={{ display: 'flex', gap: '10px', flexWrap: 'wrap' }}>
+              <div style={{ display: 'flex', gap: '8px', flexWrap: 'wrap' }}>
                 {selectedWatch.strapColors.map((color) => {
                   const isActive = config.strapColor.toLowerCase() === color.hex.toLowerCase();
                   return (
@@ -302,8 +212,8 @@ export const ConfiguratorWizard: React.FC<ConfiguratorWizardProps> = ({
                         strapColor: color.hex,
                         strapMaterial: color.materialType || 'silicone',
                       })}
-                      className={`swatch-circle ${isActive ? 'active' : ''}`}
-                      style={{ backgroundColor: color.hex }}
+                      className={`swatch-square ${isActive ? 'active' : ''}`}
+                      style={{ backgroundColor: color.hex, width: '28px', height: '28px' }}
                       title={`${color.name} (${color.materialType || 'silicone'})`}
                     />
                   );
@@ -313,23 +223,23 @@ export const ConfiguratorWizard: React.FC<ConfiguratorWizardProps> = ({
 
             {/* Dial & Lume Colors */}
             <div>
-              <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '10px' }}>
+              <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '8px' }}>
                 <span style={{ fontSize: '13px', fontWeight: 600 }}>
-                  Dial / Glow Accent
+                  Dial / Emissive Lume:
                 </span>
-                <span style={{ fontSize: '13px', color: 'var(--colors-primary)' }}>
+                <span style={{ fontSize: '13px', color: 'var(--colors-primary)', fontFamily: 'var(--font-mono)' }}>
                   {selectedWatch.dialColors.find(c => c.hex.toLowerCase() === config.dialColor.toLowerCase())?.name || 'Dial Theme'}
                 </span>
               </div>
-              <div style={{ display: 'flex', gap: '10px', flexWrap: 'wrap' }}>
+              <div style={{ display: 'flex', gap: '8px', flexWrap: 'wrap' }}>
                 {selectedWatch.dialColors.map((dial) => {
                   const isActive = config.dialColor.toLowerCase() === dial.hex.toLowerCase();
                   return (
                     <button
                       key={dial.name}
                       onClick={() => onUpdateConfig({ dialColor: dial.hex })}
-                      className={`swatch-circle ${isActive ? 'active' : ''}`}
-                      style={{ backgroundColor: dial.hex }}
+                      className={`swatch-square ${isActive ? 'active' : ''}`}
+                      style={{ backgroundColor: dial.hex, width: '28px', height: '28px' }}
                       title={dial.name}
                     />
                   );
@@ -339,16 +249,16 @@ export const ConfiguratorWizard: React.FC<ConfiguratorWizardProps> = ({
           </div>
         )}
 
-        {/* STEP 4: MANIPULATE TRANSFORMATIONS */}
+        {/* STEP 3: MANIPULATE TRANSFORMATIONS */}
         {currentStep === 'manipulate' && (
           <div style={{ display: 'flex', flexDirection: 'column', gap: '18px' }}>
             {/* Scale Slider */}
             <div>
               <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: '8px' }}>
                 <span style={{ fontSize: '13px', fontWeight: 600 }}>
-                  3D Scale Multiplier
+                  Spatial Scale Factor
                 </span>
-                <span style={{ fontSize: '13px', fontFamily: 'var(--font-mono)', fontWeight: 600, color: 'var(--colors-primary)' }}>
+                <span style={{ fontSize: '13px', fontFamily: 'var(--font-mono)', color: 'var(--colors-primary)' }}>
                   {config.scale.toFixed(2)}x
                 </span>
               </div>
@@ -360,10 +270,10 @@ export const ConfiguratorWizard: React.FC<ConfiguratorWizardProps> = ({
                 value={config.scale}
                 onChange={(e) => onUpdateConfig({ scale: parseFloat(e.target.value) })}
               />
-              <div style={{ display: 'flex', justifyContent: 'space-between', fontSize: '11px', color: 'var(--colors-body-muted)', marginTop: '6px' }}>
-                <span>0.5x Compact</span>
-                <span>1.0x Real Scale</span>
-                <span>2.0x Large</span>
+              <div style={{ display: 'flex', justifyContent: 'space-between', fontSize: '11px', color: 'var(--colors-ink-muted)', marginTop: '6px', fontFamily: 'var(--font-mono)' }}>
+                <span>0.5x [COMPACT]</span>
+                <span>1.0x [1:1 TRUE]</span>
+                <span>2.0x [EXPANDED]</span>
               </div>
             </div>
 
@@ -371,9 +281,9 @@ export const ConfiguratorWizard: React.FC<ConfiguratorWizardProps> = ({
             <div>
               <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: '8px' }}>
                 <span style={{ fontSize: '13px', fontWeight: 600 }}>
-                  Rotation Angle
+                  Y-Axis Rotation
                 </span>
-                <span style={{ fontSize: '13px', fontFamily: 'var(--font-mono)', fontWeight: 600, color: 'var(--colors-primary)' }}>
+                <span style={{ fontSize: '13px', fontFamily: 'var(--font-mono)', color: 'var(--colors-primary)' }}>
                   {Math.round((config.rotationY * 180) / Math.PI)}°
                 </span>
               </div>
@@ -385,121 +295,16 @@ export const ConfiguratorWizard: React.FC<ConfiguratorWizardProps> = ({
                 value={config.rotationY}
                 onChange={(e) => onUpdateConfig({ rotationY: parseFloat(e.target.value) })}
               />
-              <div style={{ display: 'flex', justifyContent: 'space-between', fontSize: '11px', color: 'var(--colors-body-muted)', marginTop: '6px' }}>
-                <span>0° Front</span>
-                <span>90° Side</span>
-                <span>180° Back</span>
-                <span>270° Crown</span>
+              <div style={{ display: 'flex', justifyContent: 'space-between', fontSize: '11px', color: 'var(--colors-ink-muted)', marginTop: '6px', fontFamily: 'var(--font-mono)' }}>
+                <span>0° [FRONT]</span>
+                <span>90° [PROFILE]</span>
+                <span>180° [CASEBACK]</span>
+                <span>270° [CROWN]</span>
               </div>
             </div>
           </div>
         )}
-
-        {/* STEP 5: FINALIZE & LAUNCH AR */}
-        {currentStep === 'complete' && (
-          <div>
-            <div style={{
-              backgroundColor: 'var(--colors-canvas-parchment)',
-              borderRadius: 'var(--rounded-md)',
-              padding: '16px',
-              marginBottom: '16px',
-            }}>
-              <div style={{ fontSize: '14px', fontWeight: 600, marginBottom: '8px', color: 'var(--colors-ink)' }}>
-                Specification Summary: {selectedWatch.name}
-              </div>
-              <div style={{
-                display: 'grid',
-                gridTemplateColumns: 'repeat(auto-fit, minmax(110px, 1fr))',
-                gap: '8px',
-                fontSize: '13px',
-                color: 'var(--colors-body-muted)',
-              }}>
-                <div>Band: <strong style={{ color: 'var(--colors-ink)' }}>{config.strapMaterial}</strong></div>
-                <div>Scale: <strong style={{ color: 'var(--colors-ink)' }}>{config.scale.toFixed(2)}x</strong></div>
-                <div>Price: <strong style={{ color: 'var(--colors-primary)' }}>${selectedWatch.price}</strong></div>
-              </div>
-            </div>
-
-            <p style={{ fontSize: '14px', color: 'var(--colors-body-muted)', marginBottom: '14px' }}>
-              Select an Augmented Reality mode to launch:
-            </p>
-
-            <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(130px, 1fr))', gap: '10px' }}>
-              <button
-                onClick={() => onLaunchAR('markerless')}
-                className="btn-primary"
-                style={{ fontSize: '13px' }}
-              >
-                <Sparkles size={14} />
-                <span>Space AR</span>
-              </button>
-
-              <button
-                onClick={() => onLaunchAR('marker')}
-                className="btn-secondary"
-                style={{ fontSize: '13px' }}
-              >
-                <span>Marker AR</span>
-              </button>
-
-              <button
-                onClick={() => onLaunchAR('wrist')}
-                className="btn-secondary"
-                style={{ fontSize: '13px' }}
-              >
-                <span>Wrist Try-On</span>
-              </button>
-            </div>
-          </div>
-        )}
       </div>
-
-      {/* Navigation Buttons (Prev / Next) */}
-      <div style={{
-        display: 'flex',
-        justifyContent: 'space-between',
-        alignItems: 'center',
-        paddingTop: '16px',
-        borderTop: '1px solid var(--colors-hairline)',
-      }}>
-        <button
-          onClick={handlePrev}
-          disabled={currentStepIndex === 0}
-          className="btn-secondary"
-          style={{
-            fontSize: '13px',
-            opacity: currentStepIndex === 0 ? 0.35 : 1,
-            cursor: currentStepIndex === 0 ? 'not-allowed' : 'pointer',
-          }}
-        >
-          <ArrowLeft size={14} />
-          <span>Previous</span>
-        </button>
-
-        <div style={{ fontSize: '12px', color: 'var(--colors-body-muted)', fontFamily: 'var(--font-mono)' }}>
-          {currentStepIndex + 1} / {steps.length}
-        </div>
-
-        <button
-          onClick={handleNext}
-          disabled={currentStepIndex === steps.length - 1}
-          className="btn-primary"
-          style={{
-            fontSize: '13px',
-            opacity: currentStepIndex === steps.length - 1 ? 0.35 : 1,
-            cursor: currentStepIndex === steps.length - 1 ? 'not-allowed' : 'pointer',
-          }}
-        >
-          <span>Next</span>
-          <ArrowRight size={14} />
-        </button>
-      </div>
-
-      <style>{`
-        @media (min-width: 600px) {
-          .stepper-label { display: block !important; }
-        }
-      `}</style>
     </div>
   );
 };

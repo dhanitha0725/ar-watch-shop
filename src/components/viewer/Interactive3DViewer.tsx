@@ -42,6 +42,7 @@ interface Interactive3DViewerProps {
   autoRotateDefault?: boolean;
   onSnapshot?: (dataUrl: string) => void;
   height?: string;
+  hideControls?: boolean;
 }
 
 export const Interactive3DViewer: React.FC<Interactive3DViewerProps> = ({
@@ -50,7 +51,8 @@ export const Interactive3DViewer: React.FC<Interactive3DViewerProps> = ({
   selectedDialColor,
   autoRotateDefault = true,
   onSnapshot,
-  height = '520px'
+  height = '520px',
+  hideControls = false,
 }) => {
   const modelViewerRef = useRef<any>(null);
   const [isAutoRotating, setIsAutoRotating] = useState(autoRotateDefault);
@@ -227,89 +229,91 @@ export const Interactive3DViewer: React.FC<Interactive3DViewerProps> = ({
         style={{ width: '100%', height: '100%', outline: 'none' }}
       />
 
-      {/* Floating Toolbar (44px Circular Glass Chips) */}
-      <div style={{
-        position: 'absolute',
-        top: '16px',
-        right: '16px',
-        display: 'flex',
-        flexDirection: 'column',
-        gap: '8px',
-        zIndex: 20,
-      }}>
-        {/* Auto Rotate Toggle */}
-        <button
-          onClick={() => setIsAutoRotating(!isAutoRotating)}
-          className="btn-icon"
-          title={isAutoRotating ? 'Pause Rotation' : 'Auto Rotate'}
-        >
-          <RotateCw size={17} className={isAutoRotating ? 'animate-spin-slow' : ''} color="var(--colors-ink)" />
-        </button>
+      {/* Floating Toolbar */}
+      {!hideControls && (
+        <div style={{
+          position: 'absolute',
+          top: '16px',
+          right: '16px',
+          display: 'flex',
+          flexDirection: 'column',
+          gap: '8px',
+          zIndex: 20,
+        }}>
+          {/* Auto Rotate Toggle */}
+          <button
+            onClick={() => setIsAutoRotating(!isAutoRotating)}
+            className="btn-icon"
+            title={isAutoRotating ? 'Pause Rotation' : 'Auto Rotate'}
+          >
+            <RotateCw size={17} className={isAutoRotating ? 'animate-spin-slow' : ''} color="var(--colors-ink)" />
+          </button>
 
-        {/* Snapshot Capture */}
-        <button
-          onClick={handleTakeSnapshot}
-          className="btn-icon"
-          title="Save Snapshot"
-        >
-          {snapshotTaken ? <Check size={17} color="var(--colors-success)" /> : <Camera size={17} color="var(--colors-ink)" />}
-        </button>
+          {/* Snapshot Capture */}
+          <button
+            onClick={handleTakeSnapshot}
+            className="btn-icon"
+            title="Save Snapshot"
+          >
+            {snapshotTaken ? <Check size={17} color="var(--colors-success)" /> : <Camera size={17} color="var(--colors-ink)" />}
+          </button>
 
-        {/* Lighting Switcher */}
-        <button
-          onClick={() => {
-            const next = lightingPreset === 'neutral' ? 'studio' : 'neutral';
-            setLightingPreset(next);
-            setExposure(next === 'studio' ? 1.35 : 1.1);
-          }}
-          className="btn-icon"
-          title={`Lighting: ${lightingPreset}`}
-        >
-          <Sun size={17} color="var(--colors-ink)" />
-        </button>
+          {/* Lighting Switcher */}
+          <button
+            onClick={() => {
+              const next = lightingPreset === 'neutral' ? 'studio' : 'neutral';
+              setLightingPreset(next);
+              setExposure(next === 'studio' ? 1.35 : 1.1);
+            }}
+            className="btn-icon"
+            title={`Lighting: ${lightingPreset}`}
+          >
+            <Sun size={17} color="var(--colors-ink)" />
+          </button>
 
-        {/* Reset Camera Orbit */}
-        <button
-          onClick={handleResetCamera}
-          className="btn-icon"
-          title="Reset Camera"
-        >
-          <RefreshCw size={17} color="var(--colors-ink)" />
-        </button>
+          {/* Reset Camera Orbit */}
+          <button
+            onClick={handleResetCamera}
+            className="btn-icon"
+            title="Reset Camera"
+          >
+            <RefreshCw size={17} color="var(--colors-ink)" />
+          </button>
 
-        {/* Fullscreen */}
-        <button
-          onClick={handleToggleFullscreen}
-          className="btn-icon"
-          title="Fullscreen"
-        >
-          <Maximize2 size={17} color="var(--colors-ink)" />
-        </button>
-      </div>
+          {/* Fullscreen */}
+          <button
+            onClick={handleToggleFullscreen}
+            className="btn-icon"
+            title="Fullscreen"
+          >
+            <Maximize2 size={17} color="var(--colors-ink)" />
+          </button>
+        </div>
+      )}
 
       {/* Bottom Subtle Interaction Hint */}
-      <div style={{
-        position: 'absolute',
-        bottom: '14px',
-        left: '50%',
-        transform: 'translateX(-50%)',
-        backgroundColor: 'rgba(255, 255, 255, 0.85)',
-        backdropFilter: 'blur(10px)',
-        WebkitBackdropFilter: 'blur(10px)',
-        border: '1px solid var(--colors-hairline)',
-        borderRadius: 'var(--rounded-pill)',
-        padding: '5px 14px',
-        display: 'flex',
-        alignItems: 'center',
-        gap: '6px',
-        fontSize: '12px',
-        color: 'var(--colors-body-muted)',
-        pointerEvents: 'none',
-      }}>
-        <span>Drag to rotate</span>
-        <span>•</span>
-        <span>Scroll to zoom</span>
-      </div>
+      {!hideControls && (
+        <div style={{
+          position: 'absolute',
+          bottom: '14px',
+          left: '50%',
+          transform: 'translateX(-50%)',
+          backgroundColor: 'var(--colors-surface-1)',
+          border: '1px solid var(--colors-hairline)',
+          padding: '4px 12px',
+          display: 'flex',
+          alignItems: 'center',
+          gap: '6px',
+          fontSize: '11px',
+          fontFamily: 'var(--font-mono)',
+          color: 'var(--colors-ink-muted)',
+          pointerEvents: 'none',
+        }}>
+          <span>DRAG TO ORBIT</span>
+          <span>//</span>
+          <span>SCROLL TO ZOOM</span>
+        </div>
+      )}
     </div>
   );
 };
