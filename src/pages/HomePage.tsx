@@ -3,6 +3,7 @@ import { Watch, WatchColorOption } from '../types/watch';
 import { Interactive3DViewer } from '../components/viewer/Interactive3DViewer';
 import { FeatureHighlights } from '../components/catalogue/FeatureHighlights';
 import { WatchCard } from '../components/catalogue/WatchCard';
+import { AR_COPY } from '../data/arCopy';
 import { 
   Eye, 
   ArrowRight, 
@@ -103,8 +104,8 @@ export const HomePage: React.FC<HomePageProps> = ({
                 alignItems: 'center',
                 gap: '6px',
               }}>
-                <Cpu size={14} />
-                <span>ENTERPRISE WEBAR ENGINE // CARBON SPEC</span>
+                <Eye size={14} />
+                <span>SEE THE WATCH IN YOUR SPACE</span>
               </div>
 
               {/* IBM Plex Sans Weight-300 Headline */}
@@ -116,8 +117,8 @@ export const HomePage: React.FC<HomePageProps> = ({
                 color: 'var(--colors-ink)',
                 letterSpacing: '-0.4px',
               }}>
-                Augmented reality.<br />
-                Engineered for precision.
+                See it before you choose.<br />
+                Explore every detail.
               </h1>
 
               {/* Lead Paragraph with Carbon 0.16px Tracking */}
@@ -130,7 +131,7 @@ export const HomePage: React.FC<HomePageProps> = ({
                 maxWidth: '540px',
                 letterSpacing: '0.16px',
               }}>
-                Inspect high-precision 3D timepieces with real-time PBR shaders. Place models on physical surfaces with WebXR or anchor 6DOF target cards with MindAR.
+                Explore every angle in 3D, place a watch on a table, or point your camera at our watch card to see it appear.
               </p>
 
               {/* Primary & Secondary Square CTAs */}
@@ -146,7 +147,7 @@ export const HomePage: React.FC<HomePageProps> = ({
                   style={{ fontSize: '14px', padding: '12px 20px' }}
                 >
                   <Eye size={16} />
-                  <span>Launch Space AR</span>
+                  <span>{AR_COPY.surface.button}</span>
                 </button>
 
                 <button
@@ -170,19 +171,19 @@ export const HomePage: React.FC<HomePageProps> = ({
             }}>
               <div style={{ backgroundColor: 'var(--colors-surface-1)', padding: '14px 16px' }}>
                 <div style={{ fontSize: '20px', fontWeight: 400, color: 'var(--colors-ink)', fontFamily: 'var(--font-display)' }}>
-                  04 Models
+                  04 Watches
                 </div>
                 <div style={{ fontSize: '12px', color: 'var(--colors-ink-muted)', marginTop: '2px' }}>
-                  PBR Standardized
+                  Detailed 3D views
                 </div>
               </div>
 
               <div style={{ backgroundColor: 'var(--colors-surface-1)', padding: '14px 16px' }}>
                 <div style={{ fontSize: '20px', fontWeight: 400, color: 'var(--colors-ink)', fontFamily: 'var(--font-display)' }}>
-                  60 FPS
+                  360°
                 </div>
                 <div style={{ fontSize: '12px', color: 'var(--colors-ink-muted)', marginTop: '2px' }}>
-                  EMA Jitter Filter
+                  Explore every angle
                 </div>
               </div>
 
@@ -191,7 +192,7 @@ export const HomePage: React.FC<HomePageProps> = ({
                   10 / 10
                 </div>
                 <div style={{ fontSize: '12px', color: 'var(--colors-ink-muted)', marginTop: '2px' }}>
-                  Verified Tests
+                  Ready to explore
                 </div>
               </div>
             </div>
@@ -491,7 +492,7 @@ export const HomePage: React.FC<HomePageProps> = ({
                     </div>
                     <span style={{ fontSize: '12px', color: 'var(--colors-semantic-success)', display: 'flex', alignItems: 'center', gap: '4px' }}>
                       <CheckCircle2 size={13} />
-                      <span>Ready for 3D & AR</span>
+                      <span>Ready to explore</span>
                     </span>
                   </div>
                 </div>
@@ -508,7 +509,7 @@ export const HomePage: React.FC<HomePageProps> = ({
                       padding: '12px 18px',
                     }}
                   >
-                    <span>Discover & Configure Model</span>
+                    <span>Customize this watch</span>
                     <ArrowRight size={16} />
                   </button>
 
@@ -534,10 +535,10 @@ export const HomePage: React.FC<HomePageProps> = ({
                         justifyContent: 'center',
                         gap: '4px',
                       }}
-                      title="WebXR Surface AR"
+                      title={AR_COPY.surface.button}
                     >
                       <Eye size={12} color="var(--colors-primary)" />
-                      <span>Space</span>
+                      <span>Table</span>
                     </button>
 
                     <button
@@ -555,10 +556,10 @@ export const HomePage: React.FC<HomePageProps> = ({
                         justifyContent: 'center',
                         gap: '4px',
                       }}
-                      title="Marker AR"
+                      title={AR_COPY.card.button}
                     >
                       <Scan size={12} color="var(--colors-primary)" />
-                      <span>Marker</span>
+                      <span>Card</span>
                     </button>
                   </div>
                 </div>

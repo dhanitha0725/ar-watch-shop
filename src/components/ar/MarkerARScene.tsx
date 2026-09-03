@@ -1,7 +1,9 @@
 import React, { useEffect, useRef, useState } from 'react';
 import { Watch, TrackingState } from '../../types/watch';
 import { ARStateBadge } from './ARStateBadge';
-import { ArrowLeft, QrCode, Sliders } from 'lucide-react';
+import { ARHelpPanel } from './ARHelpPanel';
+import { AR_COPY } from '../../data/arCopy';
+import { ArrowLeft, QrCode, Sliders, HelpCircle } from 'lucide-react';
 
 interface MarkerARSceneProps {
   watch: Watch;
@@ -23,6 +25,8 @@ export const MarkerARScene: React.FC<MarkerARSceneProps> = ({
   const [modelError, setModelError] = useState<string | null>(null);
   const [modelScaleMultiplier, setModelScaleMultiplier] = useState<number>(1.0);
   const [showControls, setShowControls] = useState(true);
+  const [showHelp, setShowHelp] = useState(true);
+  const [cameraError, setCameraError] = useState<string | null>(null);
 
   const iframeRef = useRef<HTMLIFrameElement>(null);
 
@@ -35,12 +39,15 @@ export const MarkerARScene: React.FC<MarkerARSceneProps> = ({
         if (event.data.type === 'modelLoading') {
           setModelState('loading');
           setModelError(null);
+          setCameraError(null);
         } else if (event.data.type === 'modelLoaded') {
           setModelState('ready');
           setModelError(null);
         } else if (event.data.type === 'modelError') {
           setModelState('error');
-          setModelError(event.data.data || 'Unable to load the 3D model.');
+          setModelError(AR_COPY.card.error);
+        } else if (event.data.type === 'arError') {
+          setCameraError(AR_COPY.card.error);
         } else if (event.data.type === 'markerFound') {
           setTrackingState('detected');
         } else if (event.data.type === 'markerLost') {
@@ -84,6 +91,7 @@ export const MarkerARScene: React.FC<MarkerARSceneProps> = ({
   useEffect(() => {
     setModelState('loading');
     setModelError(null);
+    setCameraError(null);
     setTrackingState('searching');
   }, [watch.modelUrl]);
 
@@ -113,11 +121,12 @@ export const MarkerARScene: React.FC<MarkerARSceneProps> = ({
         <ARStateBadge
           state={trackingState}
           customMessage={
-            modelState === 'error' ? `3D model failed: ${modelError}` :
-            modelState === 'loading' ? `Loading ${watch.name}…` :
-            trackingState === 'searching' ? 'Point camera at Image Target Card' :
-            trackingState === 'detected' ? `Tracking ${watch.name}` :
-            'Target lost — realigning'
+            cameraError ? cameraError :
+            modelState === 'error' ? AR_COPY.card.error :
+            modelState === 'loading' ? AR_COPY.card.loading :
+            trackingState === 'searching' ? AR_COPY.card.searching :
+            trackingState === 'detected' ? AR_COPY.card.detected :
+            AR_COPY.card.lost
           }
         />
 
@@ -125,10 +134,23 @@ export const MarkerARScene: React.FC<MarkerARSceneProps> = ({
           onClick={onOpenMarkerModal}
           className="btn-icon"
           title="Display / Print Target Card"
+          aria-label={AR_COPY.common.showCard}
         >
           <QrCode size={18} color="var(--colors-ink)" />
         </button>
+
+        <button
+          onClick={() => setShowHelp(true)}
+          className="btn-secondary"
+          title={AR_COPY.common.help}
+          aria-label={AR_COPY.common.help}
+          style={{ padding: '7px 12px', minHeight: '32px', fontSize: '12px' }}
+        >
+          <HelpCircle size={14} />
+        </button>
       </div>
+
+      {showHelp && <ARHelpPanel mode="card" onClose={() => setShowHelp(false)} onShowCard={onOpenMarkerModal} />}
 
       {/* Standalone MindAR Camera & Tracking Frame */}
       <iframe
@@ -207,7 +229,7 @@ export const MarkerARScene: React.FC<MarkerARSceneProps> = ({
             {/* Scale Slider */}
             <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginTop: '10px', gap: '14px' }}>
               <span style={{ fontSize: '12px', color: 'var(--colors-body-muted)', whiteSpace: 'nowrap' }}>
-                Scale:
+                {AR_COPY.common.size}:
               </span>
               <input
                 type="range"
@@ -236,7 +258,7 @@ export const MarkerARScene: React.FC<MarkerARSceneProps> = ({
             border: '1px solid var(--colors-hairline)',
             padding: '5px 14px',
           }}>
-            MindAR 6DOF Tracking • Natural Feature Card
+            Keep the whole watch card in view
           </div>
 
           <button
@@ -245,7 +267,7 @@ export const MarkerARScene: React.FC<MarkerARSceneProps> = ({
             style={{ padding: '6px 14px', minHeight: '32px', fontSize: '12px' }}
           >
             <Sliders size={13} />
-            <span>{showControls ? 'Hide Controls' : 'Show Controls'}</span>
+            <span>{showControls ? AR_COPY.common.hideControls : AR_COPY.common.showControls}</span>
           </button>
         </div>
       </div>

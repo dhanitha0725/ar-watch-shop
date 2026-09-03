@@ -1,5 +1,6 @@
 import React from 'react';
 import { X, Download, Printer, CheckCircle2, Sparkles, Terminal } from 'lucide-react';
+import { AR_COPY } from '../../data/arCopy';
 
 interface ModalProps {
   isOpen: boolean;
@@ -10,7 +11,7 @@ export const MarkerModal: React.FC<ModalProps> = ({ isOpen, onClose }) => {
   if (!isOpen) return null;
 
   const currentMarkerUrl = '/markers/card.png';
-  const markerName = 'MindAR Product Target Card';
+  const markerName = 'Chrono watch card';
 
   const handlePrint = () => {
     const win = window.open('', '_blank');
@@ -62,9 +63,9 @@ export const MarkerModal: React.FC<ModalProps> = ({ isOpen, onClose }) => {
           </head>
           <body onload="window.print();">
             <div class="card-container">
-              <h2>CHRONO AR Image Target Card</h2>
+              <h2>Chrono watch card</h2>
               <img src="${window.location.origin}${currentMarkerUrl}" alt="${markerName}" />
-              <p>Point your mobile camera at this Target Card in the WebAR Watch Store to view and inspect the 3D watch in 6DOF Augmented Reality.</p>
+              <p>Show this card on another screen or print it, then point your phone camera at the full card to view the watch.</p>
             </div>
           </body>
         </html>
@@ -106,7 +107,7 @@ export const MarkerModal: React.FC<ModalProps> = ({ isOpen, onClose }) => {
         }}>
           <div style={{ display: 'flex', alignItems: 'center', gap: '8px', fontSize: '11px', fontFamily: 'var(--font-mono)', color: 'var(--colors-primary)' }}>
             <Terminal size={13} />
-            <span>MINDAR // 6DOF TARGET RUNTIME</span>
+            <span>WATCH CARD</span>
           </div>
 
           <button
@@ -123,10 +124,10 @@ export const MarkerModal: React.FC<ModalProps> = ({ isOpen, onClose }) => {
           {/* Header */}
           <div style={{ marginBottom: '18px' }}>
             <h3 style={{ fontSize: '20px', fontWeight: 400, margin: '0 0 6px 0', color: 'var(--colors-ink)' }}>
-              AR Tracking Target Card
+              Use the watch card
             </h3>
             <p style={{ fontSize: '14px', color: 'var(--colors-ink-muted)', margin: 0, lineHeight: 1.45 }}>
-              Point your smartphone camera at this graphic target card on your second screen or print it out on paper.
+              Show this card on another screen or print it on paper. Keep it flat, fully visible, and well lit.
             </p>
           </div>
 
@@ -162,7 +163,7 @@ export const MarkerModal: React.FC<ModalProps> = ({ isOpen, onClose }) => {
               gap: '4px',
             }}>
               <CheckCircle2 size={13} color="var(--colors-semantic-success)" />
-              <span>Compiled 6DOF Target Anchor: <code style={{ fontSize: '11px', fontFamily: 'var(--font-mono)' }}>card.mind</code></span>
+              <span>Ready to use with your phone camera</span>
             </div>
           </div>
 
@@ -214,12 +215,12 @@ export const MarkerModal: React.FC<ModalProps> = ({ isOpen, onClose }) => {
               Instructions:
             </strong>
             <ol style={{ margin: '0 0 8px 0', paddingLeft: '18px' }}>
-              <li style={{ marginBottom: '4px' }}>Open <strong>Marker AR mode</strong> on your smartphone.</li>
-              <li style={{ marginBottom: '4px' }}>Point camera at the <strong>Target Card image</strong> above.</li>
-              <li>The 3D watch anchors instantly in full 6DOF 3D space on top of the card.</li>
+              <li style={{ marginBottom: '4px' }}>Open <strong>{AR_COPY.card.button}</strong> on your phone.</li>
+              <li style={{ marginBottom: '4px' }}>Show or print the <strong>watch card</strong>.</li>
+              <li>Point your camera at the whole card and hold it steady.</li>
             </ol>
             <div style={{ fontSize: '11px', color: 'var(--colors-ink-subtle)', borderTop: '1px solid var(--colors-hairline)', paddingTop: '6px', marginTop: '6px' }}>
-              💡 <em>MindAR utilizes Natural Feature Tracking (NFT).</em>
+              💡 <em>Good lighting and a fully visible card help the watch appear quickly.</em>
             </div>
           </div>
         </div>

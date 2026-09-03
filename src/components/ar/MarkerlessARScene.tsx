@@ -3,6 +3,8 @@ import '@google/model-viewer';
 import { Watch, WatchConfiguration } from '../../types/watch';
 import { checkWebXRSupport, XRSupportStatus } from '../../utils/webxr';
 import { ARStateBadge } from './ARStateBadge';
+import { ARHelpPanel } from './ARHelpPanel';
+import { AR_COPY } from '../../data/arCopy';
 import { 
   ArrowLeft, 
   Sparkles, 
@@ -10,7 +12,8 @@ import {
   Palette, 
   RotateCcw, 
   Smartphone, 
-  Sliders
+  Sliders,
+  HelpCircle
 } from 'lucide-react';
 
 interface MarkerlessARSceneProps {
@@ -43,6 +46,7 @@ export const MarkerlessARScene: React.FC<MarkerlessARSceneProps> = ({
   const [isPlaced, setIsPlaced] = useState<boolean>(false);
   const [arState, setArState] = useState<'idle' | 'starting' | 'active' | 'failed'>('idle');
   const [arError, setArError] = useState<string | null>(null);
+  const [showHelp, setShowHelp] = useState(true);
 
   useEffect(() => {
     checkWebXRSupport().then((status) => {
@@ -70,7 +74,7 @@ export const MarkerlessARScene: React.FC<MarkerlessARSceneProps> = ({
           break;
         case 'failed':
           setArState('failed');
-          setArError('AR session could not start. Confirm that Google Play Services for AR is installed and camera access is allowed.');
+          setArError(AR_COPY.surface.error);
           break;
       }
     };
@@ -129,12 +133,14 @@ export const MarkerlessARScene: React.FC<MarkerlessARSceneProps> = ({
 
     try {
       if (!viewer.canActivateAR) {
-        throw new Error('AR is not ready yet. Wait for the 3D model to finish loading, then try again.');
+        throw new Error(AR_COPY.surface.notReady);
       }
       await viewer.activateAR();
     } catch (error) {
       setArState('failed');
-      setArError(error instanceof Error ? error.message : 'AR session could not start.');
+      setArError(error instanceof Error && error.message === AR_COPY.surface.notReady
+        ? error.message
+        : AR_COPY.surface.error);
     }
   };
 
@@ -193,7 +199,7 @@ export const MarkerlessARScene: React.FC<MarkerlessARSceneProps> = ({
             }}
           >
             <Sparkles size={16} />
-            <span>{arState === 'starting' ? 'Starting camera…' : 'Place on Real-World Surface'}</span>
+            <span>{arState === 'starting' ? AR_COPY.surface.starting : AR_COPY.surface.button}</span>
           </button>
         </div>
       )}
@@ -221,19 +227,23 @@ export const MarkerlessARScene: React.FC<MarkerlessARSceneProps> = ({
           state={arState === 'active' ? 'detected' : 'calibrating'}
           customMessage={
             arState === 'active'
-              ? (isPlaced ? 'Object placed on surface' : 'Move phone to find a surface')
+              ? (isPlaced ? AR_COPY.surface.placed : AR_COPY.surface.searching)
               : arState === 'starting'
-                ? 'Starting WebXR camera…'
+                ? AR_COPY.surface.starting
                 : xrStatus.isSupported
-                  ? 'Ready to start WebXR surface tracking'
-                  : 'Interactive 3D Studio Active'
+                  ? AR_COPY.surface.ready
+                  : AR_COPY.surface.desktop
           }
         />
 
         <button
-          onClick={onResetConfig}
+          onClick={() => {
+            setIsPlaced(false);
+            onResetConfig();
+          }}
           className="btn-icon"
-          title="Reset to Defaults"
+          title={AR_COPY.common.startOver}
+          aria-label={AR_COPY.common.startOver}
         >
           <RotateCcw size={18} color="var(--colors-ink)" />
         </button>
@@ -259,7 +269,7 @@ export const MarkerlessARScene: React.FC<MarkerlessARSceneProps> = ({
         }}>
           <Smartphone size={18} color="var(--colors-primary)" />
           <div style={{ fontSize: '13px', color: 'var(--colors-ink)' }}>
-            <strong>Desktop Preview:</strong> Full 3D rotation & customization active. For camera plane placement, open on a <strong>WebXR-capable smartphone</strong>.
+            <strong>{AR_COPY.surface.desktop}</strong>
           </div>
         </div>
       )}
@@ -281,6 +291,19 @@ export const MarkerlessARScene: React.FC<MarkerlessARSceneProps> = ({
           {arError}
         </div>
       )}
+
+      <button
+        onClick={() => setShowHelp(true)}
+        className="btn-secondary"
+        title={AR_COPY.common.help}
+        aria-label={AR_COPY.common.help}
+        style={{ position: 'absolute', top: '72px', right: '16px', zIndex: 95, padding: '7px 12px', minHeight: '32px', fontSize: '12px' }}
+      >
+        <HelpCircle size={14} />
+        <span>{AR_COPY.common.help}</span>
+      </button>
+
+      {showHelp && <ARHelpPanel mode="surface" onClose={() => setShowHelp(false)} />}
 
       {/* Bottom Option B Interactive HUD Configurator */}
       <div style={{
