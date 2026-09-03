@@ -49,6 +49,7 @@ export const MarkerlessARScene: React.FC<MarkerlessARSceneProps> = ({
   const [arError, setArError] = useState<string | null>(null);
   const [showHelp, setShowHelp] = useState(true);
   const [showControls, setShowControls] = useState(true);
+  const [isAutoRotating, setIsAutoRotating] = useState(false);
 
   useEffect(() => {
     checkWebXRSupport().then((status) => {
@@ -146,6 +147,11 @@ export const MarkerlessARScene: React.FC<MarkerlessARSceneProps> = ({
     }
   };
 
+  const handleDoubleTap = (event: React.MouseEvent<HTMLElement>) => {
+    event.preventDefault();
+    setIsAutoRotating(true);
+  };
+
   // All models are normalized to an approximately 12 cm maximum dimension.
   // config.scale is a user-controlled multiplier on top of that baseline.
   const normalizedScale = (watch.webARScale * config.scale).toFixed(4);
@@ -164,7 +170,11 @@ export const MarkerlessARScene: React.FC<MarkerlessARSceneProps> = ({
           scale={`${normalizedScale} ${normalizedScale} ${normalizedScale}`}
           xr-environment
           camera-controls
+          auto-rotate={isAutoRotating}
+          auto-rotate-delay="1000"
+          rotation-per-second="18deg"
           touch-action="pan-y"
+          onDoubleClick={handleDoubleTap}
           shadow-intensity="1.4"
           shadow-softness="0.6"
           exposure="1.2"
