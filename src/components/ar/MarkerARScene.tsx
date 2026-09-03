@@ -3,7 +3,7 @@ import { Watch, TrackingState } from '../../types/watch';
 import { ARStateBadge } from './ARStateBadge';
 import { ARHelpPanel } from './ARHelpPanel';
 import { AR_COPY } from '../../data/arCopy';
-import { ArrowLeft, QrCode, Sliders, HelpCircle } from 'lucide-react';
+import { ArrowLeft, QrCode, Sliders, HelpCircle, X } from 'lucide-react';
 
 interface MarkerARSceneProps {
   watch: Watch;
@@ -100,57 +100,82 @@ export const MarkerARScene: React.FC<MarkerARSceneProps> = ({
   return (
     <div style={{ position: 'relative', width: '100vw', height: '100vh', backgroundColor: '#000', overflow: 'hidden' }}>
       {/* Top HUD Overlay */}
-      <div style={{
-        position: 'absolute',
-        top: '16px',
-        left: '16px',
-        right: '16px',
-        zIndex: 100,
-        display: 'flex',
-        justifyContent: 'space-between',
-        alignItems: 'center',
-      }}>
-        <button
-          onClick={onBack}
-          className="btn-icon"
-          title="Back"
-        >
-          <ArrowLeft size={18} color="var(--colors-ink)" />
-        </button>
+      <header className="ar-hud-top" role="banner">
+        {/* Left Side: Back + Card Download Component */}
+        <div className="ar-hud-left">
+          <button
+            onClick={onBack}
+            className="btn-icon"
+            title="Back"
+            aria-label="Back"
+          >
+            <ArrowLeft size={18} color="var(--colors-ink)" />
+          </button>
 
-        <ARStateBadge
-          state={trackingState}
-          customMessage={
-            cameraError ? cameraError :
-            modelState === 'error' ? AR_COPY.card.error :
-            modelState === 'loading' ? AR_COPY.card.loading :
-            trackingState === 'searching' ? AR_COPY.card.searching :
-            trackingState === 'detected' ? AR_COPY.card.detected :
-            AR_COPY.card.lost
-          }
+          <button
+            onClick={onOpenMarkerModal}
+            className="btn-icon"
+            title={AR_COPY.common.showCard}
+            aria-label={AR_COPY.common.showCard}
+          >
+            <QrCode size={18} color="var(--colors-ink)" />
+          </button>
+        </div>
+
+        {/* Center: Top State Showing Component */}
+        <div className="ar-hud-center">
+          <ARStateBadge
+            state={trackingState}
+            customMessage={
+              cameraError ? cameraError :
+              modelState === 'error' ? AR_COPY.card.error :
+              modelState === 'loading' ? AR_COPY.card.loading :
+              trackingState === 'searching' ? AR_COPY.card.searching :
+              trackingState === 'detected' ? AR_COPY.card.detected :
+              AR_COPY.card.lost
+            }
+          />
+        </div>
+
+        {/* Right Side: Help and Controls Toggles */}
+        <div className="ar-hud-right">
+          <button
+            onClick={() => setShowHelp(!showHelp)}
+            className="btn-icon"
+            title={showHelp ? AR_COPY.common.closeHelp : AR_COPY.common.help}
+            aria-label={showHelp ? AR_COPY.common.closeHelp : AR_COPY.common.help}
+            style={{
+              backgroundColor: showHelp ? 'var(--colors-ink)' : 'var(--colors-canvas)',
+              color: showHelp ? '#ffffff' : 'var(--colors-ink)',
+            }}
+          >
+            <HelpCircle size={18} />
+          </button>
+
+          {!showControls && (
+            <button
+              onClick={() => setShowControls(true)}
+              className="btn-secondary"
+              title={AR_COPY.common.showControls}
+              aria-label={AR_COPY.common.showControls}
+              style={{ padding: '0 14px', minHeight: '44px', fontSize: '13px' }}
+            >
+              <Sliders size={14} />
+              <span>Controls</span>
+            </button>
+          )}
+        </div>
+      </header>
+
+      {/* User Guideline Model on the Left Side */}
+      {showHelp && (
+        <ARHelpPanel
+          mode="card"
+          placement="left"
+          onClose={() => setShowHelp(false)}
+          onShowCard={onOpenMarkerModal}
         />
-
-        <button
-          onClick={onOpenMarkerModal}
-          className="btn-icon"
-          title={AR_COPY.common.showCard}
-          aria-label={AR_COPY.common.showCard}
-        >
-          <QrCode size={18} color="var(--colors-ink)" />
-        </button>
-
-        <button
-          onClick={() => setShowHelp(true)}
-          className="btn-secondary"
-          title={AR_COPY.common.help}
-          aria-label={AR_COPY.common.help}
-          style={{ padding: '7px 12px', minHeight: '32px', fontSize: '12px' }}
-        >
-          <HelpCircle size={14} />
-        </button>
-      </div>
-
-      {showHelp && <ARHelpPanel mode="card" onClose={() => setShowHelp(false)} onShowCard={onOpenMarkerModal} />}
+      )}
 
       {/* Standalone MindAR Camera & Tracking Frame */}
       <iframe
@@ -178,99 +203,109 @@ export const MarkerARScene: React.FC<MarkerARSceneProps> = ({
         title="MindAR Image Target Tracking Scene"
       />
 
-      {/* Bottom Floating Controls */}
-      <div style={{
-        position: 'absolute',
-        bottom: '20px',
-        left: '16px',
-        right: '16px',
-        zIndex: 100,
-        display: 'flex',
-        flexDirection: 'column',
-        gap: '10px',
-      }}>
-        {showControls && (
-          <div style={{
-            padding: '16px',
-            backgroundColor: 'rgba(255, 255, 255, 0.9)',
-            backdropFilter: 'blur(20px)',
-            WebkitBackdropFilter: 'blur(20px)',
-            borderRadius: 'var(--rounded-lg)',
-            border: '1px solid var(--colors-hairline)',
-            boxShadow: '0 8px 32px rgba(0,0,0,0.12)',
-          }}>
-            {/* Model Switcher Row */}
-            <div style={{ display: 'flex', gap: '8px', overflowX: 'auto', paddingBottom: '6px' }}>
-              {watches.map(w => {
-                const isSelected = w.id === watch.id;
-                return (
-                  <button
-                    key={w.id}
-                    onClick={() => onSelectWatch(w)}
-                    style={{
-                      flexShrink: 0,
-                      padding: '6px 14px',
-                      borderRadius: 'var(--rounded-pill)',
-                      backgroundColor: isSelected ? 'var(--colors-ink)' : 'var(--colors-canvas-parchment)',
-                      border: 'none',
-                      color: isSelected ? '#ffffff' : 'var(--colors-ink)',
-                      fontSize: '13px',
-                      fontFamily: 'var(--font-body)',
-                      fontWeight: isSelected ? 600 : 400,
-                      cursor: 'pointer',
-                    }}
-                  >
-                    {w.name}
-                  </button>
-                );
-              })}
+      {/* Right-Side Operator Window */}
+      {showControls && (
+        <aside
+          className="ar-operator-window"
+          role="region"
+          aria-label="AR Operator Controls"
+        >
+          {/* Header */}
+          <div className="ar-operator-header">
+            <div className="ar-operator-title">
+              <Sliders size={14} color="var(--colors-primary)" />
+              <span>Controls</span>
+            </div>
+            <button
+              onClick={() => setShowControls(false)}
+              className="btn-icon"
+              title={AR_COPY.common.hideControls}
+              aria-label={AR_COPY.common.hideControls}
+              style={{ width: '28px', height: '28px', border: 'none', background: 'transparent' }}
+            >
+              <X size={15} />
+            </button>
+          </div>
+
+          {/* Body */}
+          <div className="ar-operator-body">
+            {/* Watch Model Selector */}
+            <div>
+              <div className="ar-operator-section-label">Select Model</div>
+              <div className="ar-model-list">
+                {watches.map(w => {
+                  const isSelected = w.id === watch.id;
+                  return (
+                    <button
+                      key={w.id}
+                      onClick={() => onSelectWatch(w)}
+                      className={`ar-model-btn ${isSelected ? 'active' : ''}`}
+                      type="button"
+                    >
+                      <span>{w.name}</span>
+                      {isSelected && (
+                        <span style={{
+                          width: '6px',
+                          height: '6px',
+                          borderRadius: '50%',
+                          backgroundColor: 'var(--colors-primary)',
+                          display: 'inline-block'
+                        }} />
+                      )}
+                    </button>
+                  );
+                })}
+              </div>
             </div>
 
-            {/* Scale Slider */}
-            <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginTop: '10px', gap: '14px' }}>
-              <span style={{ fontSize: '12px', color: 'var(--colors-body-muted)', whiteSpace: 'nowrap' }}>
-                {AR_COPY.common.size}:
-              </span>
-              <input
-                type="range"
-                min="0.5"
-                max="2.5"
-                step="0.1"
-                value={modelScaleMultiplier}
-                onChange={(e) => setModelScaleMultiplier(parseFloat(e.target.value))}
-                style={{ flex: 1 }}
-              />
-              <span style={{ fontSize: '13px', fontFamily: 'var(--font-mono)', fontWeight: 600, color: 'var(--colors-primary)' }}>
-                {modelScaleMultiplier.toFixed(1)}x
-              </span>
+            {/* Compact Scale Slider */}
+            <div>
+              <div className="ar-operator-section-label">{AR_COPY.common.size}</div>
+              <div className="ar-scale-container">
+                <button
+                  type="button"
+                  className="ar-scale-btn"
+                  title="Decrease scale"
+                  aria-label="Decrease scale"
+                  onClick={() => setModelScaleMultiplier(prev => Math.max(0.5, parseFloat((prev - 0.1).toFixed(1))))}
+                >
+                  -
+                </button>
+
+                <input
+                  type="range"
+                  min="0.5"
+                  max="2.5"
+                  step="0.1"
+                  value={modelScaleMultiplier}
+                  onChange={(e) => setModelScaleMultiplier(parseFloat(e.target.value))}
+                  className="ar-scale-slider"
+                  aria-label="Adjust scale"
+                />
+
+                <button
+                  type="button"
+                  className="ar-scale-btn"
+                  title="Increase scale"
+                  aria-label="Increase scale"
+                  onClick={() => setModelScaleMultiplier(prev => Math.min(2.5, parseFloat((prev + 0.1).toFixed(1))))}
+                >
+                  +
+                </button>
+
+                <span className="ar-scale-val">
+                  {modelScaleMultiplier.toFixed(1)}x
+                </span>
+              </div>
             </div>
           </div>
-        )}
 
-        {/* Marker HUD bottom bar */}
-        <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-          <div style={{
-            fontSize: '12px',
-            color: 'var(--colors-body-muted)',
-            backgroundColor: 'rgba(255, 255, 255, 0.85)',
-            backdropFilter: 'blur(10px)',
-            borderRadius: 'var(--rounded-pill)',
-            border: '1px solid var(--colors-hairline)',
-            padding: '5px 14px',
-          }}>
+          {/* Footer Status Hint */}
+          <div className="ar-operator-footer">
             Keep the whole watch card in view
           </div>
-
-          <button
-            onClick={() => setShowControls(!showControls)}
-            className="btn-secondary"
-            style={{ padding: '6px 14px', minHeight: '32px', fontSize: '12px' }}
-          >
-            <Sliders size={13} />
-            <span>{showControls ? AR_COPY.common.hideControls : AR_COPY.common.showControls}</span>
-          </button>
-        </div>
-      </div>
+        </aside>
+      )}
     </div>
   );
 };

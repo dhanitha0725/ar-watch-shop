@@ -6,23 +6,47 @@ interface ARHelpPanelProps {
   mode: 'surface' | 'card';
   onClose: () => void;
   onShowCard?: () => void;
+  placement?: 'left' | 'center';
+  className?: string;
+  style?: React.CSSProperties;
 }
 
-export const ARHelpPanel: React.FC<ARHelpPanelProps> = ({ mode, onClose, onShowCard }) => {
+export const ARHelpPanel: React.FC<ARHelpPanelProps> = ({
+  mode,
+  onClose,
+  onShowCard,
+  placement = 'center',
+  className = '',
+  style,
+}) => {
   const copy = AR_COPY[mode];
+
+  const positionStyle: React.CSSProperties = placement === 'left' ? {
+    position: 'absolute',
+    top: '72px',
+    left: '16px',
+    right: 'auto',
+    zIndex: 110,
+    width: 'calc(100vw - 32px)',
+    maxWidth: '380px',
+    margin: 0,
+  } : {
+    position: 'absolute',
+    top: '72px',
+    left: '16px',
+    right: '16px',
+    zIndex: 110,
+    maxWidth: '420px',
+    margin: '0 auto',
+  };
 
   return (
     <div
       role="dialog"
       aria-label={copy.helpTitle}
+      className={`ar-help-panel ${placement === 'left' ? 'ar-help-panel-left' : ''} ${className}`.trim()}
       style={{
-        position: 'absolute',
-        top: '72px',
-        left: '16px',
-        right: '16px',
-        zIndex: 110,
-        maxWidth: '420px',
-        margin: '0 auto',
+        ...positionStyle,
         padding: '18px 20px',
         backgroundColor: 'rgba(255, 255, 255, 0.95)',
         backdropFilter: 'blur(20px)',
@@ -30,6 +54,7 @@ export const ARHelpPanel: React.FC<ARHelpPanelProps> = ({ mode, onClose, onShowC
         border: '1px solid var(--colors-hairline)',
         borderRadius: 'var(--rounded-lg)',
         boxShadow: '0 10px 36px rgba(0, 0, 0, 0.18)',
+        ...style,
       }}
     >
       <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', gap: '16px' }}>
