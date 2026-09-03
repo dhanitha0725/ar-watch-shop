@@ -6,7 +6,7 @@ import { ArrowLeft, Eye } from 'lucide-react';
 interface ComparePageProps {
   watches: Watch[];
   onSelectWatch: (watch: Watch) => void;
-  onLaunchAR: (mode: 'marker' | 'markerless' | 'wrist', watch: Watch) => void;
+  onLaunchAR: (mode: 'marker' | 'markerless', watch: Watch) => void;
   onBack: () => void;
 }
 

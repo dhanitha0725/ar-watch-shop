@@ -17,7 +17,7 @@ interface ConfiguratorWizardProps {
   onUpdateConfig: (partial: Partial<WatchConfiguration>) => void;
   onSetStep: (step: ConfiguratorStep) => void;
   onReset: () => void;
-  onLaunchAR?: (mode: 'marker' | 'markerless' | 'wrist') => void;
+  onLaunchAR?: (mode: 'marker' | 'markerless') => void;
 }
 
 export const ConfiguratorWizard: React.FC<ConfiguratorWizardProps> = ({

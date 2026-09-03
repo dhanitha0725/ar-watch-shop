@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { Watch as WatchIcon, Eye, Scan, Hand, Sliders, FileText, Menu, X, QrCode, Sparkles, ExternalLink, Terminal } from 'lucide-react';
+import { Watch as WatchIcon, Eye, Scan, Sliders, FileText, Menu, X, QrCode, Sparkles, ExternalLink, Terminal } from 'lucide-react';
 
 interface NavbarProps {
   currentView: string;
@@ -18,7 +18,6 @@ export const Navbar: React.FC<NavbarProps> = ({
     { id: 'catalogue', label: 'Collection', icon: WatchIcon },
     { id: 'markerless-ar', label: 'Space AR', icon: Eye },
     { id: 'marker-ar', label: 'Marker AR', icon: Scan },
-    { id: 'wrist-tryon', label: 'Wrist Try-On', icon: Hand },
     { id: 'compare', label: 'Compare', icon: Sliders },
     { id: 'docs', label: 'Test Matrix', icon: FileText },
   ];
@@ -69,7 +68,7 @@ export const Navbar: React.FC<NavbarProps> = ({
               gap: '4px',
             }}
           >
-            <span>Verification Spec (T01–T10)</span>
+            <span>Verification Spec (T01–T09)</span>
             <ExternalLink size={10} />
           </button>
           <span style={{ color: 'var(--colors-hairline)' }}>|</span>

@@ -37,13 +37,6 @@ export const DocumentationPage: React.FC<DocumentationPageProps> = ({ onBack }) 
       cause: 'Re-loading multi-megabyte GLB assets upon every color change caused UI freezing and high network bandwidth.',
       fix: 'Built in-memory mesh traverser (applyWatchMaterialCustomization) that modifies MeshStandardMaterial baseColor, roughness, metalness, and emissive properties directly on the live scene graph.',
       status: 'Resolved'
-    },
-    {
-      id: 'CH-05',
-      title: 'Hand Landmark Jitter in MediaPipe Wrist Try-On',
-      cause: 'Camera pixel noise created unstable wrist orientation angles when estimating pose from landmarks 0, 5, and 17.',
-      fix: 'Implemented Exponential Moving Average (EMA) mathematical filters (Vector3Smoother & ScalarSmoother with alpha=0.22) to produce silky-smooth real-time tracking.',
-      status: 'Resolved'
     }
   ];
 
@@ -83,12 +76,6 @@ export const DocumentationPage: React.FC<DocumentationPageProps> = ({ onBack }) 
       creator: 'Google LLC',
       license: 'Apache 2.0 License',
       notes: 'WebXR immersive-ar session & PBR 3D web component.'
-    },
-    {
-      name: 'MediaPipe Vision (Hand Landmarker)',
-      creator: 'Google LLC',
-      license: 'Apache 2.0 License',
-      notes: 'On-device machine learning for 21 3D hand landmarks.'
     }
   ];
 
@@ -162,7 +149,7 @@ export const DocumentationPage: React.FC<DocumentationPageProps> = ({ onBack }) 
             }}>
               <div>
                 <h3 style={{ fontSize: '18px', fontWeight: 400, marginBottom: '4px', color: 'var(--colors-ink)' }}>
-                  10-Point Verification Matrix (T01–T10)
+                  9-Point Verification Matrix (T01–T09)
                 </h3>
                 <p style={{ fontSize: '14px', color: 'var(--colors-ink-muted)' }}>
                   Verification suite covering 3D mesh rendering, spatial tracking pipelines, and Option B state machine transitions.
@@ -182,7 +169,7 @@ export const DocumentationPage: React.FC<DocumentationPageProps> = ({ onBack }) 
                 fontFamily: 'var(--font-mono)',
               }}>
                 <ShieldCheck size={14} />
-                <span>10 / 10 TESTS VERIFIED</span>
+                <span>9 / 9 TESTS VERIFIED</span>
               </span>
             </div>
 
@@ -245,7 +232,7 @@ export const DocumentationPage: React.FC<DocumentationPageProps> = ({ onBack }) 
                 Technical Challenges & Solutions
               </h3>
               <p style={{ fontSize: '14px', color: 'var(--colors-ink-muted)' }}>
-                Engineering hurdles encountered during WebXR and MediaPipe integration and their systematic solutions.
+                Engineering hurdles encountered during WebXR and MindAR spatial tracking and their systematic solutions.
               </p>
             </div>
 
@@ -319,7 +306,6 @@ export const DocumentationPage: React.FC<DocumentationPageProps> = ({ onBack }) 
                   <li>• Google &lt;model-viewer&gt; PBR Pipeline</li>
                   <li>• WebXR Device API (immersive-ar)</li>
                   <li>• MindAR 1.2.5 6DOF Natural Feature Tracking</li>
-                  <li>• MediaPipe Vision Hand Landmarker (21 Poses)</li>
                 </ul>
               </div>
 
@@ -330,7 +316,7 @@ export const DocumentationPage: React.FC<DocumentationPageProps> = ({ onBack }) 
                 <ul style={{ fontSize: '13px', color: 'var(--colors-ink-muted)', listStyle: 'none', display: 'flex', flexDirection: 'column', gap: '6px', padding: 0 }}>
                   <li>• 5-Step Guided Configurator Wizard</li>
                   <li>• In-Memory Three.js Mesh Traverser</li>
-                  <li>• Exponential Moving Average Filters</li>
+                  <li>• Precision Clamped Bounds & Scale Multipliers</li>
                   <li>• 1-Click State Defaults Reset</li>
                 </ul>
               </div>

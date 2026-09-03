@@ -8,7 +8,6 @@ import { HomePage } from './pages/HomePage';
 import { ProductDetailPage } from './pages/ProductDetailPage';
 import { MarkerARPage } from './pages/MarkerARPage';
 import { MarkerlessARPage } from './pages/MarkerlessARPage';
-import { WristTryOnPage } from './pages/WristTryOnPage';
 import { ComparePage } from './pages/ComparePage';
 import { DocumentationPage } from './pages/DocumentationPage';
 
@@ -63,13 +62,12 @@ export const App: React.FC = () => {
     });
   };
 
-  const handleLaunchAR = (mode: 'marker' | 'markerless' | 'wrist', watch?: Watch) => {
+  const handleLaunchAR = (mode: 'marker' | 'markerless', watch?: Watch) => {
     if (watch) {
       setSelectedWatch(watch);
     }
     if (mode === 'marker') setCurrentView('marker-ar');
     else if (mode === 'markerless') setCurrentView('markerless-ar');
-    else if (mode === 'wrist') setCurrentView('wrist-tryon');
   };
 
   const handleNavigate = (view: string) => {
@@ -86,7 +84,7 @@ export const App: React.FC = () => {
   };
 
   // Determine if current screen is an immersive fullscreen AR mode
-  const isImmersiveAR = ['marker-ar', 'markerless-ar', 'wrist-tryon'].includes(currentView);
+  const isImmersiveAR = ['marker-ar', 'markerless-ar'].includes(currentView);
 
   return (
     <div style={{ minHeight: '100vh', display: 'flex', flexDirection: 'column', backgroundColor: isImmersiveAR ? 'transparent' : 'var(--bg-primary)' }}>
@@ -159,19 +157,6 @@ export const App: React.FC = () => {
             onUpdateConfig={handleUpdateConfig}
             onBack={() => setCurrentView('product')}
             onResetConfig={handleResetConfig}
-          />
-        )}
-
-        {currentView === 'wrist-tryon' && (
-          <WristTryOnPage
-            watch={selectedWatch}
-            watches={WATCHES}
-            config={config}
-            onSelectWatch={(w) => {
-              setSelectedWatch(w);
-              handleUpdateConfig({ watchId: w.id });
-            }}
-            onBack={() => setCurrentView('product')}
           />
         )}
 

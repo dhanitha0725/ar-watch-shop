@@ -6,7 +6,6 @@ import {
   ArrowLeft, 
   Scan, 
   Eye, 
-  Hand, 
   CheckCircle2
 } from 'lucide-react';
 
@@ -19,7 +18,7 @@ interface ProductDetailPageProps {
   onUpdateConfig: (partial: Partial<WatchConfiguration>) => void;
   onSetConfigStep: (step: ConfiguratorStep) => void;
   onResetConfig: () => void;
-  onLaunchAR: (mode: 'marker' | 'markerless' | 'wrist') => void;
+  onLaunchAR: (mode: 'marker' | 'markerless') => void;
   onBack: () => void;
 }
 
@@ -135,16 +134,6 @@ export const ProductDetailPage: React.FC<ProductDetailPageProps> = ({
                 >
                   <Scan size={13} />
                   <span>Marker AR</span>
-                </button>
-
-                <button
-                  onClick={() => onLaunchAR('wrist')}
-                  className="btn-secondary"
-                  style={{ padding: '8px 14px', fontSize: '12px', height: '36px' }}
-                  title="MediaPipe Wrist Try-On"
-                >
-                  <Hand size={13} />
-                  <span>Wrist Try-On</span>
                 </button>
               </div>
             </div>

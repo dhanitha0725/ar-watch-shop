@@ -34,7 +34,7 @@ export const Footer: React.FC<FooterProps> = ({ onNavigate }) => {
         }}>
           <Terminal size={16} color="var(--colors-primary)" style={{ flexShrink: 0, marginTop: '2px' }} />
           <div>
-            1. WebAR features require a compatible hardware environment. WebXR Plane Hit-Testing requires ARCore / WebXR-capable browsers over HTTPS. Marker AR requires camera permissions and 6DOF Natural Feature Tracking (NFT). MediaPipe Hand Landmarker runs on-device WASM machine learning at 60 FPS.
+            1. WebAR features require a compatible hardware environment. WebXR Plane Hit-Testing requires ARCore / WebXR-capable browsers over HTTPS. Marker AR requires camera permissions and 6DOF Natural Feature Tracking (NFT) target recognition.
           </div>
         </div>
 
@@ -104,14 +104,6 @@ export const Footer: React.FC<FooterProps> = ({ onNavigate }) => {
                   style={{ background: 'none', border: 'none', cursor: 'pointer', color: 'var(--colors-inverse-ink-muted)', fontSize: '13px', padding: 0 }}
                 >
                   MindAR NFT 6DOF Tracking
-                </button>
-              </li>
-              <li>
-                <button 
-                  onClick={() => onNavigate('wrist-tryon')}
-                  style={{ background: 'none', border: 'none', cursor: 'pointer', color: 'var(--colors-inverse-ink-muted)', fontSize: '13px', padding: 0 }}
-                >
-                  MediaPipe Wrist Virtual Try-On
                 </button>
               </li>
             </ul>

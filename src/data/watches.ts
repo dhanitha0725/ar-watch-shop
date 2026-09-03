@@ -45,9 +45,7 @@ export const WATCHES: Watch[] = [
     defaultScale: 1.0,
     webARScale: 1.5748,
     markerScale: '9.1813 9.1813 9.1813',
-    markerRotation: '0 0 0',
-    wristScaleFactor: 0.012,
-    wristRotationOffset: [0, Math.PI / 2, 0]
+    markerRotation: '0 0 0'
   },
   {
     id: 'chronograph-mudmaster',
@@ -93,9 +91,7 @@ export const WATCHES: Watch[] = [
     defaultScale: 0.08,
     webARScale: 0.0159,
     markerScale: '0.0926 0.0926 0.0926',
-    markerRotation: '0 0 0',
-    wristScaleFactor: 0.001,
-    wristRotationOffset: [0, Math.PI / 2, 0]
+    markerRotation: '0 0 0'
   },
   {
     id: 'digital-cyber',
@@ -141,9 +137,7 @@ export const WATCHES: Watch[] = [
     defaultScale: 1.0,
     webARScale: 0.0095,
     markerScale: '0.0551 0.0551 0.0551',
-    markerRotation: '0 0 0',
-    wristScaleFactor: 0.015,
-    wristRotationOffset: [0, Math.PI / 2, 0]
+    markerRotation: '0 0 0'
   },
   {
     id: 'seiko-classic',
@@ -189,9 +183,7 @@ export const WATCHES: Watch[] = [
     defaultScale: 1.0,
     webARScale: 1.1131,
     markerScale: '6.4927 6.4927 6.4927',
-    markerRotation: '0 0 0',
-    wristScaleFactor: 0.014,
-    wristRotationOffset: [0, Math.PI / 2, 0]
+    markerRotation: '0 0 0'
   }
 ];
 
@@ -267,13 +259,5 @@ export const TEST_MATRIX: TestMatrixItem[] = [
     expectedResult: 'Graceful detection of WebXR immersive-ar and Camera API support with informative alerts for desktop testing.',
     status: 'Pass (with fallback)',
     notes: 'Uses navigator.xr.isSessionSupported() check and provides on-screen AR simulation mode.'
-  },
-  {
-    id: 'T10',
-    category: 'Showcase Wrist AR',
-    feature: 'MediaPipe Hand Landmark Wrist Tracking & Smoothing',
-    expectedResult: 'Webcam detects hand landmarks 0 (wrist), 5 (Index MCP), 17 (Pinky MCP) and overlays 3D watch with exponential filter.',
-    status: 'Pass',
-    notes: 'Exponential smoothing filter (alpha=0.25) eliminates high-frequency webcam landmark jitter.'
   }
 ];

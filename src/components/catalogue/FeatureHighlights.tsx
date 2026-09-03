@@ -1,8 +1,8 @@
 import React from 'react';
-import { Scan, Eye, Hand, QrCode, ArrowRight } from 'lucide-react';
+import { Scan, Eye, QrCode, ArrowRight } from 'lucide-react';
 
 interface FeatureHighlightsProps {
-  onLaunchMode: (mode: 'markerless' | 'marker' | 'wrist') => void;
+  onLaunchMode: (mode: 'markerless' | 'marker') => void;
   onOpenMarkerModal: () => void;
 }
 
@@ -39,7 +39,7 @@ export const FeatureHighlights: React.FC<FeatureHighlightsProps> = ({
           lineHeight: 1.2,
           color: 'var(--colors-ink)',
         }}>
-          Three Spatial Tracking Modalities.
+          Two Spatial Tracking Modalities.
         </h2>
         <p style={{
           fontSize: '15px',
@@ -48,12 +48,12 @@ export const FeatureHighlights: React.FC<FeatureHighlightsProps> = ({
           marginTop: '6px',
           maxWidth: '720px',
         }}>
-          Calibrated WebXR hit-testing for planar desk placement, 6DOF NFT image targets via MindAR, and 21-landmark hand pose tracking with MediaPipe Vision.
+          Calibrated WebXR hit-testing for planar surface placement and 6DOF Natural Feature Tracking (NFT) image targets via MindAR.
         </p>
       </div>
 
-      {/* 3-Column Flush Modular Grid */}
-      <div className="carbon-grid-3col" style={{
+      {/* 2-Column Flush Modular Grid */}
+      <div className="carbon-grid-2col" style={{
         gap: '0',
         backgroundColor: 'var(--colors-hairline)',
       }}>
@@ -165,57 +165,6 @@ export const FeatureHighlights: React.FC<FeatureHighlightsProps> = ({
               <QrCode size={16} />
             </button>
           </div>
-        </div>
-
-        {/* Mode 3: MediaPipe Hand Landmarker Wrist Try-On */}
-        <div className="carbon-cell" style={{
-          display: 'flex',
-          flexDirection: 'column',
-          justifyContent: 'space-between',
-          backgroundColor: 'var(--colors-canvas)',
-          borderRight: 'none',
-        }}>
-          <div>
-            <div style={{
-              width: '40px',
-              height: '40px',
-              backgroundColor: 'var(--colors-surface-1)',
-              border: '1px solid var(--colors-hairline)',
-              display: 'flex',
-              alignItems: 'center',
-              justifyContent: 'center',
-              color: 'var(--colors-primary)',
-              marginBottom: '20px',
-            }}>
-              <Hand size={20} />
-            </div>
-
-            <div style={{
-              fontSize: '12px',
-              fontFamily: 'var(--font-mono)',
-              color: 'var(--colors-ink-muted)',
-              marginBottom: '4px',
-            }}>
-              MODALITY 03 // MEDIAPIPE
-            </div>
-
-            <h3 style={{ fontSize: '20px', fontWeight: 400, marginBottom: '8px', color: 'var(--colors-ink)' }}>
-              Virtual Wrist Try-On
-            </h3>
-
-            <p style={{ fontSize: '14px', color: 'var(--colors-ink-muted)', lineHeight: 1.5, marginBottom: '24px' }}>
-              Tracks 21 3D hand landmarks in real time with MediaPipe Vision. Mathematical EMA smoothing filters eliminate jitter for a natural wrist try-on experience.
-            </p>
-          </div>
-
-          <button
-            onClick={() => onLaunchMode('wrist')}
-            className="btn-primary"
-            style={{ width: '100%', justifyContent: 'space-between' }}
-          >
-            <span>Try On Wrist</span>
-            <ArrowRight size={15} />
-          </button>
         </div>
       </div>
     </section>

@@ -7,8 +7,5 @@ export default defineConfig({
   server: {
     port: 5173,
     host: true
-  },
-  optimizeDeps: {
-    exclude: ['@mediapipe/tasks-vision']
   }
 });

@@ -8,7 +8,6 @@ import {
   ArrowRight, 
   Heart, 
   Scan, 
-  Hand, 
   Cpu, 
   CheckCircle2, 
   Grid as GridIcon,
@@ -18,7 +17,7 @@ import {
 interface HomePageProps {
   watches: Watch[];
   onSelectWatch: (watch: Watch) => void;
-  onLaunchAR: (mode: 'marker' | 'markerless' | 'wrist', watch?: Watch) => void;
+  onLaunchAR: (mode: 'marker' | 'markerless', watch?: Watch) => void;
   onOpenMarkerModal: () => void;
   onNavigate: (view: string) => void;
 }
@@ -131,7 +130,7 @@ export const HomePage: React.FC<HomePageProps> = ({
                 maxWidth: '540px',
                 letterSpacing: '0.16px',
               }}>
-                Inspect high-precision 3D timepieces with real-time PBR shaders. Place models on physical surfaces with WebXR, anchor 6DOF target cards with MindAR, or virtually try on watches via MediaPipe hand tracking.
+                Inspect high-precision 3D timepieces with real-time PBR shaders. Place models on physical surfaces with WebXR or anchor 6DOF target cards with MindAR.
               </p>
 
               {/* Primary & Secondary Square CTAs */}
@@ -515,7 +514,7 @@ export const HomePage: React.FC<HomePageProps> = ({
 
                   <div style={{
                     display: 'grid',
-                    gridTemplateColumns: 'repeat(3, 1fr)',
+                    gridTemplateColumns: 'repeat(2, 1fr)',
                     gap: '1px',
                     backgroundColor: 'var(--colors-hairline)',
                     border: '1px solid var(--colors-hairline)',
@@ -560,27 +559,6 @@ export const HomePage: React.FC<HomePageProps> = ({
                     >
                       <Scan size={12} color="var(--colors-primary)" />
                       <span>Marker</span>
-                    </button>
-
-                    <button
-                      onClick={() => onLaunchAR('wrist', activeShowcaseWatch)}
-                      style={{
-                        padding: '8px 4px',
-                        fontSize: '11px',
-                        fontFamily: 'var(--font-body)',
-                        backgroundColor: 'var(--colors-surface-1)',
-                        color: 'var(--colors-ink)',
-                        border: 'none',
-                        cursor: 'pointer',
-                        display: 'flex',
-                        alignItems: 'center',
-                        justifyContent: 'center',
-                        gap: '4px',
-                      }}
-                      title="Wrist Try-On"
-                    >
-                      <Hand size={12} color="var(--colors-primary)" />
-                      <span>Try-On</span>
                     </button>
                   </div>
                 </div>

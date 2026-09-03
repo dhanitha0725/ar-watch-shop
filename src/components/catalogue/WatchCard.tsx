@@ -6,7 +6,7 @@ import { ArrowRight } from 'lucide-react';
 interface WatchCardProps {
   watch: Watch;
   onSelect: (watch: Watch) => void;
-  onLaunchAR?: (mode: 'marker' | 'markerless' | 'wrist', watch: Watch) => void;
+  onLaunchAR?: (mode: 'marker' | 'markerless', watch: Watch) => void;
 }
 
 export const WatchCard: React.FC<WatchCardProps> = ({
