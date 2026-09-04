@@ -110,28 +110,10 @@ export const ConfiguratorWizard: React.FC<ConfiguratorWizardProps> = ({
         marginBottom: '20px',
       }}>
         <div>
-          <div style={{
-            fontSize: '11px',
-            fontFamily: 'var(--font-mono)',
-            color: 'var(--colors-primary)',
-            marginBottom: '2px',
-          }}>
-            CONFIGURATOR STEP 0{currentStepIndex + 1} // 0{steps.length}
-          </div>
           <h3 style={{ fontSize: '18px', fontWeight: 400, color: 'var(--colors-ink)' }}>
-            {steps[currentStepIndex].title} — <span style={{ color: 'var(--colors-ink-muted)' }}>{steps[currentStepIndex].subtitle}</span>
+            {steps[currentStepIndex].title}
           </h3>
         </div>
-
-        <button
-          onClick={onReset}
-          className="btn-dark-utility"
-          style={{ padding: '6px 10px', height: '30px', fontSize: '12px', gap: '4px' }}
-          title="Restore factory configuration"
-        >
-          <RotateCcw size={12} />
-          <span>Reset Defaults</span>
-        </button>
       </div>
 
       {/* Step Contents */}
@@ -140,7 +122,7 @@ export const ConfiguratorWizard: React.FC<ConfiguratorWizardProps> = ({
         {(currentStep === 'select' || currentStep !== 'manipulate') && (
           <div>
             <p style={{ fontSize: '14px', color: 'var(--colors-ink-muted)', marginBottom: '14px' }}>
-              Select base 3D CAD mesh to configure:
+              Select base model to configure:
             </p>
             <div style={{
               display: 'grid',

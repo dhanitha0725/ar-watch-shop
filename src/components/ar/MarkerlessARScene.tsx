@@ -10,7 +10,6 @@ import {
   Sparkles, 
   Layers, 
   RotateCcw, 
-  Smartphone, 
   Sliders,
   HelpCircle,
   X
@@ -235,31 +234,6 @@ export const MarkerlessARScene: React.FC<MarkerlessARSceneProps> = ({
           placement="left"
           onClose={() => setShowHelp(false)}
         />
-      )}
-
-      {/* WebXR Notice Banner for Non-Supported Desktop */}
-      {!xrStatus.isSupported && (
-        <div style={{
-          position: 'absolute',
-          bottom: '16px',
-          left: '16px',
-          zIndex: 90,
-          backgroundColor: 'rgba(255, 255, 255, 0.9)',
-          backdropFilter: 'blur(20px)',
-          WebkitBackdropFilter: 'blur(20px)',
-          border: '1px solid var(--colors-hairline)',
-          boxShadow: '0 4px 16px rgba(0,0,0,0.08)',
-          padding: '10px 14px',
-          display: 'flex',
-          alignItems: 'center',
-          gap: '10px',
-          maxWidth: '360px',
-        }}>
-          <Smartphone size={18} color="var(--colors-primary)" />
-          <div style={{ fontSize: '12px', color: 'var(--colors-ink)', lineHeight: 1.4 }}>
-            <strong>{AR_COPY.surface.desktop}</strong>
-          </div>
-        </div>
       )}
 
       {/* Right-Side Operator Window */}

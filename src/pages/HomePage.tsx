@@ -12,7 +12,9 @@ import {
   Cpu, 
   CheckCircle2, 
   Grid as GridIcon,
-  Layers
+  Layers,
+  ChevronLeft,
+  ChevronRight
 } from 'lucide-react';
 
 interface HomePageProps {
@@ -60,6 +62,14 @@ export const HomePage: React.FC<HomePageProps> = ({
     if (cat.watchIndex !== undefined) {
       setShowcaseIndex(cat.watchIndex);
     }
+  };
+
+  const handlePrevShowcase = () => {
+    setShowcaseIndex((prev) => (prev > 0 ? prev - 1 : watches.length - 1));
+  };
+
+  const handleNextShowcase = () => {
+    setShowcaseIndex((prev) => (prev < watches.length - 1 ? prev + 1 : 0));
   };
 
   const filteredWatches = watches.filter((w) => {
@@ -534,10 +544,79 @@ export const HomePage: React.FC<HomePageProps> = ({
                 backgroundColor: 'var(--colors-canvas)',
                 minHeight: '560px',
               }}>
+                {/* Previous Model Button (<) */}
+                <button
+                  onClick={handlePrevShowcase}
+                  className="btn-icon"
+                  style={{
+                    position: 'absolute',
+                    left: '20px',
+                    top: '50%',
+                    transform: 'translateY(-50%)',
+                    zIndex: 25,
+                    width: '42px',
+                    height: '42px',
+                    backgroundColor: 'rgba(255, 255, 255, 0.92)',
+                    backdropFilter: 'blur(12px)',
+                    WebkitBackdropFilter: 'blur(12px)',
+                    border: '1px solid var(--colors-hairline)',
+                    boxShadow: '0 4px 16px rgba(0, 0, 0, 0.08)',
+                    cursor: 'pointer',
+                  }}
+                  title="Previous Watch Model"
+                  aria-label="Previous Watch Model"
+                >
+                  <ChevronLeft size={20} color="var(--colors-ink)" />
+                </button>
+
                 <Interactive3DViewer
                   watch={activeShowcaseWatch}
                   height="100%"
                 />
+
+                {/* Next Model Button (>) */}
+                <button
+                  onClick={handleNextShowcase}
+                  className="btn-icon"
+                  style={{
+                    position: 'absolute',
+                    right: '20px',
+                    top: '50%',
+                    transform: 'translateY(-50%)',
+                    zIndex: 25,
+                    width: '42px',
+                    height: '42px',
+                    backgroundColor: 'rgba(255, 255, 255, 0.92)',
+                    backdropFilter: 'blur(12px)',
+                    WebkitBackdropFilter: 'blur(12px)',
+                    border: '1px solid var(--colors-hairline)',
+                    boxShadow: '0 4px 16px rgba(0, 0, 0, 0.08)',
+                    cursor: 'pointer',
+                  }}
+                  title="Next Watch Model"
+                  aria-label="Next Watch Model"
+                >
+                  <ChevronRight size={20} color="var(--colors-ink)" />
+                </button>
+
+                {/* Model Index Indicator */}
+                <div style={{
+                  position: 'absolute',
+                  bottom: '16px',
+                  right: '20px',
+                  zIndex: 25,
+                  backgroundColor: 'rgba(255, 255, 255, 0.92)',
+                  backdropFilter: 'blur(10px)',
+                  WebkitBackdropFilter: 'blur(10px)',
+                  border: '1px solid var(--colors-hairline)',
+                  padding: '4px 12px',
+                  fontSize: '11px',
+                  fontFamily: 'var(--font-mono)',
+                  color: 'var(--colors-ink-muted)',
+                  pointerEvents: 'none',
+                }}>
+                  <span style={{ color: 'var(--colors-primary)', fontWeight: 600 }}>0{showcaseIndex + 1}</span> / 0{watches.length}
+                </div>
               </div>
             </div>
           </div>
