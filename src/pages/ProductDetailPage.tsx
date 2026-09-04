@@ -81,6 +81,7 @@ export const ProductDetailPage: React.FC<ProductDetailPageProps> = ({
             <div style={{ flex: 1, minHeight: '520px' }}>
               <Interactive3DViewer
                 watch={watch}
+                config={config}
                 height="100%"
               />
             </div>

@@ -2,7 +2,6 @@ import React from 'react';
 import { Watch, ConfiguratorStep, WatchConfiguration } from '../../types/watch';
 import { 
   Check, 
-  Palette, 
   Sliders, 
   RotateCcw, 
   ShoppingBag
@@ -32,7 +31,6 @@ export const ConfiguratorWizard: React.FC<ConfiguratorWizardProps> = ({
 }) => {
   const steps: { id: ConfiguratorStep; title: string; subtitle: string; icon: any }[] = [
     { id: 'select', title: 'Model', subtitle: 'Base Mesh', icon: ShoppingBag },
-    { id: 'customize', title: 'Finish', subtitle: 'Original Materials', icon: Palette },
     { id: 'manipulate', title: 'Transform', subtitle: 'Scale & Rotate', icon: Sliders },
   ];
 
@@ -40,10 +38,10 @@ export const ConfiguratorWizard: React.FC<ConfiguratorWizardProps> = ({
 
   return (
     <div className="carbon-tile" style={{ padding: '28px', backgroundColor: 'var(--colors-canvas)' }}>
-      {/* Carbon 3-Step Stepper Bar */}
+      {/* Carbon 2-Step Stepper Bar */}
       <div style={{
         display: 'grid',
-        gridTemplateColumns: 'repeat(3, 1fr)',
+        gridTemplateColumns: `repeat(${steps.length}, 1fr)`,
         gap: '1px',
         backgroundColor: 'var(--colors-hairline)',
         marginBottom: '24px',
@@ -139,7 +137,7 @@ export const ConfiguratorWizard: React.FC<ConfiguratorWizardProps> = ({
       {/* Step Contents */}
       <div style={{ minHeight: '190px' }}>
         {/* STEP 1: MODEL SELECTION */}
-        {(currentStep === 'select' || (!['customize', 'manipulate'].includes(currentStep))) && (
+        {(currentStep === 'select' || currentStep !== 'manipulate') && (
           <div>
             <p style={{ fontSize: '14px', color: 'var(--colors-ink-muted)', marginBottom: '14px' }}>
               Select base 3D CAD mesh to configure:
@@ -186,25 +184,42 @@ export const ConfiguratorWizard: React.FC<ConfiguratorWizardProps> = ({
           </div>
         )}
 
-        {/* STEP 2: ORIGINAL MATERIALS */}
-        {currentStep === 'customize' && (
-          <div style={{ fontSize: '14px', color: 'var(--colors-ink-muted)', lineHeight: 1.5 }}>
-            This watch uses its original, verified finish. Colour controls are unavailable so that the product appearance remains accurate in 3D and AR.
-          </div>
-        )}
 
-        {/* STEP 3: MANIPULATE TRANSFORMATIONS */}
+
+        {/* STEP 2: MANIPULATE TRANSFORMATIONS */}
         {currentStep === 'manipulate' && (
-          <div style={{ display: 'flex', flexDirection: 'column', gap: '18px' }}>
+          <div style={{ display: 'flex', flexDirection: 'column', gap: '20px' }}>
             {/* Scale Slider */}
             <div>
-              <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: '8px' }}>
+              <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '8px' }}>
                 <span style={{ fontSize: '13px', fontWeight: 600 }}>
                   Spatial Scale Factor
                 </span>
-                <span style={{ fontSize: '13px', fontFamily: 'var(--font-mono)', color: 'var(--colors-primary)' }}>
-                  {config.scale.toFixed(2)}x
-                </span>
+                <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
+                  <button
+                    type="button"
+                    className="ar-scale-btn"
+                    title="Decrease scale"
+                    aria-label="Decrease scale"
+                    onClick={() => onUpdateConfig({ scale: Math.max(0.5, parseFloat((config.scale - 0.05).toFixed(2))) })}
+                    style={{ width: '24px', height: '24px', display: 'flex', alignItems: 'center', justifyContent: 'center', cursor: 'pointer', border: '1px solid var(--colors-hairline)', background: 'var(--colors-surface-1)' }}
+                  >
+                    -
+                  </button>
+                  <span style={{ fontSize: '13px', fontFamily: 'var(--font-mono)', color: 'var(--colors-primary)', minWidth: '42px', textAlign: 'center' }}>
+                    {config.scale.toFixed(2)}x
+                  </span>
+                  <button
+                    type="button"
+                    className="ar-scale-btn"
+                    title="Increase scale"
+                    aria-label="Increase scale"
+                    onClick={() => onUpdateConfig({ scale: Math.min(2.0, parseFloat((config.scale + 0.05).toFixed(2))) })}
+                    style={{ width: '24px', height: '24px', display: 'flex', alignItems: 'center', justifyContent: 'center', cursor: 'pointer', border: '1px solid var(--colors-hairline)', background: 'var(--colors-surface-1)' }}
+                  >
+                    +
+                  </button>
+                </div>
               </div>
               <input
                 type="range"
@@ -213,17 +228,19 @@ export const ConfiguratorWizard: React.FC<ConfiguratorWizardProps> = ({
                 step="0.05"
                 value={config.scale}
                 onChange={(e) => onUpdateConfig({ scale: parseFloat(e.target.value) })}
+                style={{ width: '100%', cursor: 'pointer' }}
+                aria-label="Adjust scale"
               />
               <div style={{ display: 'flex', justifyContent: 'space-between', fontSize: '11px', color: 'var(--colors-ink-muted)', marginTop: '6px', fontFamily: 'var(--font-mono)' }}>
-                <span>0.5x [COMPACT]</span>
-                <span>1.0x [1:1 TRUE]</span>
-                <span>2.0x [EXPANDED]</span>
+                <span style={{ cursor: 'pointer' }} onClick={() => onUpdateConfig({ scale: 0.5 })}>0.5x [COMPACT]</span>
+                <span style={{ cursor: 'pointer' }} onClick={() => onUpdateConfig({ scale: 1.0 })}>1.0x [1:1 TRUE]</span>
+                <span style={{ cursor: 'pointer' }} onClick={() => onUpdateConfig({ scale: 2.0 })}>2.0x [EXPANDED]</span>
               </div>
             </div>
 
             {/* Rotation Slider */}
             <div>
-              <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: '8px' }}>
+              <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '8px' }}>
                 <span style={{ fontSize: '13px', fontWeight: 600 }}>
                   Y-Axis Rotation
                 </span>
@@ -238,12 +255,42 @@ export const ConfiguratorWizard: React.FC<ConfiguratorWizardProps> = ({
                 step="0.05"
                 value={config.rotationY}
                 onChange={(e) => onUpdateConfig({ rotationY: parseFloat(e.target.value) })}
+                style={{ width: '100%', cursor: 'pointer' }}
+                aria-label="Adjust rotation"
               />
-              <div style={{ display: 'flex', justifyContent: 'space-between', fontSize: '11px', color: 'var(--colors-ink-muted)', marginTop: '6px', fontFamily: 'var(--font-mono)' }}>
-                <span>0° [FRONT]</span>
-                <span>90° [PROFILE]</span>
-                <span>180° [CASEBACK]</span>
-                <span>270° [CROWN]</span>
+              {/* Quick Preset Buttons */}
+              <div style={{ display: 'grid', gridTemplateColumns: 'repeat(4, 1fr)', gap: '6px', marginTop: '10px' }}>
+                {[
+                  { label: '0° Front', angle: 0 },
+                  { label: '90° Side', angle: Math.PI / 2 },
+                  { label: '180° Back', angle: Math.PI },
+                  { label: '270° Crown', angle: (Math.PI * 3) / 2 },
+                ].map(p => {
+                  const currentDeg = Math.round((config.rotationY * 180) / Math.PI) % 360;
+                  const targetDeg = Math.round((p.angle * 180) / Math.PI) % 360;
+                  const isPresetActive = Math.abs(currentDeg - targetDeg) < 5;
+
+                  return (
+                    <button
+                      key={p.label}
+                      type="button"
+                      onClick={() => onUpdateConfig({ rotationY: p.angle })}
+                      style={{
+                        padding: '6px 4px',
+                        fontSize: '11px',
+                        fontFamily: 'var(--font-mono)',
+                        border: isPresetActive ? '1px solid var(--colors-primary)' : '1px solid var(--colors-hairline)',
+                        backgroundColor: isPresetActive ? 'var(--colors-surface-1)' : 'var(--colors-canvas)',
+                        color: isPresetActive ? 'var(--colors-primary)' : 'var(--colors-ink-muted)',
+                        cursor: 'pointer',
+                        textAlign: 'center',
+                        transition: 'all 0.1s ease',
+                      }}
+                    >
+                      {p.label}
+                    </button>
+                  );
+                })}
               </div>
             </div>
           </div>
