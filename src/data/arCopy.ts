@@ -34,6 +34,7 @@ export const AR_COPY = {
       'Keep the whole card visible in your camera.',
       'Use bright, even light and hold your phone steady.',
     ],
+    getMarkerImage: 'Get marker image to view the model',
   },
   common: {
     help: 'How to use AR',
@@ -43,5 +44,6 @@ export const AR_COPY = {
     size: 'Size',
     hideControls: 'Hide controls',
     showControls: 'Show controls',
+    getMarkerImage: 'Get marker image to view the model',
   },
 } as const;

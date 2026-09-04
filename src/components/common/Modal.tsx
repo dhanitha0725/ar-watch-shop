@@ -1,5 +1,6 @@
 import React from 'react';
-import { X, CheckCircle2 } from 'lucide-react';
+import { X, CheckCircle2, Download } from 'lucide-react';
+import { AR_COPY } from '../../data/arCopy';
 
 interface ModalProps {
   isOpen: boolean;
@@ -76,7 +77,7 @@ export const MarkerModal: React.FC<ModalProps> = ({ isOpen, onClose }) => {
             flexDirection: 'column',
             justifyContent: 'center',
             alignItems: 'center',
-            marginBottom: '20px',
+            marginBottom: '16px',
             border: '1px solid var(--colors-hairline)',
             position: 'relative',
           }}>
@@ -102,6 +103,26 @@ export const MarkerModal: React.FC<ModalProps> = ({ isOpen, onClose }) => {
               <CheckCircle2 size={13} color="var(--colors-semantic-success)" />
               <span>Ready to use with your phone camera</span>
             </div>
+          </div>
+
+          {/* Download Marker Action */}
+          <div style={{ marginBottom: '20px' }}>
+            <a
+              href={currentMarkerUrl}
+              download="chrono-watch-card.jpg"
+              className="btn-primary"
+              style={{
+                width: '100%',
+                justifyContent: 'center',
+                textDecoration: 'none',
+                gap: '8px',
+                minHeight: '44px',
+                fontSize: '14px',
+              }}
+            >
+              <Download size={16} />
+              <span>{AR_COPY.common.getMarkerImage}</span>
+            </a>
           </div>
 
           {/* Step-by-Step Instructions */}
