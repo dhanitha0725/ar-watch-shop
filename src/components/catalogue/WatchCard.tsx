@@ -1,5 +1,5 @@
-import React, { useState } from 'react';
-import { Watch, WatchColorOption } from '../../types/watch';
+import React from 'react';
+import { Watch } from '../../types/watch';
 import { Interactive3DViewer } from '../viewer/Interactive3DViewer';
 import { ArrowRight } from 'lucide-react';
 
@@ -13,9 +13,6 @@ export const WatchCard: React.FC<WatchCardProps> = ({
   watch,
   onSelect,
 }) => {
-  const [selectedStrapColor, setSelectedStrapColor] = useState<WatchColorOption>(watch.strapColors[0]);
-  const [selectedDialColor] = useState<WatchColorOption>(watch.dialColors[0]);
-
   return (
     <div className="carbon-tile" style={{
       display: 'flex',
@@ -59,46 +56,11 @@ export const WatchCard: React.FC<WatchCardProps> = ({
         }}>
           <Interactive3DViewer
             watch={watch}
-            selectedStrapColor={selectedStrapColor}
-            selectedDialColor={selectedDialColor}
             autoRotateDefault={false}
             hideControls={true}
             height="100%"
+            loading="lazy"
           />
-        </div>
-
-        {/* Color Swatches */}
-        <div style={{ marginBottom: '16px' }}>
-          <div style={{
-            fontSize: '11px',
-            color: 'var(--colors-ink-muted)',
-            marginBottom: '6px',
-            display: 'flex',
-            justifyContent: 'space-between',
-          }}>
-            <span>Finishes:</span>
-            <strong style={{ color: 'var(--colors-ink)', fontFamily: 'var(--font-mono)' }}>
-              {selectedStrapColor?.name || 'Standard'}
-            </strong>
-          </div>
-          <div style={{ display: 'flex', gap: '6px', flexWrap: 'wrap' }}>
-            {watch.strapColors.map((color, idx) => {
-              const isActive = selectedStrapColor?.name === color.name;
-              return (
-                <button
-                  key={idx}
-                  onClick={() => setSelectedStrapColor(color)}
-                  className={`swatch-square ${isActive ? 'active' : ''}`}
-                  style={{
-                    width: '20px',
-                    height: '20px',
-                    backgroundColor: color.hex,
-                  }}
-                  title={`${color.name} (${color.materialType || 'silicone'})`}
-                />
-              );
-            })}
-          </div>
         </div>
       </div>
 
