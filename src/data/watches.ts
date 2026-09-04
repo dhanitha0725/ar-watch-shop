@@ -1,4 +1,4 @@
-import { Watch, TestMatrixItem } from '../types/watch';
+import { Watch } from '../types/watch';
 
 export const WATCHES: Watch[] = [
   {
@@ -187,77 +187,3 @@ export const WATCHES: Watch[] = [
   }
 ];
 
-export const TEST_MATRIX: TestMatrixItem[] = [
-  {
-    id: 'T01',
-    category: 'Mandatory 3D',
-    feature: '3D Model Loading & PBR Rendering',
-    expectedResult: 'GLB watches load with PBR textures, environment lighting, realistic reflections, and subtle shadows.',
-    status: 'Pass',
-    notes: 'Tested on Desktop Chrome, Android Chrome, and Safari. All 4 GLB models render without texture tearing.'
-  },
-  {
-    id: 'T02',
-    category: 'Mandatory 3D',
-    feature: '360° Orbit, Zoom & Animation Controls',
-    expectedResult: 'Interactive mouse/touch rotation, pinch zoom with min/max clamps, and automatic turntable showcase toggle.',
-    status: 'Pass',
-    notes: 'Camera controls configured with smooth damping and momentum.'
-  },
-  {
-    id: 'T03',
-    category: 'Marker AR',
-    feature: 'MindAR Image Tracking (Natural Feature Target & Pattern)',
-    expectedResult: 'Camera feed launches, recognizes target card or pattern, and anchors 3D watch rigidly in 6DOF space via MindAR.',
-    status: 'Pass',
-    notes: 'Tested with both printed target card and on-screen secondary display with fast neural feature detection.'
-  },
-  {
-    id: 'T04',
-    category: 'Marker AR',
-    feature: 'Tracking State Handling & UI Feedback',
-    expectedResult: 'HUD dynamically displays Searching... ➔ Target Detected ✓ ➔ Target Lost with clear guidance.',
-    status: 'Pass',
-    notes: 'Reactive listeners hooked to MindAR targetFound and targetLost lifecycle events.'
-  },
-  {
-    id: 'T05',
-    category: 'Markerless WebXR',
-    feature: 'WebXR Surface Detection & Reticle Placement',
-    expectedResult: 'Device maps real-world floor/tabletop, displays placement reticle, and locks 3D watch on surface upon tap.',
-    status: 'Pass',
-    notes: 'Tested on Android Chrome with ARCore. Desktop displays interactive spatial placement fallback.'
-  },
-  {
-    id: 'T06',
-    category: 'Option B Interaction',
-    feature: 'Dynamic Strap & Dial Material Mutation',
-    expectedResult: 'Real-time PBR color, roughness, and metalness updates across meshes without reloading the 3D model.',
-    status: 'Pass',
-    notes: 'Traverses GLB child meshes and updates Three.js MeshStandardMaterial properties reactively.'
-  },
-  {
-    id: 'T07',
-    category: 'Option B Interaction',
-    feature: '3D Object Manipulation (Scale & Rotation)',
-    expectedResult: 'Drag-to-rotate dial and pinch/slider scale adjustments reflect in real time with min/max safety boundaries.',
-    status: 'Pass',
-    notes: 'Smooth gesture input and precision numerical step sliders provided.'
-  },
-  {
-    id: 'T08',
-    category: 'Option B Interaction',
-    feature: 'Multi-Step State Flow & Reset Defaults',
-    expectedResult: 'Guided 5-step wizard (Select ➔ Place ➔ Customize ➔ Manipulate ➔ Complete) with 1-click calibration reset.',
-    status: 'Pass',
-    notes: 'State machine maintains consistent configuration across preview and AR transitions.'
-  },
-  {
-    id: 'T09',
-    category: 'System & UX',
-    feature: 'Device Capability Detection & Fallback',
-    expectedResult: 'Graceful detection of WebXR immersive-ar and Camera API support with informative alerts for desktop testing.',
-    status: 'Pass (with fallback)',
-    notes: 'Uses navigator.xr.isSessionSupported() check and provides on-screen AR simulation mode.'
-  }
-];

@@ -56,11 +56,3 @@ export interface WatchConfiguration {
 
 export type TrackingState = 'searching' | 'detected' | 'lost' | 'calibrating' | 'unsupported';
 
-export interface TestMatrixItem {
-  id: string;
-  category: 'Mandatory 3D' | 'Marker AR' | 'Markerless WebXR' | 'Option B Interaction' | 'System & UX';
-  feature: string;
-  expectedResult: string;
-  status: 'Pass' | 'Pass (with fallback)' | 'In Progress';
-  notes: string;
-}
