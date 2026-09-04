@@ -98,9 +98,6 @@ export const ProductDetailPage: React.FC<ProductDetailPageProps> = ({
               flexWrap: 'wrap',
             }}>
               <div>
-                <div style={{ fontSize: '11px', color: 'var(--colors-ink-muted)', fontFamily: 'var(--font-mono)' }}>
-                  SPATIAL RUNTIMES
-                </div>
                 <div style={{ fontSize: '14px', fontWeight: 600, color: 'var(--colors-ink)' }}>
                   View in Physical Environment
                 </div>
@@ -162,7 +159,7 @@ export const ProductDetailPage: React.FC<ProductDetailPageProps> = ({
                 </span>
                 <span style={{ fontSize: '12px', color: 'var(--colors-semantic-success)', display: 'flex', alignItems: 'center', gap: '4px', fontWeight: 600 }}>
                   <CheckCircle2 size={14} />
-                  <span>In Stock • Real-Time PBR</span>
+                  <span>In Stock</span>
                 </span>
               </div>
             </div>
