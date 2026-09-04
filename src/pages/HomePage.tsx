@@ -179,10 +179,10 @@ export const HomePage: React.FC<HomePageProps> = ({
 
               <div style={{ backgroundColor: 'var(--colors-surface-1)', padding: '14px 16px' }}>
                 <div style={{ fontSize: '20px', fontWeight: 400, color: 'var(--colors-semantic-success)', fontFamily: 'var(--font-display)' }}>
-                  10 / 10
+                  Support AR
                 </div>
                 <div style={{ fontSize: '12px', color: 'var(--colors-ink-muted)', marginTop: '2px' }}>
-                  Ready to explore
+                  Compatible with both marker and markerless AR
                 </div>
               </div>
             </div>

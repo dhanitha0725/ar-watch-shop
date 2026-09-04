@@ -1,7 +1,7 @@
 import React, { useEffect, useRef, useState } from 'react';
 import '@google/model-viewer';
 import { Watch } from '../../types/watch';
-import { RotateCw, Maximize2, Camera, RefreshCw, Check } from 'lucide-react';
+import { RotateCw, Maximize2, Camera, Check } from 'lucide-react';
 
 declare global {
   namespace JSX {
@@ -74,12 +74,6 @@ export const Interactive3DViewer: React.FC<Interactive3DViewerProps> = ({
     };
   }, [watch.modelUrl]);
 
-  const handleResetCamera = () => {
-    if (modelViewerRef.current) {
-      modelViewerRef.current.cameraOrbit = '0deg 75deg 105%';
-      modelViewerRef.current.fieldOfView = 'auto';
-    }
-  };
 
   const handleTakeSnapshot = async () => {
     if (!modelViewerRef.current) return;
@@ -200,14 +194,6 @@ export const Interactive3DViewer: React.FC<Interactive3DViewerProps> = ({
           </button>
 
 
-          {/* Reset Camera Orbit */}
-          <button
-            onClick={handleResetCamera}
-            className="btn-icon"
-            title="Reset Camera"
-          >
-            <RefreshCw size={17} color="var(--colors-ink)" />
-          </button>
 
           {/* Fullscreen */}
           <button
