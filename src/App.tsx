@@ -19,9 +19,6 @@ export const App: React.FC = () => {
   // Global Option B Watch Configuration state
   const [config, setConfig] = useState<WatchConfiguration>({
     watchId: WATCHES[0].id,
-    strapColor: WATCHES[0].strapColors[0]?.hex || '#18181b',
-    strapMaterial: WATCHES[0].strapColors[0]?.materialType || 'silicone',
-    dialColor: WATCHES[0].dialColors[0]?.hex || '#00f0ff',
     scale: 1.0,
     rotationY: 0,
     elevation: 0,
@@ -36,9 +33,6 @@ export const App: React.FC = () => {
     setSelectedWatch(watch);
     setConfig({
       watchId: watch.id,
-      strapColor: watch.strapColors[0]?.hex || '#18181b',
-      strapMaterial: watch.strapColors[0]?.materialType || 'silicone',
-      dialColor: watch.dialColors[0]?.hex || '#00f0ff',
       scale: 1.0,
       rotationY: 0,
       elevation: 0,
@@ -51,9 +45,6 @@ export const App: React.FC = () => {
   const handleResetConfig = () => {
     setConfig({
       watchId: selectedWatch.id,
-      strapColor: selectedWatch.strapColors[0]?.hex || '#18181b',
-      strapMaterial: selectedWatch.strapColors[0]?.materialType || 'silicone',
-      dialColor: selectedWatch.dialColors[0]?.hex || '#00f0ff',
       scale: 1.0,
       rotationY: 0,
       elevation: 0,
@@ -118,9 +109,6 @@ export const App: React.FC = () => {
               setSelectedWatch(w);
               handleUpdateConfig({
                 watchId: w.id,
-                strapColor: w.strapColors[0]?.hex || '#18181b',
-                strapMaterial: w.strapColors[0]?.materialType || 'silicone',
-                dialColor: w.dialColors[0]?.hex || '#00f0ff',
               });
             }}
             onUpdateConfig={handleUpdateConfig}

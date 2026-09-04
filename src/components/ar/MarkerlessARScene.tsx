@@ -9,7 +9,6 @@ import {
   ArrowLeft, 
   Sparkles, 
   Layers, 
-  Palette, 
   RotateCcw, 
   Smartphone, 
   Sliders,
@@ -85,47 +84,6 @@ export const MarkerlessARScene: React.FC<MarkerlessARSceneProps> = ({
     viewer.addEventListener('ar-status', handleArStatus);
     return () => viewer.removeEventListener('ar-status', handleArStatus);
   }, []);
-
-  useEffect(() => {
-    const viewer = modelViewerRef.current;
-    if (!viewer) return;
-
-    const applyColors = () => {
-      try {
-        if (!viewer.model) return;
-        const materials = viewer.model.materials;
-        if (!materials) return;
-
-        const hex = config.strapColor;
-        const r = parseInt(hex.slice(1, 3), 16) / 255;
-        const g = parseInt(hex.slice(3, 5), 16) / 255;
-        const b = parseInt(hex.slice(5, 7), 16) / 255;
-
-        for (const mat of materials) {
-          const matName = (mat.name || '').toLowerCase();
-          if (matName.includes('strap') || matName.includes('belt') || matName.includes('band')) {
-            mat.pbrMetallicRoughness?.setBaseColorFactor([r, g, b, 1.0]);
-          }
-          if (matName.includes('dial') || matName.includes('screen') || matName.includes('face')) {
-            const dialHex = config.dialColor;
-            const dr = parseInt(dialHex.slice(1, 3), 16) / 255;
-            const dg = parseInt(dialHex.slice(3, 5), 16) / 255;
-            const db = parseInt(dialHex.slice(5, 7), 16) / 255;
-            mat.pbrMetallicRoughness?.setBaseColorFactor([dr, dg, db, 1.0]);
-          }
-        }
-      } catch (e) {
-        console.warn('Sync material notice:', e);
-      }
-    };
-
-    viewer.addEventListener('load', applyColors);
-    applyColors();
-
-    return () => {
-      viewer.removeEventListener('load', applyColors);
-    };
-  }, [watch, config.strapColor, config.dialColor]);
 
   const launchAR = async () => {
     const viewer = modelViewerRef.current;
@@ -347,8 +305,7 @@ export const MarkerlessARScene: React.FC<MarkerlessARSceneProps> = ({
             <div className="ar-operator-tabs">
               {[
                 { step: 1, label: 'Model', icon: Layers },
-                { step: 2, label: 'Materials', icon: Palette },
-                { step: 3, label: 'Transform', icon: Sliders },
+                { step: 2, label: 'Transform', icon: Sliders },
               ].map(s => {
                 const active = activeStep === s.step;
                 const Icon = s.icon;
@@ -380,9 +337,6 @@ export const MarkerlessARScene: React.FC<MarkerlessARSceneProps> = ({
                           onSelectWatch(w);
                           onUpdateConfig({
                             watchId: w.id,
-                            strapColor: w.strapColors[0]?.hex || '#18181b',
-                            strapMaterial: w.strapColors[0]?.materialType || 'silicone',
-                            dialColor: w.dialColors[0]?.hex || '#00f0ff',
                           });
                         }}
                         className={`ar-model-btn ${isSelected ? 'active' : ''}`}
@@ -408,48 +362,8 @@ export const MarkerlessARScene: React.FC<MarkerlessARSceneProps> = ({
               </div>
             )}
 
-            {/* Step 2: Live Material Color Customization */}
+            {/* Step 2: Scale & Rotation Gestures */}
             {activeStep === 2 && (
-              <div style={{ display: 'flex', flexDirection: 'column', gap: '14px' }}>
-                <div>
-                  <div className="ar-operator-section-label">Band Finish</div>
-                  <div style={{ display: 'flex', gap: '8px', flexWrap: 'wrap' }}>
-                    {watch.strapColors.map(color => (
-                      <button
-                        key={color.name}
-                        onClick={() => onUpdateConfig({
-                          strapColor: color.hex,
-                          strapMaterial: color.materialType || 'silicone'
-                        })}
-                        className={`swatch-circle ${config.strapColor.toLowerCase() === color.hex.toLowerCase() ? 'active' : ''}`}
-                        style={{ backgroundColor: color.hex, width: '26px', height: '26px' }}
-                        title={color.name}
-                        aria-label={`Select ${color.name} band`}
-                      />
-                    ))}
-                  </div>
-                </div>
-
-                <div>
-                  <div className="ar-operator-section-label">Dial Accent</div>
-                  <div style={{ display: 'flex', gap: '8px', flexWrap: 'wrap' }}>
-                    {watch.dialColors.map(dial => (
-                      <button
-                        key={dial.name}
-                        onClick={() => onUpdateConfig({ dialColor: dial.hex })}
-                        className={`swatch-circle ${config.dialColor.toLowerCase() === dial.hex.toLowerCase() ? 'active' : ''}`}
-                        style={{ backgroundColor: dial.hex, width: '26px', height: '26px' }}
-                        title={dial.name}
-                        aria-label={`Select ${dial.name} dial`}
-                      />
-                    ))}
-                  </div>
-                </div>
-              </div>
-            )}
-
-            {/* Step 3: Scale & Rotation Gestures */}
-            {activeStep === 3 && (
               <div style={{ display: 'flex', flexDirection: 'column', gap: '14px' }}>
                 <div>
                   <div className="ar-operator-section-label">Scale</div>

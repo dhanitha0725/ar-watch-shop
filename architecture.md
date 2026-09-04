@@ -6,7 +6,7 @@
 
 ### Core Problem Solved:
 Online watch shopping historically suffers from high return rates because 2D photography cannot communicate true physical scale, metallic material reflectivity, or real-world lighting interaction. WebAR Watch Store addresses this by providing three complementary immersive visualization modalities:
-1. **Interactive 3D Turntable:** 360° orbital inspection with PBR environment reflections, customizable strap/dial materials, and exploded/dimension views.
+1. **Interactive 3D Turntable:** 360° orbital inspection with PBR environment reflections and original, verified watch materials.
 2. **Marker & Image Target 6DOF AR:** Pinned rigid 3D tracking on physical cards, packaging, or screen targets via MindAR GPU/WASM Natural Feature Tracking (NFT).
 3. **Markerless WebXR Surface AR:** True 1:1 real-world surface placement on desks and floors using device SLAM and hit-testing (with desktop 3D ground-plane fallback).
 
@@ -22,7 +22,7 @@ flowchart TD
         
         subgraph Subsystems ["Rendering & Tracking Subsystems"]
             MV["Google <model-viewer><br/>PBR Shading & HDR Environment"]
-            ThreeCore["Three.js (r183)<br/>Scene Graph & Live Material Mutator"]
+            ThreeCore["Three.js (r183)<br/>Scene Graph & PBR Rendering"]
             
             subgraph ARModes ["AR Tracking Engines"]
                 MindAR["Marker AR Sandbox (Iframe)<br/>MindAR 1.2.5 + A-Frame 1.5.0<br/>6DOF Natural Feature Tracking on .mind Targets"]
@@ -30,9 +30,6 @@ flowchart TD
             end
         end
         
-        subgraph MutatorPipeline ["Dynamic Material Pipeline"]
-            MatMut["applyWatchMaterialCustomization()<br/>(Scene-Graph Traverser)"]
-        end
     end
 
     subgraph Assets ["Static Assets (public/)"]
@@ -45,8 +42,6 @@ flowchart TD
     StateMgr --> ThreeCore
     StateMgr --> MindAR
     StateMgr --> WebXR
-    
-    StateMgr --> MatMut --> ThreeCore
     
     GLB --> MV
     GLB --> ThreeCore
@@ -106,7 +101,7 @@ d:\ar\
 │   │   └── viewer/
 │   │       └── Interactive3DViewer.tsx   # <model-viewer> wrapper with camera controls
 │   ├── data/
-│   │   └── watches.ts            # Catalogue specifications and mesh maps
+│   │   └── watches.ts            # Catalogue specifications and AR calibration
 │   ├── pages/
 │   │   ├── ComparePage.tsx       # Side-by-side dual 3D watch comparison
 │   │   ├── HomePage.tsx          # Hero section, catalogue grid, AR feature links
@@ -116,7 +111,6 @@ d:\ar\
 │   ├── types/
 │   │   └── watch.ts              # TypeScript interfaces for models and configurations
 │   ├── utils/
-│   │   ├── materialModifier.ts   # In-memory Three.js PBR material mutator
 │   │   └── webxr.ts              # WebXR session detection & permission queries
 │   ├── App.tsx                   # Top-level view routing & global configuration state
 │   ├── index.css                 # Apple Design System design tokens and CSS rules
@@ -191,55 +185,29 @@ sequenceDiagram
 
 ---
 
-### 5.4 Dynamic Material Mutation Pipeline (`materialModifier.ts`)
-Rather than re-downloading GLB assets when users pick colors or materials, the application traverses the Three.js scene-graph in-memory:
-
-```typescript
-// Mesh Traversal & PBR Mutation
-model.traverse((child) => {
-  if ((child as THREE.Mesh).isMesh) {
-    const mesh = child as THREE.Mesh;
-    const isStrap = matchMeshName(mesh.name, watch.strapMeshNames);
-    const isDial = matchMeshName(mesh.name, watch.dialMeshNames);
-
-    if (isStrap) {
-      mesh.material.color.set(strapColorHex);
-      mesh.material.roughness = targetRoughness;
-      mesh.material.metalness = targetMetalness;
-      mesh.material.needsUpdate = true;
-    }
-    if (isDial) {
-      mesh.material.color.set(dialColorHex);
-      if (mesh.material.emissive) {
-        mesh.material.emissive.set(dialColorHex).multiplyScalar(0.25);
-      }
-      mesh.material.needsUpdate = true;
-    }
-  }
-});
-```
-
-### 5.5 GLB Asset Optimization & Texture Sampling
+### 5.4 GLB Asset Optimization & Texture Sampling
 
 All production 3D assets remain self-contained `.glb` files so the `<model-viewer>` markerless path and the A-Frame/MindAR marker path load the same URL:
 
-- Textures are compressed to WebP with glTF Transform at quality `95` using a texture-only pass.
-- Geometry, node hierarchy, mesh names, material names, and AR calibration transforms are preserved.
-- Draco, Meshopt geometry compression, KTX2, and texture resizing are not enabled in the shared production assets because the marker AR loader has no explicit decoder configuration for those extensions.
+- Textures are compressed to WebP with glTF Transform at quality `95`.
+- Apple Watch Ultra and Cyber Horizon textures are capped at 1024px before WebP compression to reduce GPU memory use.
+- Mudmaster geometry is welded, simplified with a constrained error threshold, reordered for GPU locality, and joined to reduce draw calls.
+- Seiko geometry is joined to reduce draw calls. Mudmaster and Seiko hierarchy/mesh names are intentionally flattened because runtime material mutation is not supported.
+- Draco, Meshopt geometry compression, and KTX2 remain disabled because the marker AR loader has no explicit decoder/transcoder configuration for those extensions.
 - Each model keeps the glTF sampler `minFilter: 9987` (`LINEAR_MIPMAP_LINEAR`). The browser renderer generates and uses runtime mipmaps for the regular WebP textures, improving distant-view stability and reducing texture shimmering.
 
 The default all-in-one `gltf-transform optimize` pipeline was evaluated separately. It also enables mesh simplification, quantization, joining, and Meshopt compression, so those outputs require separate compatibility and visual QA before they can be used by both AR modes.
 
 ---
 
-## 6. 3D Model Catalog & Mesh Name Mapping
+## 6. 3D Model Catalog & AR Calibration
 
-| Watch Model | Asset Path | Key Strap Meshes | Key Dial Meshes | Glass Meshes | Default Marker Scale |
-| :--- | :--- | :--- | :--- | :--- | :--- |
-| **Apple Watch Ultra 2** | `/models/apple-watch-ultra.glb` | `bXoKVYbQhcORrRo`, `LMTUXYhSYYJrnsy_0` | `VHnHbLOyhEXLvWA`, `DCiPNWQGULbWNNE` | `EZmdWXCjqrUDeoX` | `0.06 0.06 0.06` |
-| **G-Shock Mudmaster** | `/models/chronograph-mudmaster.glb` | `belt_1_...`, `belt_2_...` | `N6_JewelryGlossyGold...`, `numbers_base_frame` | `Main_glass...` | `0.005 0.005 0.005` |
-| **Cyber Horizon Digital** | `/models/digital-watch.glb` | `strap_0` | `screen_0`, `screen.001_0` | `watch_0` | `0.07 0.07 0.07` |
-| **Seiko Premier Automatic** | `/models/seiko-classic.glb` | `defaultMaterial` | `defaultMaterial` | `defaultMaterial` | `0.07 0.07 0.07` |
+| Watch Model | Asset Path | Marker scale |
+| :--- | :--- | :--- |
+| **Apple Watch Ultra 2** | `/models/apple-watch-ultra.glb` | `9.1813 9.1813 9.1813` |
+| **G-Shock Mudmaster** | `/models/chronograph-mudmaster.glb` | `0.0926 0.0926 0.0926` |
+| **Cyber Horizon Digital** | `/models/digital-watch.glb` | `0.0551 0.0551 0.0551` |
+| **Seiko Premier Automatic** | `/models/seiko-classic.glb` | `6.4927 6.4927 6.4927` |
 
 ---
 
@@ -252,17 +220,17 @@ stateDiagram-v2
     [*] --> Select: Step 1
     Select --> Place: Choose Model & Dimensions
     Place --> Customize: Choose Environment (3D / Marker / Surface)
-    Customize --> Manipulate: Mutate Strap & Dial PBR Materials
+    Customize --> Manipulate: Confirm Original Finish
     Manipulate --> Complete: Adjust Scale, Rotation & Elevation
     Complete --> [*]: Final Review, Snapshot & Order Checkout
     
-    Complete --> Customize: Re-edit Materials
+    Complete --> Customize: Review Original Finish
     Complete --> Place: Switch AR Mode
 ```
 
 - **Step 1 (`select`):** Model selection with real-time specs inspection.
 - **Step 2 (`place`):** Viewport selection (Studio Turntable, Marker AR, or Surface AR).
-- **Step 3 (`customize`):** Interactive PBR material palette (Silicone, Titanium, Leather, Gold, Steel).
+- **Step 3 (`customize`):** Confirms that the verified original material finish is retained.
 - **Step 4 (`manipulate`):** 3D rotation, pitch, elevation offset, and scale multiplier.
 - **Step 5 (`complete`):** High-resolution snapshot export, configuration summary, and checkout action.
 

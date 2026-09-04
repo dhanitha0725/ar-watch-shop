@@ -32,7 +32,7 @@ export const ConfiguratorWizard: React.FC<ConfiguratorWizardProps> = ({
 }) => {
   const steps: { id: ConfiguratorStep; title: string; subtitle: string; icon: any }[] = [
     { id: 'select', title: 'Model', subtitle: 'Base Mesh', icon: ShoppingBag },
-    { id: 'customize', title: 'Materials', subtitle: 'PBR Shaders', icon: Palette },
+    { id: 'customize', title: 'Finish', subtitle: 'Original Materials', icon: Palette },
     { id: 'manipulate', title: 'Transform', subtitle: 'Scale & Rotate', icon: Sliders },
   ];
 
@@ -158,9 +158,6 @@ export const ConfiguratorWizard: React.FC<ConfiguratorWizardProps> = ({
                       onSelectWatch(w);
                       onUpdateConfig({
                         watchId: w.id,
-                        strapColor: w.strapColors[0]?.hex || '#18181b',
-                        strapMaterial: w.strapColors[0]?.materialType || 'silicone',
-                        dialColor: w.dialColors[0]?.hex || '#00f0ff',
                       });
                     }}
                     style={{
@@ -189,63 +186,10 @@ export const ConfiguratorWizard: React.FC<ConfiguratorWizardProps> = ({
           </div>
         )}
 
-        {/* STEP 2: CUSTOM MATERIALS */}
+        {/* STEP 2: ORIGINAL MATERIALS */}
         {currentStep === 'customize' && (
-          <div style={{ display: 'flex', flexDirection: 'column', gap: '20px' }}>
-            {/* Strap Swatches */}
-            <div>
-              <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '8px' }}>
-                <span style={{ fontSize: '13px', fontWeight: 600 }}>
-                  Strap Material & Color:
-                </span>
-                <span style={{ fontSize: '13px', color: 'var(--colors-primary)', fontFamily: 'var(--font-mono)' }}>
-                  {selectedWatch.strapColors.find(c => c.hex.toLowerCase() === config.strapColor.toLowerCase())?.name || config.strapMaterial}
-                </span>
-              </div>
-              <div style={{ display: 'flex', gap: '8px', flexWrap: 'wrap' }}>
-                {selectedWatch.strapColors.map((color) => {
-                  const isActive = config.strapColor.toLowerCase() === color.hex.toLowerCase();
-                  return (
-                    <button
-                      key={color.name}
-                      onClick={() => onUpdateConfig({
-                        strapColor: color.hex,
-                        strapMaterial: color.materialType || 'silicone',
-                      })}
-                      className={`swatch-square ${isActive ? 'active' : ''}`}
-                      style={{ backgroundColor: color.hex, width: '28px', height: '28px' }}
-                      title={`${color.name} (${color.materialType || 'silicone'})`}
-                    />
-                  );
-                })}
-              </div>
-            </div>
-
-            {/* Dial & Lume Colors */}
-            <div>
-              <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '8px' }}>
-                <span style={{ fontSize: '13px', fontWeight: 600 }}>
-                  Dial / Emissive Lume:
-                </span>
-                <span style={{ fontSize: '13px', color: 'var(--colors-primary)', fontFamily: 'var(--font-mono)' }}>
-                  {selectedWatch.dialColors.find(c => c.hex.toLowerCase() === config.dialColor.toLowerCase())?.name || 'Dial Theme'}
-                </span>
-              </div>
-              <div style={{ display: 'flex', gap: '8px', flexWrap: 'wrap' }}>
-                {selectedWatch.dialColors.map((dial) => {
-                  const isActive = config.dialColor.toLowerCase() === dial.hex.toLowerCase();
-                  return (
-                    <button
-                      key={dial.name}
-                      onClick={() => onUpdateConfig({ dialColor: dial.hex })}
-                      className={`swatch-square ${isActive ? 'active' : ''}`}
-                      style={{ backgroundColor: dial.hex, width: '28px', height: '28px' }}
-                      title={dial.name}
-                    />
-                  );
-                })}
-              </div>
-            </div>
+          <div style={{ fontSize: '14px', color: 'var(--colors-ink-muted)', lineHeight: 1.5 }}>
+            This watch uses its original, verified finish. Colour controls are unavailable so that the product appearance remains accurate in 3D and AR.
           </div>
         )}
 

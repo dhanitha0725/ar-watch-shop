@@ -36,14 +36,6 @@ export const ProductDetailPage: React.FC<ProductDetailPageProps> = ({
 }) => {
   const [activeTab, setActiveTab] = useState<'specs' | 'features'>('specs');
 
-  const selectedStrapObj = watch.strapColors.find(
-    c => c.hex.toLowerCase() === config.strapColor.toLowerCase()
-  ) || watch.strapColors[0];
-
-  const selectedDialObj = watch.dialColors.find(
-    c => c.hex.toLowerCase() === config.dialColor.toLowerCase()
-  ) || watch.dialColors[0];
-
   return (
     <div className="carbon-grid-container">
       {/* Top Header / Back Ribbon */}
@@ -89,8 +81,6 @@ export const ProductDetailPage: React.FC<ProductDetailPageProps> = ({
             <div style={{ flex: 1, minHeight: '520px' }}>
               <Interactive3DViewer
                 watch={watch}
-                selectedStrapColor={selectedStrapObj}
-                selectedDialColor={selectedDialObj}
                 height="100%"
               />
             </div>

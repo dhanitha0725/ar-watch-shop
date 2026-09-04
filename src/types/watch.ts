@@ -1,13 +1,5 @@
 export type WatchCategory = 'Smart' | 'Sport' | 'Luxury' | 'Digital';
 
-export interface WatchColorOption {
-  name: string;
-  hex: string;
-  materialType?: 'silicone' | 'leather' | 'steel' | 'titanium' | 'gold';
-  roughness?: number;
-  metalness?: number;
-}
-
 export interface WatchSpecs {
   caseDiameter: string;
   caseThickness: string;
@@ -30,11 +22,6 @@ export interface Watch {
   description: string;
   features: string[];
   specs: WatchSpecs;
-  strapColors: WatchColorOption[];
-  dialColors: WatchColorOption[];
-  strapMeshNames: string[];
-  dialMeshNames: string[];
-  glassMeshNames: string[];
   defaultScale: number;
   webARScale: number;
   markerScale: string; // e.g. "0.08 0.08 0.08"
@@ -45,9 +32,6 @@ export type ConfiguratorStep = 'select' | 'place' | 'customize' | 'manipulate' |
 
 export interface WatchConfiguration {
   watchId: string;
-  strapColor: string;
-  strapMaterial: string;
-  dialColor: string;
   scale: number;
   rotationY: number;
   elevation: number;

@@ -1,5 +1,5 @@
-import React, { useState, useEffect } from 'react';
-import { Watch, WatchColorOption } from '../types/watch';
+import React, { useState } from 'react';
+import { Watch } from '../types/watch';
 import { Interactive3DViewer } from '../components/viewer/Interactive3DViewer';
 import { FeatureHighlights } from '../components/catalogue/FeatureHighlights';
 import { WatchCard } from '../components/catalogue/WatchCard';
@@ -33,22 +33,12 @@ export const HomePage: React.FC<HomePageProps> = ({
 
   // Showcase state for the Image-2 layout
   const [showcaseIndex, setShowcaseIndex] = useState<number>(0);
-  const [selectedStrapColor, setSelectedStrapColor] = useState<WatchColorOption>(watches[0]?.strapColors[0]);
-  const [selectedDialColor, setSelectedDialColor] = useState<WatchColorOption>(watches[0]?.dialColors[0]);
   const [favorites, setFavorites] = useState<Record<string, boolean>>({});
   const [viewMode, setViewMode] = useState<'showcase' | 'grid'>('showcase');
   const [selectedCategory, setSelectedCategory] = useState<string>('All');
 
   const heroWatch = watches[heroWatchIndex] || watches[0];
   const activeShowcaseWatch = watches[showcaseIndex] || watches[0];
-
-  // Sync color selection when showcase model changes
-  useEffect(() => {
-    if (activeShowcaseWatch) {
-      setSelectedStrapColor(activeShowcaseWatch.strapColors[0]);
-      setSelectedDialColor(activeShowcaseWatch.dialColors[0]);
-    }
-  }, [showcaseIndex, activeShowcaseWatch]);
 
   const toggleFavorite = (watchId: string) => {
     setFavorites(prev => ({
@@ -208,8 +198,6 @@ export const HomePage: React.FC<HomePageProps> = ({
             <div style={{ flex: 1, minHeight: '440px' }}>
               <Interactive3DViewer
                 watch={heroWatch}
-                selectedStrapColor={heroWatch.strapColors[0]}
-                selectedDialColor={heroWatch.dialColors[0]}
                 height="100%"
               />
             </div>
@@ -441,42 +429,6 @@ export const HomePage: React.FC<HomePageProps> = ({
                     {activeShowcaseWatch.tagline}
                   </p>
 
-                  {/* Colour Variations Swatches */}
-                  <div style={{ marginBottom: '24px' }}>
-                    <div style={{
-                      fontSize: '12px',
-                      color: 'var(--colors-ink)',
-                      marginBottom: '10px',
-                      display: 'flex',
-                      justifyContent: 'space-between',
-                      alignItems: 'center',
-                    }}>
-                      <span>Band Finish:</span>
-                      <strong style={{ color: 'var(--colors-primary)', fontFamily: 'var(--font-mono)' }}>
-                        {selectedStrapColor?.name || 'Default'}
-                      </strong>
-                    </div>
-                    
-                    <div style={{ display: 'flex', gap: '8px', flexWrap: 'wrap' }}>
-                      {activeShowcaseWatch.strapColors.map((color, idx) => {
-                        const isActive = selectedStrapColor?.name === color.name;
-                        return (
-                          <button
-                            key={idx}
-                            onClick={() => setSelectedStrapColor(color)}
-                            className={`swatch-square ${isActive ? 'active' : ''}`}
-                            style={{
-                              width: '26px',
-                              height: '26px',
-                              backgroundColor: color.hex,
-                            }}
-                            title={`${color.name} (${color.materialType || 'silicone'})`}
-                          />
-                        );
-                      })}
-                    </div>
-                  </div>
-
                   {/* Price Row */}
                   <div style={{
                     display: 'flex',
@@ -576,8 +528,6 @@ export const HomePage: React.FC<HomePageProps> = ({
               }}>
                 <Interactive3DViewer
                   watch={activeShowcaseWatch}
-                  selectedStrapColor={selectedStrapColor}
-                  selectedDialColor={selectedDialColor}
                   height="100%"
                 />
               </div>

@@ -1,6 +1,6 @@
 import React, { useEffect, useRef, useState } from 'react';
 import '@google/model-viewer';
-import { Watch, WatchColorOption } from '../../types/watch';
+import { Watch } from '../../types/watch';
 import { RotateCw, Maximize2, Camera, Sun, RefreshCw, Check } from 'lucide-react';
 
 declare global {
@@ -37,22 +37,20 @@ declare global {
 
 interface Interactive3DViewerProps {
   watch: Watch;
-  selectedStrapColor?: WatchColorOption;
-  selectedDialColor?: WatchColorOption;
   autoRotateDefault?: boolean;
   onSnapshot?: (dataUrl: string) => void;
   height?: string;
   hideControls?: boolean;
+  loading?: 'lazy' | 'eager';
 }
 
 export const Interactive3DViewer: React.FC<Interactive3DViewerProps> = ({
   watch,
-  selectedStrapColor,
-  selectedDialColor,
   autoRotateDefault = true,
   onSnapshot,
   height = '520px',
   hideControls = false,
+  loading = 'eager',
 }) => {
   const modelViewerRef = useRef<any>(null);
   const [isAutoRotating, setIsAutoRotating] = useState(autoRotateDefault);
@@ -65,73 +63,17 @@ export const Interactive3DViewer: React.FC<Interactive3DViewerProps> = ({
     const viewer = modelViewerRef.current;
     if (!viewer) return;
 
-    const applyColors = async () => {
-      try {
-        if (!viewer.model) return;
-        const materials = viewer.model.materials;
-        if (!materials || materials.length === 0) return;
-
-        if (selectedStrapColor) {
-          const hex = selectedStrapColor.hex;
-          const r = parseInt(hex.slice(1, 3), 16) / 255;
-          const g = parseInt(hex.slice(3, 5), 16) / 255;
-          const b = parseInt(hex.slice(5, 7), 16) / 255;
-
-          const strapKeywords = ['strap', 'belt', 'band', 'silicone', 'leather', ...watch.strapMeshNames.map(s => s.toLowerCase())];
-
-          for (const mat of materials) {
-            const matName = (mat.name || '').toLowerCase();
-            const matchesStrap = strapKeywords.some(kw => matName.includes(kw));
-
-            if (matchesStrap && mat.pbrMetallicRoughness) {
-              mat.pbrMetallicRoughness.setBaseColorFactor([r, g, b, 1.0]);
-              if (selectedStrapColor.roughness !== undefined) {
-                mat.pbrMetallicRoughness.setRoughnessFactor(selectedStrapColor.roughness);
-              }
-              if (selectedStrapColor.metalness !== undefined) {
-                mat.pbrMetallicRoughness.setMetallicFactor(selectedStrapColor.metalness);
-              }
-            }
-          }
-        }
-
-        if (selectedDialColor) {
-          const hex = selectedDialColor.hex;
-          const r = parseInt(hex.slice(1, 3), 16) / 255;
-          const g = parseInt(hex.slice(3, 5), 16) / 255;
-          const b = parseInt(hex.slice(5, 7), 16) / 255;
-
-          const dialKeywords = ['dial', 'face', 'screen', 'display', 'screen_0', ...watch.dialMeshNames.map(d => d.toLowerCase())];
-
-          for (const mat of materials) {
-            const matName = (mat.name || '').toLowerCase();
-            const matchesDial = dialKeywords.some(kw => matName.includes(kw));
-
-            if (matchesDial && mat.pbrMetallicRoughness) {
-              mat.pbrMetallicRoughness.setBaseColorFactor([r, g, b, 1.0]);
-              if (mat.setEmissiveFactor) {
-                mat.setEmissiveFactor([r * 0.4, g * 0.4, b * 0.4]);
-              }
-            }
-          }
-        }
-      } catch (err) {
-        console.warn('Material modification notice:', err);
-      }
-    };
-
     const handleModelLoad = () => {
       setIsLoading(false);
-      applyColors();
     };
 
+    setIsLoading(true);
     viewer.addEventListener('load', handleModelLoad);
-    applyColors();
 
     return () => {
       viewer.removeEventListener('load', handleModelLoad);
     };
-  }, [watch, selectedStrapColor, selectedDialColor]);
+  }, [watch.modelUrl]);
 
   const handleResetCamera = () => {
     if (modelViewerRef.current) {
@@ -225,7 +167,7 @@ export const Interactive3DViewer: React.FC<Interactive3DViewerProps> = ({
         camera-orbit="0deg 75deg 105%"
         min-camera-orbit="auto auto 40%"
         max-camera-orbit="auto auto 200%"
-        loading="eager"
+        loading={loading}
         style={{ width: '100%', height: '100%', outline: 'none' }}
       />
 
