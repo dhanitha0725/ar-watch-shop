@@ -106,16 +106,15 @@ d:\ar\
 │   │   └── viewer/
 │   │       └── Interactive3DViewer.tsx   # <model-viewer> wrapper with camera controls
 │   ├── data/
-│   │   └── watches.ts            # Catalogue specifications, mesh maps, test matrix
+│   │   └── watches.ts            # Catalogue specifications and mesh maps
 │   ├── pages/
 │   │   ├── ComparePage.tsx       # Side-by-side dual 3D watch comparison
-│   │   ├── DocumentationPage.tsx # In-app user manual & architecture viewer
 │   │   ├── HomePage.tsx          # Hero section, catalogue grid, AR feature links
 │   │   ├── MarkerARPage.tsx      # Marker tracking entry view
 │   │   ├── MarkerlessARPage.tsx  # Surface tracking entry view
 │   │   └── ProductDetailPage.tsx # Single product deep-dive + configurator wizard
 │   ├── types/
-│   │   └── watch.ts              # TypeScript interfaces for models, configs, tests
+│   │   └── watch.ts              # TypeScript interfaces for models and configurations
 │   ├── utils/
 │   │   ├── materialModifier.ts   # In-memory Three.js PBR material mutator
 │   │   └── webxr.ts              # WebXR session detection & permission queries
@@ -300,23 +299,7 @@ The application implements the **Apple Clean Photography-First Design System** (
 
 ---
 
-## 9. Verification & Testing Matrix (T01–T09)
-
-| Test ID | Category | Feature Verified | Verification Status | Fallback Behavior |
-| :---: | :--- | :--- | :---: | :--- |
-| **T01** | Mandatory 3D | 4 GLB Models Loading with PBR Shaders | ✅ **Pass** | Fallback poster & retry prompt |
-| **T02** | Mandatory 3D | 360° Turntable Orbit, Zoom & Reset | ✅ **Pass** | Bounded FOV clamps ($12^\circ - 65^\circ$) |
-| **T03** | Marker AR | MindAR Natural Feature Image Target Tracking | ✅ **Pass** | High-contrast target card modal guide |
-| **T04** | Marker AR | Dynamic HUD State Indicator Badge | ✅ **Pass** | Reactive event listeners |
-| **T05** | Markerless AR | WebXR Surface Hit-Test Placement | ✅ **Pass** | Desktop 3D Ground-Plane Viewer |
-| **T06** | Option B | Real-time Strap & Dial Material Mutation | ✅ **Pass** | In-memory scene-graph traverser |
-| **T07** | Option B | 3D Transform Sliders (Scale, Yaw, Elevation)| ✅ **Pass** | Clamped bounds $(0.5\text{x} - 2.5\text{x})$ |
-| **T08** | Option B | 5-Step Guided Configurator State Machine | ✅ **Pass** | 1-Click "Reset to Default" button |
-| **T09** | System / UX | Hardware Capability & HTTPS Detection | ✅ **Pass** | Graceful alerts & permission modals |
-
----
-
-## 10. Security, Permissions, & Deployment
+## 9. Security, Permissions, & Deployment
 
 1. **HTTPS Context:**
    - WebXR and `getUserMedia` require secure origins (`https://` or `localhost`).

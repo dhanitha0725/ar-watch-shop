@@ -9,7 +9,6 @@ import { ProductDetailPage } from './pages/ProductDetailPage';
 import { MarkerARPage } from './pages/MarkerARPage';
 import { MarkerlessARPage } from './pages/MarkerlessARPage';
 import { ComparePage } from './pages/ComparePage';
-import { DocumentationPage } from './pages/DocumentationPage';
 
 export const App: React.FC = () => {
   const [currentView, setCurrentView] = useState<string>('home');
@@ -165,12 +164,6 @@ export const App: React.FC = () => {
             watches={WATCHES}
             onSelectWatch={handleSelectWatch}
             onLaunchAR={handleLaunchAR}
-            onBack={() => setCurrentView('home')}
-          />
-        )}
-
-        {currentView === 'docs' && (
-          <DocumentationPage
             onBack={() => setCurrentView('home')}
           />
         )}

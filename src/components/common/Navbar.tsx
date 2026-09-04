@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { Watch as WatchIcon, Eye, Scan, Sliders, FileText, Menu, X, QrCode, Sparkles, ExternalLink, Terminal } from 'lucide-react';
+import { Watch as WatchIcon, Eye, Scan, Sliders, Menu, X, QrCode, Sparkles, ExternalLink, Terminal } from 'lucide-react';
 
 interface NavbarProps {
   currentView: string;
@@ -19,7 +19,6 @@ export const Navbar: React.FC<NavbarProps> = ({
     { id: 'markerless-ar', label: 'Space AR', icon: Eye },
     { id: 'marker-ar', label: 'Marker AR', icon: Scan },
     { id: 'compare', label: 'Compare', icon: Sliders },
-    { id: 'docs', label: 'Test Matrix', icon: FileText },
   ];
 
   const handleNavClick = (id: string) => {
