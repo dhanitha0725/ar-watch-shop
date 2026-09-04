@@ -82,6 +82,7 @@ export const ARHelpPanel: React.FC<ARHelpPanelProps> = ({
           {onShowCard && <button onClick={onShowCard} className="btn-secondary" style={{ padding: '7px 10px', fontSize: '12px', whiteSpace: 'nowrap' }}>{AR_COPY.common.showCard}</button>}
         </div>
       )}
+
     </div>
   );
 };

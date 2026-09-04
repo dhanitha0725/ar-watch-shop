@@ -1,7 +1,7 @@
 import React, { useEffect, useRef, useState } from 'react';
 import '@google/model-viewer';
 import { Watch } from '../../types/watch';
-import { RotateCw, Maximize2, Camera, Sun, RefreshCw, Check } from 'lucide-react';
+import { RotateCw, Maximize2, Camera, RefreshCw, Check } from 'lucide-react';
 
 declare global {
   namespace JSX {
@@ -54,8 +54,7 @@ export const Interactive3DViewer: React.FC<Interactive3DViewerProps> = ({
 }) => {
   const modelViewerRef = useRef<any>(null);
   const [isAutoRotating, setIsAutoRotating] = useState(autoRotateDefault);
-  const [lightingPreset, setLightingPreset] = useState<'neutral' | 'studio'>('neutral');
-  const [exposure, setExposure] = useState<number>(1.1);
+  const [exposure] = useState<number>(1.1);
   const [isLoading, setIsLoading] = useState(true);
   const [snapshotTaken, setSnapshotTaken] = useState(false);
 
@@ -162,7 +161,7 @@ export const Interactive3DViewer: React.FC<Interactive3DViewerProps> = ({
         shadow-intensity="1.2"
         shadow-softness="0.8"
         exposure={exposure.toString()}
-        environment-image={lightingPreset === 'neutral' ? 'neutral' : 'legacy'}
+        environment-image="neutral"
         interaction-prompt="none"
         camera-orbit="0deg 75deg 105%"
         min-camera-orbit="auto auto 40%"
@@ -200,18 +199,6 @@ export const Interactive3DViewer: React.FC<Interactive3DViewerProps> = ({
             {snapshotTaken ? <Check size={17} color="var(--colors-success)" /> : <Camera size={17} color="var(--colors-ink)" />}
           </button>
 
-          {/* Lighting Switcher */}
-          <button
-            onClick={() => {
-              const next = lightingPreset === 'neutral' ? 'studio' : 'neutral';
-              setLightingPreset(next);
-              setExposure(next === 'studio' ? 1.35 : 1.1);
-            }}
-            className="btn-icon"
-            title={`Lighting: ${lightingPreset}`}
-          >
-            <Sun size={17} color="var(--colors-ink)" />
-          </button>
 
           {/* Reset Camera Orbit */}
           <button

@@ -10,6 +10,13 @@ export interface WatchSpecs {
   weight: string;
 }
 
+export interface ModelAttribution {
+  originalModelName: string;
+  creator: string;
+  licenseName: string;
+  licenseUrl: string;
+}
+
 export interface Watch {
   id: string;
   name: string;
@@ -26,6 +33,7 @@ export interface Watch {
   webARScale: number;
   markerScale: string; // e.g. "0.08 0.08 0.08"
   markerRotation?: string;
+  attribution?: ModelAttribution;
 }
 
 export type ConfiguratorStep = 'select' | 'place' | 'customize' | 'manipulate' | 'complete';
