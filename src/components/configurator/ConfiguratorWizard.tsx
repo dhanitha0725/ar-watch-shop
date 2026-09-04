@@ -2,7 +2,6 @@ import React from 'react';
 import { Watch, ConfiguratorStep, WatchConfiguration } from '../../types/watch';
 import { 
   Check, 
-  Palette, 
   Sliders, 
   RotateCcw, 
   ShoppingBag
@@ -32,7 +31,6 @@ export const ConfiguratorWizard: React.FC<ConfiguratorWizardProps> = ({
 }) => {
   const steps: { id: ConfiguratorStep; title: string; subtitle: string; icon: any }[] = [
     { id: 'select', title: 'Model', subtitle: 'Base Mesh', icon: ShoppingBag },
-    { id: 'customize', title: 'Finish', subtitle: 'Original Materials', icon: Palette },
     { id: 'manipulate', title: 'Transform', subtitle: 'Scale & Rotate', icon: Sliders },
   ];
 
@@ -40,10 +38,10 @@ export const ConfiguratorWizard: React.FC<ConfiguratorWizardProps> = ({
 
   return (
     <div className="carbon-tile" style={{ padding: '28px', backgroundColor: 'var(--colors-canvas)' }}>
-      {/* Carbon 3-Step Stepper Bar */}
+      {/* Carbon 2-Step Stepper Bar */}
       <div style={{
         display: 'grid',
-        gridTemplateColumns: 'repeat(3, 1fr)',
+        gridTemplateColumns: `repeat(${steps.length}, 1fr)`,
         gap: '1px',
         backgroundColor: 'var(--colors-hairline)',
         marginBottom: '24px',
@@ -139,7 +137,7 @@ export const ConfiguratorWizard: React.FC<ConfiguratorWizardProps> = ({
       {/* Step Contents */}
       <div style={{ minHeight: '190px' }}>
         {/* STEP 1: MODEL SELECTION */}
-        {(currentStep === 'select' || (!['customize', 'manipulate'].includes(currentStep))) && (
+        {(currentStep === 'select' || currentStep !== 'manipulate') && (
           <div>
             <p style={{ fontSize: '14px', color: 'var(--colors-ink-muted)', marginBottom: '14px' }}>
               Select base 3D CAD mesh to configure:
@@ -186,12 +184,7 @@ export const ConfiguratorWizard: React.FC<ConfiguratorWizardProps> = ({
           </div>
         )}
 
-        {/* STEP 2: ORIGINAL MATERIALS */}
-        {currentStep === 'customize' && (
-          <div style={{ fontSize: '14px', color: 'var(--colors-ink-muted)', lineHeight: 1.5 }}>
-            This watch uses its original, verified finish. Colour controls are unavailable so that the product appearance remains accurate in 3D and AR.
-          </div>
-        )}
+
 
         {/* STEP 3: MANIPULATE TRANSFORMATIONS */}
         {currentStep === 'manipulate' && (
