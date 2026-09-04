@@ -1,6 +1,6 @@
 import React, { useEffect, useRef, useState } from 'react';
 import '@google/model-viewer';
-import { Watch } from '../../types/watch';
+import { Watch, WatchConfiguration } from '../../types/watch';
 import { RotateCw, Maximize2, Camera, Check } from 'lucide-react';
 
 declare global {
@@ -37,6 +37,9 @@ declare global {
 
 interface Interactive3DViewerProps {
   watch: Watch;
+  config?: WatchConfiguration;
+  scale?: number;
+  rotationY?: number;
   autoRotateDefault?: boolean;
   onSnapshot?: (dataUrl: string) => void;
   height?: string;
@@ -46,6 +49,9 @@ interface Interactive3DViewerProps {
 
 export const Interactive3DViewer: React.FC<Interactive3DViewerProps> = ({
   watch,
+  config,
+  scale,
+  rotationY,
   autoRotateDefault = true,
   onSnapshot,
   height = '520px',
@@ -57,6 +63,18 @@ export const Interactive3DViewer: React.FC<Interactive3DViewerProps> = ({
   const [exposure] = useState<number>(1.1);
   const [isLoading, setIsLoading] = useState(true);
   const [snapshotTaken, setSnapshotTaken] = useState(false);
+
+  // Active transform values from props
+  const currentScale = scale ?? config?.scale ?? 1.0;
+  const currentRotationY = rotationY ?? config?.rotationY ?? 0;
+  const orbitDegree = Math.round((currentRotationY * 180) / Math.PI);
+
+  // Update camera orbit on model-viewer when rotation changes
+  useEffect(() => {
+    if (modelViewerRef.current) {
+      modelViewerRef.current.cameraOrbit = `${orbitDegree}deg 75deg 105%`;
+    }
+  }, [orbitDegree]);
 
   useEffect(() => {
     const viewer = modelViewerRef.current;
@@ -149,6 +167,7 @@ export const Interactive3DViewer: React.FC<Interactive3DViewerProps> = ({
         src={watch.modelUrl}
         alt={`3D representation of ${watch.name}`}
         camera-controls
+        scale={`${currentScale} ${currentScale} ${currentScale}`}
         auto-rotate={isAutoRotating}
         auto-rotate-delay="1000"
         rotation-per-second="18deg"
@@ -157,7 +176,7 @@ export const Interactive3DViewer: React.FC<Interactive3DViewerProps> = ({
         exposure={exposure.toString()}
         environment-image="neutral"
         interaction-prompt="none"
-        camera-orbit="0deg 75deg 105%"
+        camera-orbit={`${orbitDegree}deg 75deg 105%`}
         min-camera-orbit="auto auto 40%"
         max-camera-orbit="auto auto 200%"
         loading={loading}
