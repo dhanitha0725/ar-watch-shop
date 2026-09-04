@@ -123,35 +123,41 @@ export const Navbar: React.FC<NavbarProps> = ({
           alignItems: 'center',
           gap: '8px',
         }}>
-          <button
-            onClick={onOpenMarkerModal}
-            className="btn-dark-utility"
-            style={{
-              padding: '6px 12px',
-              fontSize: '12px',
-              height: '32px',
-              gap: '6px',
-            }}
-            title="AR Marker"
-          >
-            <QrCode size={13} />
-            <span style={{ display: 'none' }} className="marker-btn-text">Watch Card</span>
-          </button>
+          <div className="desktop-actions" style={{
+            display: 'flex',
+            alignItems: 'center',
+            gap: '8px',
+          }}>
+            <button
+              onClick={onOpenMarkerModal}
+              className="btn-dark-utility"
+              style={{
+                padding: '6px 12px',
+                fontSize: '12px',
+                height: '32px',
+                gap: '6px',
+              }}
+              title="AR Marker"
+            >
+              <QrCode size={13} />
+              <span className="marker-btn-text">Watch Card</span>
+            </button>
 
-          <button
-            onClick={() => handleNavClick('markerless-ar')}
-            className="btn-primary"
-            style={{
-              padding: '6px 14px',
-              fontSize: '13px',
-              minHeight: '32px',
-              height: '32px',
-              gap: '6px',
-            }}
-          >
-            <Sparkles size={13} />
-            <span>Launch Space AR</span>
-          </button>
+            <button
+              onClick={() => handleNavClick('markerless-ar')}
+              className="btn-primary"
+              style={{
+                padding: '6px 14px',
+                fontSize: '13px',
+                minHeight: '32px',
+                height: '32px',
+                gap: '6px',
+              }}
+            >
+              <Sparkles size={13} />
+              <span>Launch Space AR</span>
+            </button>
+          </div>
 
           {/* Mobile Menu Toggle Button */}
           <button
@@ -202,14 +208,22 @@ export const Navbar: React.FC<NavbarProps> = ({
               </button>
             );
           })}
-          <div style={{ padding: '16px' }}>
+          <div style={{ padding: '16px', display: 'flex', flexDirection: 'column', gap: '10px' }}>
+            <button
+              onClick={() => handleNavClick('markerless-ar')}
+              className="btn-primary"
+              style={{ width: '100%', justifyContent: 'center', height: '40px' }}
+            >
+              <Sparkles size={15} />
+              <span>Launch Space AR</span>
+            </button>
             <button
               onClick={() => {
                 onOpenMarkerModal();
                 setMobileMenuOpen(false);
               }}
               className="btn-secondary"
-              style={{ width: '100%', justifyContent: 'center' }}
+              style={{ width: '100%', justifyContent: 'center', height: '40px' }}
             >
               <QrCode size={15} />
               <span>Show Watch Card</span>
@@ -222,10 +236,13 @@ export const Navbar: React.FC<NavbarProps> = ({
       <style>{`
         @media (min-width: 900px) {
           .desktop-nav { display: flex !important; }
+          .desktop-actions { display: flex !important; }
           .mobile-menu-btn { display: none !important; }
           .marker-btn-text { display: inline !important; }
         }
         @media (max-width: 899px) {
+          .desktop-nav { display: none !important; }
+          .desktop-actions { display: none !important; }
           .mobile-menu-btn { display: inline-flex !important; }
           .utility-bar { display: none !important; }
         }

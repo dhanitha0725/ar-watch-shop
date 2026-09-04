@@ -76,12 +76,28 @@ export const Interactive3DViewer: React.FC<Interactive3DViewerProps> = ({
     }
   }, [orbitDegree]);
 
+  // Sync autoRotate property with model-viewer DOM element
+  useEffect(() => {
+    if (modelViewerRef.current) {
+      modelViewerRef.current.autoRotate = isAutoRotating;
+    }
+  }, [isAutoRotating]);
+
+  // Reset auto-rotate state when switching models
+  useEffect(() => {
+    setIsAutoRotating(autoRotateDefault);
+  }, [watch.modelUrl, autoRotateDefault]);
+
+  // Handle model loading state strictly on model URL changes (do NOT depend on isAutoRotating)
   useEffect(() => {
     const viewer = modelViewerRef.current;
     if (!viewer) return;
 
     const handleModelLoad = () => {
       setIsLoading(false);
+      if (modelViewerRef.current) {
+        modelViewerRef.current.autoRotate = isAutoRotating;
+      }
     };
 
     setIsLoading(true);
@@ -92,6 +108,15 @@ export const Interactive3DViewer: React.FC<Interactive3DViewerProps> = ({
     };
   }, [watch.modelUrl]);
 
+  const handleToggleAutoRotate = () => {
+    setIsAutoRotating((prev) => {
+      const next = !prev;
+      if (modelViewerRef.current) {
+        modelViewerRef.current.autoRotate = next;
+      }
+      return next;
+    });
+  };
 
   const handleTakeSnapshot = async () => {
     if (!modelViewerRef.current) return;
@@ -157,6 +182,8 @@ export const Interactive3DViewer: React.FC<Interactive3DViewerProps> = ({
           </div>
           <style>{`
             @keyframes spin { 100% { transform: rotate(360deg); } }
+            @keyframes spinSlow { from { transform: rotate(0deg); } to { transform: rotate(360deg); } }
+            .animate-spin-slow { animation: spinSlow 8s linear infinite; }
           `}</style>
         </div>
       )}
@@ -169,7 +196,7 @@ export const Interactive3DViewer: React.FC<Interactive3DViewerProps> = ({
         camera-controls
         scale={`${currentScale} ${currentScale} ${currentScale}`}
         auto-rotate={isAutoRotating}
-        auto-rotate-delay="1000"
+        auto-rotate-delay="0"
         rotation-per-second="18deg"
         shadow-intensity="1.2"
         shadow-softness="0.8"
@@ -196,11 +223,20 @@ export const Interactive3DViewer: React.FC<Interactive3DViewerProps> = ({
         }}>
           {/* Auto Rotate Toggle */}
           <button
-            onClick={() => setIsAutoRotating(!isAutoRotating)}
+            onClick={handleToggleAutoRotate}
             className="btn-icon"
-            title={isAutoRotating ? 'Pause Rotation' : 'Auto Rotate'}
+            title={isAutoRotating ? 'Pause Rotation' : 'Start Auto Rotate'}
+            aria-label={isAutoRotating ? 'Pause Rotation' : 'Start Auto Rotate'}
+            style={{
+              backgroundColor: isAutoRotating ? 'var(--colors-surface-1)' : 'var(--colors-canvas)',
+              borderColor: isAutoRotating ? 'var(--colors-primary)' : 'var(--colors-hairline)',
+            }}
           >
-            <RotateCw size={17} className={isAutoRotating ? 'animate-spin-slow' : ''} color="var(--colors-ink)" />
+            <RotateCw
+              size={17}
+              className={isAutoRotating ? 'animate-spin-slow' : ''}
+              color={isAutoRotating ? 'var(--colors-primary)' : 'var(--colors-ink)'}
+            />
           </button>
 
           {/* Snapshot Capture */}

@@ -33,8 +33,8 @@ export const ARStateBadge: React.FC<ARStateBadgeProps> = ({ state, customMessage
   switch (state) {
     case 'searching':
       return (
-        <div style={badgeStyle}>
-          <Loader2 size={14} className="animate-spin" color="var(--colors-primary)" />
+        <div className="ar-state-badge" style={badgeStyle}>
+          <Loader2 size={14} className="animate-spin" color="var(--colors-primary)" style={{ flexShrink: 0 }} />
           <span style={textStyle}>
             {customMessage || AR_COPY.surface.searching}
           </span>
@@ -47,8 +47,8 @@ export const ARStateBadge: React.FC<ARStateBadgeProps> = ({ state, customMessage
 
     case 'detected':
       return (
-        <div style={badgeStyle}>
-          <CheckCircle2 size={14} color="var(--colors-success)" />
+        <div className="ar-state-badge" style={badgeStyle}>
+          <CheckCircle2 size={14} color="var(--colors-success)" style={{ flexShrink: 0 }} />
           <span style={textStyle}>
             {customMessage || AR_COPY.surface.found}
           </span>
@@ -57,8 +57,8 @@ export const ARStateBadge: React.FC<ARStateBadgeProps> = ({ state, customMessage
 
     case 'lost':
       return (
-        <div style={badgeStyle}>
-          <AlertTriangle size={14} color="var(--colors-danger)" />
+        <div className="ar-state-badge" style={badgeStyle}>
+          <AlertTriangle size={14} color="var(--colors-danger)" style={{ flexShrink: 0 }} />
           <span style={textStyle}>
             {customMessage || AR_COPY.card.lost}
           </span>
@@ -67,8 +67,8 @@ export const ARStateBadge: React.FC<ARStateBadgeProps> = ({ state, customMessage
 
     case 'calibrating':
       return (
-        <div style={badgeStyle}>
-          <Eye size={14} color="var(--colors-primary)" />
+        <div className="ar-state-badge" style={badgeStyle}>
+          <Eye size={14} color="var(--colors-primary)" style={{ flexShrink: 0 }} />
           <span style={textStyle}>
             {customMessage || AR_COPY.surface.ready}
           </span>
@@ -78,8 +78,8 @@ export const ARStateBadge: React.FC<ARStateBadgeProps> = ({ state, customMessage
     case 'unsupported':
     default:
       return (
-        <div style={badgeStyle}>
-          <span style={{ width: '8px', height: '8px', borderRadius: '50%', backgroundColor: 'var(--colors-body-muted)' }} />
+        <div className="ar-state-badge" style={badgeStyle}>
+          <span style={{ width: '8px', height: '8px', borderRadius: '50%', backgroundColor: 'var(--colors-body-muted)', flexShrink: 0 }} />
           <span style={textStyle}>
             {customMessage || AR_COPY.surface.desktop}
           </span>

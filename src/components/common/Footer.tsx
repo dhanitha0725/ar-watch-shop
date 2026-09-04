@@ -20,23 +20,6 @@ export const Footer: React.FC<FooterProps> = ({ onNavigate }) => {
         fontSize: '13px',
         lineHeight: 1.5,
       }}>
-        {/* Footnote / Capability Notice */}
-        <div style={{
-          color: 'var(--colors-ink-subtle)',
-          fontSize: '12px',
-          lineHeight: 1.5,
-          marginBottom: '36px',
-          paddingBottom: '24px',
-          borderBottom: '1px solid var(--colors-inverse-surface-1)',
-          display: 'flex',
-          alignItems: 'flex-start',
-          gap: '12px',
-        }}>
-          <Terminal size={16} color="var(--colors-primary)" style={{ flexShrink: 0, marginTop: '2px' }} />
-          <div>
-            WebAR spatial features require a compatible device environment. WebXR plane hit-testing requires ARCore / WebXR-capable browsers over HTTPS. Marker AR utilizes camera permissions and 6DOF Natural Feature Tracking (NFT).
-          </div>
-        </div>
 
         {/* 3 Clean Columns */}
         <div style={{
@@ -95,7 +78,7 @@ export const Footer: React.FC<FooterProps> = ({ onNavigate }) => {
                   onClick={() => onNavigate('markerless-ar')}
                   style={{ background: 'none', border: 'none', cursor: 'pointer', color: 'var(--colors-inverse-ink-muted)', fontSize: '13px', padding: 0 }}
                 >
-                  WebXR Space AR (Hit-Test)
+                  WebXR Space AR
                 </button>
               </li>
               <li>

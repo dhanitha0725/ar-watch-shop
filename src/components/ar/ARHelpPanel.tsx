@@ -21,39 +21,19 @@ export const ARHelpPanel: React.FC<ARHelpPanelProps> = ({
 }) => {
   const copy = AR_COPY[mode];
 
-  const positionStyle: React.CSSProperties = placement === 'left' ? {
-    position: 'absolute',
-    top: '72px',
-    left: '16px',
-    right: 'auto',
-    zIndex: 110,
-    width: 'calc(100vw - 32px)',
-    maxWidth: '380px',
-    margin: 0,
-  } : {
-    position: 'absolute',
-    top: '72px',
-    left: '16px',
-    right: '16px',
-    zIndex: 110,
-    maxWidth: '420px',
-    margin: '0 auto',
-  };
-
   return (
     <div
       role="dialog"
       aria-label={copy.helpTitle}
-      className={`ar-help-panel ${placement === 'left' ? 'ar-help-panel-left' : ''} ${className}`.trim()}
+      className={`ar-help-panel ar-help-panel-${placement} ${className}`.trim()}
       style={{
-        ...positionStyle,
-        padding: '18px 20px',
-        backgroundColor: 'rgba(255, 255, 255, 0.95)',
+        padding: '16px 18px',
+        backgroundColor: 'rgba(255, 255, 255, 0.96)',
         backdropFilter: 'blur(20px)',
         WebkitBackdropFilter: 'blur(20px)',
         border: '1px solid var(--colors-hairline)',
-        borderRadius: 'var(--rounded-lg)',
         boxShadow: '0 10px 36px rgba(0, 0, 0, 0.18)',
+        zIndex: 110,
         ...style,
       }}
     >
@@ -82,7 +62,6 @@ export const ARHelpPanel: React.FC<ARHelpPanelProps> = ({
           {onShowCard && <button onClick={onShowCard} className="btn-secondary" style={{ padding: '7px 10px', fontSize: '12px', whiteSpace: 'nowrap' }}>{AR_COPY.common.showCard}</button>}
         </div>
       )}
-
     </div>
   );
 };
