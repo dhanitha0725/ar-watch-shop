@@ -179,10 +179,10 @@ export const HomePage: React.FC<HomePageProps> = ({
 
               <div style={{ backgroundColor: 'var(--colors-surface-1)', padding: '14px 16px' }}>
                 <div style={{ fontSize: '20px', fontWeight: 400, color: 'var(--colors-semantic-success)', fontFamily: 'var(--font-display)' }}>
-                  10 / 10
+                  Support AR
                 </div>
                 <div style={{ fontSize: '12px', color: 'var(--colors-ink-muted)', marginTop: '2px' }}>
-                  Ready to explore
+                  Compatible with both marker and markerless AR
                 </div>
               </div>
             </div>
@@ -211,8 +211,17 @@ export const HomePage: React.FC<HomePageProps> = ({
               justifyContent: 'space-between',
               alignItems: 'center',
             }}>
-              <div style={{ fontSize: '13px', fontWeight: 600, color: 'var(--colors-ink)' }}>
-                Active Model: <span style={{ color: 'var(--colors-primary)', fontWeight: 400 }}>{heroWatch.name}</span>
+              <div style={{ minWidth: 0, fontSize: '13px', fontWeight: 600, color: 'var(--colors-ink)' }}>
+                <div>
+                  Active Model: <span style={{ color: 'var(--colors-primary)', fontWeight: 400 }}>{heroWatch.name}</span>
+                </div>
+                {heroWatch.attribution && (
+                  <div style={{ marginTop: '4px', fontSize: '11px', lineHeight: 1.4, fontWeight: 400, color: 'var(--colors-ink-muted)' }}>
+                    This model is an optimized version of {heroWatch.attribution.originalModelName} by {heroWatch.attribution.creator}, used under{' '}
+                    <a href={heroWatch.attribution.licenseUrl} target="_blank" rel="noreferrer" style={{ color: 'var(--colors-primary)', textDecoration: 'underline' }}>{heroWatch.attribution.licenseName}</a>.
+                    {' '}Modified by Dhanitha Kolonnage for educational purposes.
+                  </div>
+                )}
               </div>
 
               <div style={{ display: 'flex', gap: '4px' }}>

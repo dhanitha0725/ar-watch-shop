@@ -29,7 +29,11 @@ export const WATCHES: Watch[] = [
     defaultScale: 1.0,
     webARScale: 1.5748,
     markerScale: '9.1813 9.1813 9.1813',
-    markerRotation: '0 0 0'
+    markerRotation: '0 0 0',
+    attribution: {
+      originalModelName: 'Apple Watch Ultra 2', creator: 'polyman Studio',
+      licenseName: 'CC BY 4.0', licenseUrl: 'https://creativecommons.org/licenses/by/4.0/'
+    }
   },
   {
     id: 'chronograph-mudmaster',
@@ -59,7 +63,11 @@ export const WATCHES: Watch[] = [
     defaultScale: 0.08,
     webARScale: 0.0159,
     markerScale: '0.0926 0.0926 0.0926',
-    markerRotation: '0 0 0'
+    markerRotation: '0 0 0',
+    attribution: {
+      originalModelName: 'Chronograph Watch Mudmaster', creator: 'graphiccompressor',
+      licenseName: 'CC BY 4.0', licenseUrl: 'https://creativecommons.org/licenses/by/4.0/'
+    }
   },
   {
     id: 'digital-cyber',
@@ -89,7 +97,11 @@ export const WATCHES: Watch[] = [
     defaultScale: 1.0,
     webARScale: 0.0095,
     markerScale: '0.0551 0.0551 0.0551',
-    markerRotation: '0 0 0'
+    markerRotation: '0 0 0',
+    attribution: {
+      originalModelName: 'Digital Watch', creator: 'SpatialNeglect',
+      licenseName: 'CC BY-NC 4.0', licenseUrl: 'https://creativecommons.org/licenses/by-nc/4.0/'
+    }
   },
   {
     id: 'seiko-classic',
@@ -119,7 +131,11 @@ export const WATCHES: Watch[] = [
     defaultScale: 1.0,
     webARScale: 1.1131,
     markerScale: '6.4927 6.4927 6.4927',
-    markerRotation: '0 0 0'
+    markerRotation: '0 0 0',
+    attribution: {
+      originalModelName: 'Seiko Watch', creator: 'carloshisserich',
+      licenseName: 'CC BY 4.0', licenseUrl: 'https://creativecommons.org/licenses/by/4.0/'
+    }
   }
 ];
 
