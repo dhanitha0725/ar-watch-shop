@@ -75,7 +75,7 @@ export const HomePage: React.FC<HomePageProps> = ({
       <section className="carbon-section">
         <div className="carbon-grid-2col" style={{ alignItems: 'stretch' }}>
           {/* Left Column: Headlines, Lead & Technical Stats Grid */}
-          <div style={{
+          <div className="hero-left-col" style={{
             padding: '48px 40px',
             display: 'flex',
             flexDirection: 'column',
@@ -125,7 +125,7 @@ export const HomePage: React.FC<HomePageProps> = ({
               </p>
 
               {/* Primary & Secondary Square CTAs */}
-              <div style={{
+              <div className="hero-cta-group" style={{
                 display: 'flex',
                 gap: '12px',
                 flexWrap: 'wrap',
@@ -151,10 +151,9 @@ export const HomePage: React.FC<HomePageProps> = ({
               </div>
             </div>
 
-            {/* Bottom 3-Cell Metric Grid */}
-            <div style={{
+            {/* Bottom 3-Cell Metric Grid - Stacked on mobile */}
+            <div className="hero-metrics-grid" style={{
               display: 'grid',
-              gridTemplateColumns: 'repeat(3, 1fr)',
               gap: '1px',
               backgroundColor: 'var(--colors-hairline)',
               border: '1px solid var(--colors-hairline)',
@@ -566,9 +565,28 @@ export const HomePage: React.FC<HomePageProps> = ({
 
       {/* Responsive Inline Styles */}
       <style>{`
+        @media (min-width: 769px) {
+          .hero-metrics-grid {
+            grid-template-columns: repeat(3, 1fr) !important;
+          }
+        }
         @media (max-width: 960px) {
           .showcase-stage-grid {
             grid-template-columns: 1fr !important;
+          }
+        }
+        @media (max-width: 768px) {
+          .hero-left-col {
+            padding: 32px 20px !important;
+            border-right: none !important;
+            border-bottom: 1px solid var(--colors-hairline) !important;
+          }
+          .hero-metrics-grid {
+            grid-template-columns: 1fr !important;
+            margin-top: 16px !important;
+          }
+          .hero-cta-group {
+            margin-bottom: 28px !important;
           }
         }
       `}</style>

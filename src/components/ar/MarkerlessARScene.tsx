@@ -46,7 +46,7 @@ export const MarkerlessARScene: React.FC<MarkerlessARSceneProps> = ({
   const [isPlaced, setIsPlaced] = useState<boolean>(false);
   const [arState, setArState] = useState<'idle' | 'starting' | 'active' | 'failed'>('idle');
   const [arError, setArError] = useState<string | null>(null);
-  const [showHelp, setShowHelp] = useState(true);
+  const [showHelp, setShowHelp] = useState(() => typeof window !== 'undefined' && window.innerWidth >= 768);
   const [showControls, setShowControls] = useState(true);
   const [isAutoRotating, setIsAutoRotating] = useState(false);
 
@@ -114,6 +114,15 @@ export const MarkerlessARScene: React.FC<MarkerlessARSceneProps> = ({
   // config.scale is a user-controlled multiplier on top of that baseline.
   const normalizedScale = (watch.webARScale * config.scale).toFixed(4);
 
+  const statusMessage = arError ? arError :
+    arState === 'active'
+      ? (isPlaced ? AR_COPY.surface.placed : AR_COPY.surface.searching)
+      : arState === 'starting'
+        ? AR_COPY.surface.starting
+        : xrStatus.isSupported
+          ? AR_COPY.surface.ready
+          : AR_COPY.surface.desktop;
+
   return (
     <div style={{ position: 'relative', width: '100vw', height: '100vh', backgroundColor: '#000', overflow: 'hidden' }}>
       {/* 3D / WebXR Scene Viewport */}
@@ -147,74 +156,75 @@ export const MarkerlessARScene: React.FC<MarkerlessARSceneProps> = ({
 
       {/* Top Navigation HUD */}
       <header className="ar-hud-top" role="banner">
-        {/* Left Side: Back + Reset/Start Over Button */}
-        <div className="ar-hud-left">
-          <button
-            onClick={onBack}
-            className="btn-icon"
-            title="Back"
-            aria-label="Back"
-          >
-            <ArrowLeft size={18} color="var(--colors-ink)" />
-          </button>
+        <div className="ar-hud-bar">
+          {/* Left Side: Back + Reset/Start Over Button */}
+          <div className="ar-hud-left">
+            <button
+              onClick={onBack}
+              className="btn-icon"
+              title="Back"
+              aria-label="Back"
+            >
+              <ArrowLeft size={18} color="var(--colors-ink)" />
+            </button>
 
-          <button
-            onClick={() => {
-              setIsPlaced(false);
-              onResetConfig();
-            }}
-            className="btn-icon"
-            title={AR_COPY.common.startOver}
-            aria-label={AR_COPY.common.startOver}
-          >
-            <RotateCcw size={18} color="var(--colors-ink)" />
-          </button>
+            <button
+              onClick={() => {
+                setIsPlaced(false);
+                onResetConfig();
+              }}
+              className="btn-icon"
+              title={AR_COPY.common.startOver}
+              aria-label={AR_COPY.common.startOver}
+            >
+              <RotateCcw size={18} color="var(--colors-ink)" />
+            </button>
+          </div>
+
+          {/* Desktop Center: Top State Showing Component */}
+          <div className="ar-hud-center ar-hud-center-desktop">
+            <ARStateBadge
+              state={arState === 'active' ? 'detected' : 'calibrating'}
+              customMessage={statusMessage}
+            />
+          </div>
+
+          {/* Right Side: Help and Controls Toggles */}
+          <div className="ar-hud-right">
+            <button
+              onClick={() => setShowHelp(!showHelp)}
+              className="btn-icon"
+              title={showHelp ? AR_COPY.common.closeHelp : AR_COPY.common.help}
+              aria-label={showHelp ? AR_COPY.common.closeHelp : AR_COPY.common.help}
+              style={{
+                backgroundColor: showHelp ? 'var(--colors-ink)' : 'var(--colors-canvas)',
+                color: showHelp ? '#ffffff' : 'var(--colors-ink)',
+              }}
+            >
+              <HelpCircle size={18} />
+            </button>
+
+            {!showControls && (
+              <button
+                onClick={() => setShowControls(true)}
+                className="btn-secondary"
+                title={AR_COPY.common.showControls}
+                aria-label={AR_COPY.common.showControls}
+                style={{ padding: '0 12px', minHeight: '36px', height: '36px', fontSize: '12px' }}
+              >
+                <Sliders size={14} />
+                <span>Controls</span>
+              </button>
+            )}
+          </div>
         </div>
 
-        {/* Center: Top State Showing Component */}
-        <div className="ar-hud-center">
+        {/* Mobile State Showing Row */}
+        <div className="ar-hud-status-mobile">
           <ARStateBadge
             state={arState === 'active' ? 'detected' : 'calibrating'}
-            customMessage={
-              arError ? arError :
-              arState === 'active'
-                ? (isPlaced ? AR_COPY.surface.placed : AR_COPY.surface.searching)
-                : arState === 'starting'
-                  ? AR_COPY.surface.starting
-                  : xrStatus.isSupported
-                    ? AR_COPY.surface.ready
-                    : AR_COPY.surface.desktop
-            }
+            customMessage={statusMessage}
           />
-        </div>
-
-        {/* Right Side: Help and Controls Toggles */}
-        <div className="ar-hud-right">
-          <button
-            onClick={() => setShowHelp(!showHelp)}
-            className="btn-icon"
-            title={showHelp ? AR_COPY.common.closeHelp : AR_COPY.common.help}
-            aria-label={showHelp ? AR_COPY.common.closeHelp : AR_COPY.common.help}
-            style={{
-              backgroundColor: showHelp ? 'var(--colors-ink)' : 'var(--colors-canvas)',
-              color: showHelp ? '#ffffff' : 'var(--colors-ink)',
-            }}
-          >
-            <HelpCircle size={18} />
-          </button>
-
-          {!showControls && (
-            <button
-              onClick={() => setShowControls(true)}
-              className="btn-secondary"
-              title={AR_COPY.common.showControls}
-              aria-label={AR_COPY.common.showControls}
-              style={{ padding: '0 14px', minHeight: '44px', fontSize: '13px' }}
-            >
-              <Sliders size={14} />
-              <span>Controls</span>
-            </button>
-          )}
         </div>
       </header>
 
