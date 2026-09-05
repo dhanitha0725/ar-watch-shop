@@ -233,6 +233,7 @@ export const MarkerlessARScene: React.FC<MarkerlessARSceneProps> = ({
           mode="surface"
           placement="left"
           onClose={() => setShowHelp(false)}
+          isAutoRotating={isAutoRotating}
         />
       )}
 

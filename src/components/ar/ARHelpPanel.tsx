@@ -1,6 +1,7 @@
 import React from 'react';
 import { HelpCircle, X } from 'lucide-react';
 import { AR_COPY } from '../../data/arCopy';
+import { ARGestureGuide } from './ARGestureGuide';
 
 interface ARHelpPanelProps {
   mode: 'surface' | 'card';
@@ -9,6 +10,7 @@ interface ARHelpPanelProps {
   placement?: 'left' | 'center';
   className?: string;
   style?: React.CSSProperties;
+  isAutoRotating?: boolean;
 }
 
 export const ARHelpPanel: React.FC<ARHelpPanelProps> = ({
@@ -18,6 +20,7 @@ export const ARHelpPanel: React.FC<ARHelpPanelProps> = ({
   placement = 'center',
   className = '',
   style,
+  isAutoRotating = false,
 }) => {
   const copy = AR_COPY[mode];
 
@@ -51,6 +54,8 @@ export const ARHelpPanel: React.FC<ARHelpPanelProps> = ({
           <X size={16} />
         </button>
       </div>
+
+      <ARGestureGuide mode={mode} isAutoRotating={isAutoRotating} />
 
       {mode === 'surface' ? (
         <div style={{ marginTop: '12px', paddingTop: '12px', borderTop: '1px solid var(--colors-hairline)', fontSize: '12px', color: 'var(--colors-ink-muted)' }}>
