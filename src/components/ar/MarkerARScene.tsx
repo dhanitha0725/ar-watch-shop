@@ -195,6 +195,7 @@ export const MarkerARScene: React.FC<MarkerARSceneProps> = ({
           placement="left"
           onClose={() => setShowHelp(false)}
           onShowCard={onOpenMarkerModal}
+          isAutoRotating={isAutoRotating}
         />
       )}
 
